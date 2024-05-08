@@ -19,7 +19,7 @@ struct ContentView: View {
                     .environmentObject(TabbarData())
             } else {
                 LaunchView()
-                    .environmentObject(UserInfoData()) // 注入用户信息环境变量
+                    .environmentObject(UserInfoData())
                     .environmentObject(TabbarData())
             }
         }
@@ -32,10 +32,14 @@ struct ContentView: View {
     private func checkPermissionsAndNavigate() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             print("准备跳转首页")
-            navigateRunView = true
+            withAnimation {
+                navigateRunView = true
+            }
         }
     }
 }
+
+private extension ContentView
 
 #Preview {
     ContentView()
