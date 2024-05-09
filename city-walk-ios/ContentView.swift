@@ -9,13 +9,16 @@ import SwiftUI
 
 struct ContentView: View {
     /// 添加一个状态来控制是否跳转跳转页面
-    @State private var navigateRunView = false
+//    @State private var navigateRunView = false
+
+    @EnvironmentObject var LaunchScreenDataModel: LaunchScreenData
 
     var body: some View {
         ZStack {
-            if navigateRunView == true {
+            // 离开启动页面进入模板页
+            if LaunchScreenDataModel.states == .leave {
                 LayoutView()
-                    .environmentObject(UserInfoData()) // 注入用户信息环境变量
+                    .environmentObject(UserInfoData())
                     .environmentObject(TabbarData())
             } else {
                 LaunchView()
@@ -23,24 +26,10 @@ struct ContentView: View {
                     .environmentObject(TabbarData())
             }
         }
-        .onAppear {
-            self.checkPermissionsAndNavigate()
-        }
-    }
-
-    // 检查权限并延迟跳转
-    private func checkPermissionsAndNavigate() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            print("准备跳转首页")
-            withAnimation {
-                navigateRunView = true
-            }
-        }
     }
 }
 
-private extension ContentView
-
 #Preview {
     ContentView()
+        .environmentObject(LaunchScreenData())
 }

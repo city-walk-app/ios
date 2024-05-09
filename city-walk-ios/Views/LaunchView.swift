@@ -5,7 +5,7 @@
 //  Created by Tyh2001 on 2024/5/1.
 //
 
-//import CoreLocation
+// import CoreLocation
 import Network
 import SwiftUI
 
@@ -17,13 +17,14 @@ struct LaunchView: View {
     /// 用于存储网络权限状态的状态变量，默认为需要连接状态
     @State private var networkAuthorizationStatus: NWPath.Status = .requiresConnection
     /// 添加一个状态来控制是否跳转跳转页面
-    @State private var navigateRunView = false
+//    @State private var navigateRunView = false
     /// 缓存信息
     private let cacheInfo = UserCache.shared.getInfo()
     /// 用户信息数据
     /// 通过 @EnvironmentObject 获取全局的 UserInfoData 对象
     @EnvironmentObject var userInfoDataModel: UserInfoData
     @EnvironmentObject var tabberDataModel: TabbarData
+    @EnvironmentObject var LaunchScreenDataModel: LaunchScreenData
 
     var body: some View {
         NavigationStack {
@@ -50,20 +51,20 @@ struct LaunchView: View {
                     .font(.system(size: 14))
                     .foregroundStyle(.black.opacity(0.7))
 
-                // 页面跳转
-                Button(action: {
-                    navigateRunView = (cacheInfo != nil) && (cacheInfo?.id != nil)
-                }) {
-                    EmptyView()
-                }
-                .navigationDestination(isPresented: $navigateRunView) {
-                    if (cacheInfo != nil) && (cacheInfo?.id != nil) {
-                        LayoutView()
-                    } else {
-                        LoginView()
-                    }
-                }
-                .hidden() // 隐藏按钮
+//                // 页面跳转
+//                Button(action: {
+//                    navigateRunView = (cacheInfo != nil) && (cacheInfo?.id != nil)
+//                }) {
+//                    EmptyView()
+//                }
+//                .navigationDestination(isPresented: $navigateRunView) {
+//                    if (cacheInfo != nil) && (cacheInfo?.id != nil) {
+//                        LayoutView()
+//                    } else {
+//                        LoginView()
+//                    }
+//                }
+//                .hidden() // 隐藏按钮
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 100)
@@ -84,8 +85,8 @@ struct LaunchView: View {
 //                locationAuthorizationStatus == .authorizedWhenInUse || locationAuthorizationStatus == .authorizedAlways,
                 networkAuthorizationStatus == .satisfied
             {
-                print("全部都授权了")
-//                self.checkPermissionsAndNavigate()
+                print("授权了网络")
+                self.checkPermissionsAndNavigate()
                 return
             }
 
@@ -116,7 +117,7 @@ struct LaunchView: View {
             if networkAuthorizationStatus == .satisfied {
 //                navigateRunView = true // 设置为 true，以触发导航到首页
                 print("网络授权改变")
-//                checkPermissionsAndNavigate()
+                self.checkPermissionsAndNavigate()
             }
         }
     }
@@ -176,7 +177,8 @@ struct LaunchView: View {
     private func checkPermissionsAndNavigate() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             print("准备跳转首页")
-            navigateRunView = true
+            LaunchScreenDataModel.change()
+//            navigateRunView = true
         }
     }
 }
@@ -185,4 +187,5 @@ struct LaunchView: View {
     LaunchView()
         .environmentObject(UserInfoData())
         .environmentObject(TabbarData())
+        .environmentObject(LaunchScreenData())
 }
