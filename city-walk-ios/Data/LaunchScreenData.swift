@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum LaunchScreenStates {
     case enter
@@ -18,6 +19,8 @@ class LaunchScreenData: ObservableObject {
 
     /// 切换当前状态
     func change() {
-        self.states = .leave
+        withAnimation {
+            self.states = .leave
+        }
     }
 }
