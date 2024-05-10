@@ -8,18 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
-    /// 添加一个状态来控制是否跳转跳转页面
-//    @State private var navigateRunView = false
-
-    @EnvironmentObject var LaunchScreenDataModel: LaunchScreenData
+    @EnvironmentObject var launchScreenDataModel: LaunchScreenData
+    @EnvironmentObject var userInfoDataModel: UserInfoData
 
     var body: some View {
         ZStack {
             // 离开启动页面进入模板页
-            if LaunchScreenDataModel.states == .leave {
-                LayoutView()
-                    .environmentObject(UserInfoData())
-                    .environmentObject(TabbarData())
+            if launchScreenDataModel.states == .leave {
+                // 如果存在信息，进入 layour
+                if (userInfoDataModel.cacheInfo != nil) && (userInfoDataModel.cacheInfo?.id != nil) {
+                    LayoutView()
+                        .environmentObject(UserInfoData())
+                        .environmentObject(TabbarData())
+                }
+                // 否则需要登录
+                else {
+                    LoginView()
+                }
             } else {
                 LaunchView()
                     .environmentObject(UserInfoData())
@@ -32,4 +37,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(LaunchScreenData())
+        .environmentObject(UserInfoData())
 }

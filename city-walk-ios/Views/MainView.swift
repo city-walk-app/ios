@@ -15,9 +15,6 @@ struct MainView: View {
     let cacheInfo = UserCache.shared.getInfo()!
     /// 用户信息数据
     @EnvironmentObject var userInfoDataModel: UserInfoData
-    
-//    @State var userInfo: UserInfo.UserInfoData?
-    @State var avatarUrl: URL?
     /// 日历热力图
     @State var calendarHeatmap: [[UserGetCalendarHeatmap.UserGetCalendarHeatmapDataItem]] = []
     /// 省份版图列表
@@ -110,28 +107,10 @@ struct MainView: View {
             .padding(.top, 80)
         }
         .onAppear {
-//            loadUserInfo() // 获取用户信息
-            loadGetUserProvince() // 获取指定用户去过的省份
-            loadUserGetCalendarHeatmap() // 获取用户的动态发布日历热力图
+            self.loadGetUserProvince() // 获取指定用户去过的省份
+            self.loadUserGetCalendarHeatmap() // 获取用户的动态发布日历热力图
         }
     }
-
-    /// 获取用户信息
-//    private func loadUserInfo() {
-//        API.userInfo(params: ["id": String(userId)]) { result in
-//            print("获取的用户信息", result)
-//
-//            switch result {
-//            case .success(let data):
-//                if data.code == 200 {
-//                    print("获取的用户信息", data)
-//                    userInfo = data.data
-//                }
-//            case .failure:
-//                print("接口错误")
-//            }
-//        }
-//    }
 
     /// 获取用户的动态发布日历热力图
     private func loadUserGetCalendarHeatmap() {
@@ -139,7 +118,6 @@ struct MainView: View {
             switch result {
             case .success(let data):
                 if data.code == 200 && (data.data?.isEmpty) != nil {
-                    print("获取热力图", data)
                     calendarHeatmap = data.data!
                 }
             case .failure:
@@ -154,7 +132,6 @@ struct MainView: View {
             switch result {
             case .success(let data):
                 if data.code == 200 && (data.data?.isEmpty) != nil {
-                    print("获取热力图", data)
                     userProvince = data.data!
                 }
             case .failure:

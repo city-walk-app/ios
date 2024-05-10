@@ -13,6 +13,8 @@ struct city_walk_iosApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(LaunchScreenData())
+                .environmentObject(UserInfoData())
+                .environmentObject(TabbarData())
         }
     }
 }

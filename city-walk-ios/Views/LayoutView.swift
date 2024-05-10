@@ -21,27 +21,22 @@ struct LayoutView: View {
 
     var body: some View {
         NavigationStack {
-            if (cacheInfo != nil) && (cacheInfo?.id != nil) {
-                ZStack(alignment: .bottom) {
-                    if active == .home {
-                        HomeView()
-                    }
-                    else if active == .ranking {
-                        RankingView()
-                    }
-                    else if active == .route {
-                        RouterView()
-                    }
-                    else if active == .main {
-                        MainView(userId: cacheInfo!.id)
-                    }
-
-                    // 底部 tab
-                    TabbarView(active: $active)
+            ZStack(alignment: .bottom) {
+                if active == .home {
+                    HomeView()
                 }
-            }
-            else {
-                LoginView()
+                else if active == .ranking {
+                    RankingView()
+                }
+                else if active == .route {
+                    RouterView()
+                }
+                else if active == .main {
+                    MainView(userId: cacheInfo!.id)
+                }
+
+                // 底部 tab
+                TabbarView(active: $active)
             }
         }
         .navigationBarBackButtonHidden(true)

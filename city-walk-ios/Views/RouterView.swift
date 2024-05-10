@@ -8,10 +8,7 @@
 import SwiftUI
 
 struct RouterView: View {
-//    let API = Index()
     let API = ApiBasic()
-
-//    @State private var routerList: [GetRouteList.GetRouteListData] = []
 
     /// tab 切换数据
     @EnvironmentObject var tabbarDataModel: TabbarData
@@ -43,17 +40,16 @@ struct RouterView: View {
         }
         .navigationTitle("打卡记录")
         .onAppear {
-            getRouteList() // 获取指定用户去过的省份
+            self.getRouteList() // 获取指定用户去过的省份
         }
     }
 
     /// 获取指定用户去过的省份
-    func getRouteList() {
+    private func getRouteList() {
         API.getRouteList(params: ["page": "1", "page_size": "20"]) { result in
             switch result {
             case .success(let data):
                 if data.code == 200 && ((data.data?.isEmpty) != nil) {
-//                    routerList = data.data!
                     tabbarDataModel.setRouterData(data.data!)
                 }
             case .failure:
@@ -65,4 +61,5 @@ struct RouterView: View {
 
 #Preview {
     RouterView()
+        .environmentObject(TabbarData())
 }

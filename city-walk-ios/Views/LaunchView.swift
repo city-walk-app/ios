@@ -16,8 +16,6 @@ struct LaunchView: View {
 //    @State private var locationAuthorizationStatus: CLAuthorizationStatus = .notDetermined
     /// 用于存储网络权限状态的状态变量，默认为需要连接状态
     @State private var networkAuthorizationStatus: NWPath.Status = .requiresConnection
-    /// 添加一个状态来控制是否跳转跳转页面
-//    @State private var navigateRunView = false
     /// 缓存信息
     private let cacheInfo = UserCache.shared.getInfo()
     /// 用户信息数据
@@ -50,21 +48,6 @@ struct LaunchView: View {
                 Text("记录你走过的每个地方")
                     .font(.system(size: 14))
                     .foregroundStyle(.black.opacity(0.7))
-
-//                // 页面跳转
-//                Button(action: {
-//                    navigateRunView = (cacheInfo != nil) && (cacheInfo?.id != nil)
-//                }) {
-//                    EmptyView()
-//                }
-//                .navigationDestination(isPresented: $navigateRunView) {
-//                    if (cacheInfo != nil) && (cacheInfo?.id != nil) {
-//                        LayoutView()
-//                    } else {
-//                        LoginView()
-//                    }
-//                }
-//                .hidden() // 隐藏按钮
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 100)
@@ -115,15 +98,14 @@ struct LaunchView: View {
         .onChange(of: networkAuthorizationStatus) {
             // 如果网络权限已授权
             if networkAuthorizationStatus == .satisfied {
-//                navigateRunView = true // 设置为 true，以触发导航到首页
                 print("网络授权改变")
-                self.checkPermissionsAndNavigate()
+                self.checkPermissionsAndNavigate() // 跳转
             }
         }
     }
 
     /// 获取用户信息
-    public func loadUserInfo() {
+    private func loadUserInfo() {
         // 将 id 转换为字符串发送请求
         if let value = cacheInfo?.id {
             let id = String(describing: value)
@@ -159,12 +141,11 @@ struct LaunchView: View {
     }
 
     /// 获取指定用户去过的省份
-    func getRouteList() {
+    private func getRouteList() {
         API.getRouteList(params: ["page": "1", "page_size": "20"]) { result in
             switch result {
             case .success(let data):
                 if data.code == 200 && ((data.data?.isEmpty) != nil) {
-//                    routerList = data.data!
                     self.tabberDataModel.setRouterData(data.data!)
                 }
             case .failure:
@@ -173,12 +154,11 @@ struct LaunchView: View {
         }
     }
 
-    // 检查权限并延迟跳转
+    /// 开始跳转首页
     private func checkPermissionsAndNavigate() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             print("准备跳转首页")
             LaunchScreenDataModel.change()
-//            navigateRunView = true
         }
     }
 }

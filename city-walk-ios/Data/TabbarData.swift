@@ -17,12 +17,16 @@ class TabbarData: ObservableObject {
     /// 设置排行榜数据
     /// - Parameter data: 数据
     func setRankingData(_ data: [ExperienceRanking.ExperienceRankingData]) {
-        self.rankingData = data
+        DispatchQueue.main.async {
+            self.rankingData = data
+        }
     }
 
     /// 设置步行记录数据
     /// - Parameter data: 数据
     func setRouterData(_ data: [GetRouteList.GetRouteListData]) {
-        self.routerData = data
+        DispatchQueue.main.async {
+            self.routerData = data
+        }
     }
 }

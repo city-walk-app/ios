@@ -73,4 +73,5 @@ struct RankingView: View {
 
 #Preview {
     RankingView()
+        .environmentObject(TabbarData())
 }
