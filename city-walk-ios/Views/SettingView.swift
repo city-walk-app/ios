@@ -19,11 +19,14 @@ struct SettingView: View {
     @State private var isGoLoginView = false
     /// 是否显示退出登录的按钮确认框
     @State private var showingLogoutAlert = false
+    /// 用户信息
     @EnvironmentObject var userInfoDataModel: UserInfoData
-
-    @State var userInfoItems: [UserInfoDataModel] = [
+    /// 用户信息列表选项
+    let userInfoItems: [UserInfoDataModel] = [
         UserInfoDataModel(title: "名字", key: "nick_name", icon: "person.fill", color: .blue),
-        UserInfoDataModel(title: "邮箱", key: "email", icon: "mic.square.fill", color: .red),
+        UserInfoDataModel(title: "性别", key: "gender", icon: "mic.square.fill", color: .red),
+        UserInfoDataModel(title: "城市", key: "city", icon: "mic.square.fill", color: .red),
+        UserInfoDataModel(title: "邮箱", key: "nick_name", icon: "person.fill", color: .blue),
         UserInfoDataModel(title: "手机", key: "mobel", icon: "circle.square", color: .orange),
         UserInfoDataModel(title: "签名", key: "signature", icon: "house", color: .green)
     ]
@@ -49,7 +52,7 @@ struct SettingView: View {
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 70, height: 70)
                                     .mask(Circle())
-                                Text("欢迎使用")
+                                Text("欢迎使用 City Walk!")
                                     .foregroundStyle(.black)
 
                                 Spacer()
@@ -63,24 +66,69 @@ struct SettingView: View {
                     // 信息
                     Section {
                         ForEach(userInfoItems.indices, id: \.self) { index in
-                            HStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 36, height: 36)
-                                    .foregroundColor(userInfoItems[index].color) // 修改为指定的颜色
-                                    .overlay {
-                                        Image(systemName: userInfoItems[index].icon)
-                                            .foregroundColor(.white)
-                                    }
-                                    .clipShape(RoundedRectangle(cornerRadius: 10)) // 添加裁剪圆角
+                            Button {} label: {
+                                HStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: 36, height: 36)
+                                        .foregroundColor(userInfoItems[index].color) // 修改为指定的颜色
+                                        .overlay {
+                                            Image(systemName: userInfoItems[index].icon)
+                                                .foregroundColor(.white)
+                                        }
 
-                                Text(userInfoItems[index].title) // 使用条目的 key 属性作为文本
+                                    Text(userInfoItems[index].title)
+                                        .foregroundStyle(.black)
+
+                                    Spacer()
+
+                                    // 使用 userInfoDataModel.data 字典中对应 key 的值作为文本
+                                    //                                if let value = userInfoDataModel.data?[userInfoItems[index].key] {
+                                    //                                    Text(value)
+                                    //                                }
+
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                        }
+                    }
+
+                    // 赞助
+                    Section {
+                        Button {} label: {
+                            Text("赞助")
+                        }
+                    }
+
+                    // 作者
+                    Section(header: Text("作者")) {
+                        Button {} label: {
+                            HStack {
+                                Text("微信")
 
                                 Spacer()
 
-                                // 使用 userInfoDataModel.data 字典中对应 key 的值作为文本
-//                                if let value = userInfoDataModel.data?[userInfoItems[index].key] {
-//                                    Text(value)
-//                                }
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+
+                        Button {} label: {
+                            HStack {
+                                Text("𝕏")
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+
+                        Button {} label: {
+                            HStack {
+                                Text("Github")
+
+                                Spacer()
 
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.gray)
@@ -88,7 +136,20 @@ struct SettingView: View {
                         }
                     }
 
-                    // 服务
+                    // 应用服务
+                    Section {
+                        Button {} label: {
+                            Text("给个好评")
+                        }
+
+                        Button {} label: {
+                            Text("分享给好友")
+                        }
+
+                        Button {} label: {
+                            Text("加入CityWalk开发者")
+                        }
+                    }
 
                     // 退出登录
                     Section {
