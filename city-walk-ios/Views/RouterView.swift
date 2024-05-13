@@ -11,22 +11,22 @@ struct RouterView: View {
     let API = ApiBasic()
 
     /// tab 切换数据
-    @EnvironmentObject var tabbarDataModel: TabbarData
+    @EnvironmentObject var globalDataModel: GlobalData
 
     var body: some View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack {
-                    ForEach(tabbarDataModel.routerData.indices, id: \.self) { index in
-                        NavigationLink(destination: MapView(listId: tabbarDataModel.routerData[index].id)) {
+                    ForEach(globalDataModel.routerData.indices, id: \.self) { index in
+                        NavigationLink(destination: MapView(listId: globalDataModel.routerData[index].id)) {
                             HStack {
                                 Image(systemName: "figure.run.circle.fill")
                                     .font(.system(size: 30))
                                     .foregroundStyle(Color.green)
 
-                                Text("打卡\(tabbarDataModel.routerData[index].route_detail)个位置")
+                                Text("打卡\(globalDataModel.routerData[index].route_detail)个位置")
                                 Spacer()
-                                Text("\(tabbarDataModel.routerData[index].city)")
+                                Text("\(globalDataModel.routerData[index].city)")
                             }
                             .padding(.vertical, 20)
                             .padding(.horizontal, 22)
@@ -50,7 +50,7 @@ struct RouterView: View {
             switch result {
             case .success(let data):
                 if data.code == 200 && ((data.data?.isEmpty) != nil) {
-                    tabbarDataModel.setRouterData(data.data!)
+                    globalDataModel.setRouterData(data.data!)
                 }
             case .failure:
                 print("获取失败")
@@ -61,5 +61,5 @@ struct RouterView: View {
 
 #Preview {
     RouterView()
-        .environmentObject(TabbarData())
+        .environmentObject(GlobalData())
 }

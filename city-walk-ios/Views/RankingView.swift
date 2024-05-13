@@ -11,24 +11,24 @@ struct RankingView: View {
     let API = ApiBasic()
 
     /// tab 切换数据
-    @EnvironmentObject var tabbarDataModel: TabbarData
+    @EnvironmentObject var globalDataModel: GlobalData
 
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
                 VStack {
-                    ForEach(tabbarDataModel.rankingData.indices, id: \.self) { index in
+                    ForEach(globalDataModel.rankingData.indices, id: \.self) { index in
 
                         HStack {
-                            NavigationLink(destination: MainView(userId: tabbarDataModel.rankingData[index].user_id)) {
-                                URLImage(url: URL(string: "\(BASE_URL)/\(tabbarDataModel.rankingData[index].user_info.avatar ?? "")")!)
+                            NavigationLink(destination: MainView(userId: globalDataModel.rankingData[index].user_id)) {
+                                URLImage(url: URL(string: "\(BASE_URL)/\(globalDataModel.rankingData[index].user_info.avatar ?? "")")!)
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 70, height: 70)
                                     .mask(Circle())
                             }
 
                             VStack(alignment: .leading) {
-                                Text("\(tabbarDataModel.rankingData[index].user_info.nick_name ?? "")")
+                                Text("\(globalDataModel.rankingData[index].user_info.nick_name ?? "")")
                                     .font(.title2)
 
                                 HStack {
@@ -62,7 +62,7 @@ struct RankingView: View {
             switch result {
             case .success(let data):
                 if data.code == 200 && (data.data?.isEmpty) != nil {
-                    self.tabbarDataModel.setRankingData(data.data!)
+                    self.globalDataModel.setRankingData(data.data!)
                 }
             case .failure:
                 print("获取失败")
@@ -73,5 +73,5 @@ struct RankingView: View {
 
 #Preview {
     RankingView()
-        .environmentObject(TabbarData())
+        .environmentObject(GlobalData())
 }

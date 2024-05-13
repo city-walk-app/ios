@@ -7,7 +7,7 @@
 
 import Foundation
 
-class TabbarData: ObservableObject {
+class GlobalData: ObservableObject {
     /// 排行榜数据
     @Published var rankingData: [ExperienceRanking.ExperienceRankingData] = []
 

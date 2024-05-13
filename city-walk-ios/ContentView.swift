@@ -17,9 +17,8 @@ struct ContentView: View {
             if launchScreenDataModel.states == .leave {
                 // 如果存在信息，进入 layour
                 if (userInfoDataModel.cacheInfo != nil) && (userInfoDataModel.cacheInfo?.id != nil) {
-                    LayoutView()
+                    HomeView()
                         .environmentObject(UserInfoData())
-                        .environmentObject(TabbarData())
                 }
                 // 否则需要登录
                 else {
@@ -28,7 +27,7 @@ struct ContentView: View {
             } else {
                 LaunchView()
                     .environmentObject(UserInfoData())
-                    .environmentObject(TabbarData())
+                    .environmentObject(GlobalData())
             }
         }
     }

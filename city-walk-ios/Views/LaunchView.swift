@@ -21,7 +21,7 @@ struct LaunchView: View {
     /// 用户信息数据
     /// 通过 @EnvironmentObject 获取全局的 UserInfoData 对象
     @EnvironmentObject var userInfoDataModel: UserInfoData
-    @EnvironmentObject var tabberDataModel: TabbarData
+    @EnvironmentObject var globalDataModel: GlobalData
     @EnvironmentObject var LaunchScreenDataModel: LaunchScreenData
 
     var body: some View {
@@ -132,7 +132,7 @@ struct LaunchView: View {
             switch result {
             case .success(let data):
                 if data.code == 200 && (data.data?.isEmpty) != nil {
-                    self.tabberDataModel.setRankingData(data.data!)
+                    self.globalDataModel.setRankingData(data.data!)
                 }
             case .failure:
                 print("获取失败")
@@ -146,7 +146,7 @@ struct LaunchView: View {
             switch result {
             case .success(let data):
                 if data.code == 200 && ((data.data?.isEmpty) != nil) {
-                    self.tabberDataModel.setRouterData(data.data!)
+                    self.globalDataModel.setRouterData(data.data!)
                 }
             case .failure:
                 print("获取失败")
@@ -166,6 +166,6 @@ struct LaunchView: View {
 #Preview {
     LaunchView()
         .environmentObject(UserInfoData())
-        .environmentObject(TabbarData())
+        .environmentObject(GlobalData())
         .environmentObject(LaunchScreenData())
 }

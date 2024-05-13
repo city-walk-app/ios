@@ -112,7 +112,7 @@ struct LoginView: View {
                 .disabled(isLoginButtonDisabled)
 
                 // 跳转首页
-                NavigationLink(destination: LayoutView(), isActive: $isGoLayoutView) {
+                NavigationLink(destination: HomeView(), isActive: $isGoLayoutView) {
                     EmptyView()
                 }
 //                .isDetailLink(false)
