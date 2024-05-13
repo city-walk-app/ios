@@ -23,46 +23,38 @@ struct MainView: View {
     @State var userProvince: [GetUserProvince.GetUserProvinceData] = []
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        ScrollView(showsIndicators: false) {
             VStack {
                 // 头像
-                HStack {
+                HStack(alignment: .center) {
                     if userInfoDataModel.data != nil {
                         URLImage(url: URL(string: "\(BASE_URL)/\(userInfoDataModel.data!.avatar ?? "")")!)
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 100, height: 100)
+                            .frame(width: 140, height: 140)
                             .mask(Circle())
 
                     } else {
                         Image(systemName: "person")
                     }
-
-                    Spacer()
                 }
+
+                Text("\(userId)")
 
                 // 昵称
-                HStack {
-                    Text("\(userInfoDataModel.data?.nick_name ?? "")")
-                        .bold()
-
-                    Spacer()
-                }
+                Text("\(userInfoDataModel.data?.nick_name ?? "")")
+                    .font(.title)
 
                 // 签名
-                HStack {
-                    Text(userInfoDataModel.data?.signature ?? "")
-
-                    Spacer()
-                }
+                Text(userInfoDataModel.data?.signature ?? "")
+                    .padding(.top, 4)
 
                 // 位置信息
                 HStack {
                     Text(userInfoDataModel.data?.province ?? "")
                     Text("-")
                     Text(userInfoDataModel.data?.city ?? "")
-
-                    Spacer()
                 }
+                .foregroundStyle(.gray)
 
                 // 省份版图列表
                 if userProvince.count != 0 {
@@ -128,12 +120,13 @@ struct MainView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.top, 80)
+            .padding(.top, 20)
         }
         .onAppear {
             self.loadGetUserProvince() // 获取指定用户去过的省份
             self.loadUserGetCalendarHeatmap() // 获取用户的动态发布日历热力图
             self.getRouteList() // 获取指定用户的打卡记录
+            self.loadUserInfo() // 获取用户信息
         }
     }
 
@@ -144,6 +137,20 @@ struct MainView: View {
             case .success(let data):
                 if data.code == 200 && (data.data?.isEmpty) != nil {
                     calendarHeatmap = data.data!
+                }
+            case .failure:
+                print("接口错误")
+            }
+        }
+    }
+
+    /// 获取用户信息
+    private func loadUserInfo() {
+        API.userInfo(params: ["id": userId]) { result in
+            switch result {
+            case .success(let data):
+                if data.code == 200 && data.data != nil {
+                    userInfoDataModel.set(data.data!)
                 }
             case .failure:
                 print("接口错误")

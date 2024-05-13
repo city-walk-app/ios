@@ -176,7 +176,6 @@ struct LoginView: View {
                         }
                         // 选择头像的弹出层
                         .sheet(isPresented: $isShowAvatarSelectSheet) {
-//                            Text("123")
                             ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet)
                         }
 
