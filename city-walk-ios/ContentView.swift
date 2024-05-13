@@ -37,4 +37,5 @@ struct ContentView: View {
     ContentView()
         .environmentObject(LaunchScreenData())
         .environmentObject(UserInfoData())
+        .environmentObject(GlobalData())
 }

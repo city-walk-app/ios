@@ -15,6 +15,8 @@ struct MainView: View {
     let cacheInfo = UserCache.shared.getInfo()!
     /// 用户信息数据
     @EnvironmentObject var userInfoDataModel: UserInfoData
+    /// 全局数据
+    @EnvironmentObject var globalDataModel: GlobalData
     /// 日历热力图
     @State var calendarHeatmap: [[UserGetCalendarHeatmap.UserGetCalendarHeatmapDataItem]] = []
     /// 省份版图列表
@@ -102,6 +104,28 @@ struct MainView: View {
                 } else {
                     Text("热力图加载中...")
                 }
+
+                // 用户的打卡记录
+                if globalDataModel.routerData.count != 0 {
+                    ForEach(globalDataModel.routerData.indices, id: \.self) { index in
+                        NavigationLink(destination: MapView(listId: globalDataModel.routerData[index].id)) {
+                            HStack {
+                                Image(systemName: "figure.run.circle.fill")
+                                    .font(.system(size: 30))
+                                    .foregroundStyle(Color.green)
+
+                                Text("打卡\(globalDataModel.routerData[index].route_detail)个位置")
+                                Spacer()
+                                Text("\(globalDataModel.routerData[index].city)")
+                            }
+                            .padding(.vertical, 20)
+                            .padding(.horizontal, 22)
+                            .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 22))
+                        }
+                    }
+                } else {
+                    Text("暂无打卡记录")
+                }
             }
             .padding(.horizontal, 16)
             .padding(.top, 80)
@@ -109,6 +133,7 @@ struct MainView: View {
         .onAppear {
             self.loadGetUserProvince() // 获取指定用户去过的省份
             self.loadUserGetCalendarHeatmap() // 获取用户的动态发布日历热力图
+            self.getRouteList() // 获取指定用户的打卡记录
         }
     }
 
@@ -122,6 +147,20 @@ struct MainView: View {
                 }
             case .failure:
                 print("接口错误")
+            }
+        }
+    }
+
+    /// 获取指定用户的打卡记录
+    private func getRouteList() {
+        API.getRouteList(params: ["page": "1", "page_size": "20"]) { result in
+            switch result {
+            case .success(let data):
+                if data.code == 200 && ((data.data?.isEmpty) != nil) {
+                    globalDataModel.setRouterData(data.data!)
+                }
+            case .failure:
+                print("获取失败")
             }
         }
     }
@@ -144,4 +183,5 @@ struct MainView: View {
 #Preview {
     MainView(userId: 1)
         .environmentObject(UserInfoData())
+        .environmentObject(GlobalData())
 }

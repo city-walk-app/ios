@@ -146,7 +146,7 @@ struct LaunchView: View {
             switch result {
             case .success(let data):
                 if data.code == 200 && ((data.data?.isEmpty) != nil) {
-                    self.globalDataModel.setRouterData(data.data!)
+                    globalDataModel.setRouterData(data.data!)
                 }
             case .failure:
                 print("获取失败")

@@ -75,6 +75,9 @@ struct HomeView: View {
                     .shadow(radius: 15)
                 
                 VStack {
+                    NavigationLink(destination: RankingView()) {
+                        Text("排行榜")
+                    }
                     Button {
                         isCurrentLocation.toggle()
                     } label: {
