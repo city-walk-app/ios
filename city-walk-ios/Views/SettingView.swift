@@ -19,6 +19,10 @@ struct SettingView: View {
     @State private var isGoLoginView = false
     /// 是否显示退出登录的按钮确认框
     @State private var showingLogoutAlert = false
+    /// 选择的头像图片
+    @State private var selectAvatarImage: UIImage?
+    /// 是否显示选择头像的对话框
+    @State private var isShowAvatarSelectSheet = false
     /// 用户信息
     @EnvironmentObject var userInfoDataModel: UserInfoData
     /// 用户信息列表选项
@@ -46,12 +50,24 @@ struct SettingView: View {
                 List {
                     // 基本信息
                     Section {
-                        Button {} label: {
+                        // 头像设置
+                        Button {
+                            self.isShowAvatarSelectSheet.toggle()
+                        } label: {
                             HStack {
-                                URLImage(url: URL(string: "\(BASE_URL)/\(userInfoDataModel.data!.avatar ?? "")")!)
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 70, height: 70)
-                                    .mask(Circle())
+                                if let image = selectAvatarImage {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 70, height: 70)
+                                        .clipShape(Circle())
+                                } else {
+                                    URLImage(url: URL(string: "\(BASE_URL)/\(userInfoDataModel.data!.avatar ?? "")")!)
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 70, height: 70)
+                                        .mask(Circle())
+                                }
+
                                 Text("欢迎使用 City Walk!")
                                     .foregroundStyle(.black)
 
@@ -60,6 +76,10 @@ struct SettingView: View {
                                 Image(systemName: "chevron.right")
                                     .foregroundStyle(.gray)
                             }
+                        }
+                        // 选择头像的弹出层
+                        .sheet(isPresented: $isShowAvatarSelectSheet) {
+                            ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet)
                         }
                     }
 

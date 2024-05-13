@@ -8,7 +8,6 @@
 import Combine
 import Foundation
 import SwiftUI
-import UIKit
 
 struct LoginView: View {
     let API = ApiBasic()
@@ -35,8 +34,6 @@ struct LoginView: View {
     @State private var userId = 0
     /// 登录按钮是否禁用
     @State private var isLoginButtonDisabled = false
-    /// 是否显示选择头像的对话框
-    @State private var isShowAvatarSelectSheet = false
     /// 是否跳转到首页
     @State private var isToHomeView = false
     /// 输入框是否获取焦点
@@ -49,6 +46,8 @@ struct LoginView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect() // 创建一个每秒触发一次的定时器
     /// 选择的头像图片
     @State private var selectAvatarImage: UIImage?
+    /// 是否显示选择头像的对话框
+    @State private var isShowAvatarSelectSheet = false
 
     var body: some View {
         NavigationStack {
@@ -118,7 +117,7 @@ struct LoginView: View {
 
                     /// 登录按钮
                     Button {
-                        userLoginEmail()
+                        self.userLoginEmail()
                     } label: {
                         Circle()
                             .frame(width: 80, height: 80)
