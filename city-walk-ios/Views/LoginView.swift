@@ -8,18 +8,37 @@
 import Combine
 import Foundation
 import SwiftUI
+import UIKit
 
 struct LoginView: View {
     let API = ApiBasic()
 
+    /// 聚焦的输入框枚举
+    enum FocusedField: Hashable {
+        case email, code, name
+    }
+
+    /// 步骤枚举
+    enum LoginState {
+        case login, name, avatar
+    }
+
+    /// 当前登录页的状态
+    @State var loginState: LoginState = .avatar
     /// 邮箱
     @State private var email = ""
     /// 验证码
     @State private var code = ""
+    /// 名字
+    @State private var nickName = ""
+    /// 当前登录的用户 id，只在新用户注册时使用
+    @State private var userId = 0
     /// 登录按钮是否禁用
     @State private var isLoginButtonDisabled = false
+    /// 是否显示选择头像的对话框
+    @State private var isShowAvatarSelectSheet = false
     /// 是否跳转到首页
-    @State private var isGoLayoutView = false
+    @State private var isToHomeView = false
     /// 输入框是否获取焦点
     @FocusState var focus: FocusedField?
     /// 是否在倒计时中
@@ -28,91 +47,149 @@ struct LoginView: View {
     @State private var countdownSeconds = 10
     /// 创建一个每秒触发一次的定时器
     let timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect() // 创建一个每秒触发一次的定时器
-    /// 聚焦的输入框枚举
-    enum FocusedField: Hashable {
-        case email, code
-    }
+    /// 选择的头像图片
+    @State private var selectAvatarImage: UIImage?
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                // 标题
-                HStack {
-                    Image("logo")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 40, height: 40)
-                        .mask(Circle())
+                // 登录状态
+                if loginState == .login {
+                    // 标题
+                    HStack {
+                        Image("logo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                            .mask(Circle())
 
-                    Text("Welcome")
-                        .font(.title)
-                        .bold()
+                        Text("Welcome")
+                            .font(.title)
+                            .bold()
 
-                    Spacer()
-                }
+                        Spacer()
+                    }
 
-                /// 邮箱
-                HStack {
-                    TextField("请输入邮箱", text: $email)
-                        .padding(.vertical, 20)
-                        .keyboardType(.URL)
-                        .focused($focus, equals: .email)
-                        .textContentType(.emailAddress)
-                        .submitLabel(.next)
-                        .onReceive(Just(code), perform: { _ in
-                            limitMaxLength(content: &code, maxLength: 50)
-                        })
-                        .onSubmit { // 监听提交事件
-                            validateEmail()
-                        }
+                    /// 邮箱
+                    HStack {
+                        TextField("请输入邮箱", text: $email)
+                            .padding(.vertical, 20)
+                            .keyboardType(.URL)
+                            .focused($focus, equals: .email)
+                            .textContentType(.emailAddress)
+                            .submitLabel(.next)
+                            .onReceive(Just(code), perform: { _ in
+                                limitMaxLength(content: &code, maxLength: 50)
+                            })
+                            .onSubmit { // 监听提交事件
+                                self.validateEmail()
+                            }
 
-                    // 获取验证码按钮
-                    if isCountingDown {
-                        Text("\(countdownSeconds)s后再试")
-                            .foregroundStyle(.gray)
-                    } else {
-                        Button {
-                            validateEmail()
-                        } label: {
-                            Text("获取验证码")
+                        // 获取验证码按钮
+                        if isCountingDown {
+                            Text("\(countdownSeconds)s后再试")
+                                .foregroundStyle(.gray)
+                        } else {
+                            Button {
+                                validateEmail()
+                            } label: {
+                                Text("获取验证码")
+                            }
                         }
                     }
-                }
-                .padding(.horizontal, 23)
-                .background(.white, in: RoundedRectangle(cornerRadius: 35))
-                .padding(.top, 20)
+                    .padding(.horizontal, 23)
+                    .background(.white, in: RoundedRectangle(cornerRadius: 35))
+                    .padding(.top, 20)
 
-                /// 验证码
-                HStack {
-                    TextField("邮箱验证码", text: $code)
-                        .keyboardType(.numberPad) // 设置键盘类型为数字键盘
-                        .textContentType(.oneTimeCode) // 设置内容类型为一次性代码，以便系统知道右下角按钮应该显示为“确认”
-                        .padding(.vertical, 20)
-                        .focused($focus, equals: .code)
-                        .submitLabel(.return)
-                        .onReceive(Just(code), perform: { _ in
-                            limitMaxLength(content: &code, maxLength: 6)
-                        }) // 最大长度为 6 位
-                }
-                .padding(.horizontal, 23)
-                .background(.white, in: RoundedRectangle(cornerRadius: 35))
+                    /// 验证码
+                    HStack {
+                        TextField("邮箱验证码", text: $code)
+                            .keyboardType(.numberPad) // 设置键盘类型为数字键盘
+                            .textContentType(.oneTimeCode) // 设置内容类型为一次性代码，以便系统知道右下角按钮应该显示为“确认”
+                            .padding(.vertical, 20)
+                            .focused($focus, equals: .code)
+                            .submitLabel(.return)
+                            .onReceive(Just(code), perform: { _ in
+                                limitMaxLength(content: &code, maxLength: 6)
+                            }) // 最大长度为 6 位
+                    }
+                    .padding(.horizontal, 23)
+                    .background(.white, in: RoundedRectangle(cornerRadius: 35))
 
-                /// 登录按钮
-                Button {
-                    userLoginEmail()
-                } label: {
-                    Circle()
-                        .frame(width: 80, height: 80)
-                        .overlay {
-                            Image(systemName: "chevron.right")
-                                .foregroundStyle(.white)
-                                .font(.system(size: 20))
+                    /// 登录按钮
+                    Button {
+                        userLoginEmail()
+                    } label: {
+                        Circle()
+                            .frame(width: 80, height: 80)
+                            .overlay {
+                                Image(systemName: "chevron.right")
+                                    .foregroundStyle(.white)
+                                    .font(.system(size: 20))
+                            }
+                    }
+                    .disabled(isLoginButtonDisabled)
+                }
+                // 设置名字步骤
+                else if loginState == .name {
+                    Text("设置你的名字")
+                    TextField("你的名字", text: $nickName)
+
+                    Button {
+                        withAnimation {
+                            self.loginState = .avatar
                         }
+                    } label: {
+                        Text("确定")
+                    }
                 }
-                .disabled(isLoginButtonDisabled)
+                // 设置头像步骤
+                else if loginState == .avatar {
+                    VStack {
+                        // 点击选择头像
+                        Button {
+                            self.isShowAvatarSelectSheet.toggle()
+                        } label: {
+                            VStack {
+                                if let image = selectAvatarImage {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .clipShape(Circle())
+                                } else {
+                                    Circle()
+                                        .frame(width: 100, height: 100)
+                                        .foregroundStyle(.gray.opacity(0.3))
+                                        .overlay {
+                                            Image(systemName: "person")
+                                                .foregroundStyle(.white)
+                                                .font(.system(size: 44))
+                                        }
+                                }
+
+                                HStack {
+                                    Spacer()
+                                    Text("设置你的头像")
+                                    Spacer()
+                                }
+                            }
+                        }
+                        // 选择头像的弹出层
+                        .sheet(isPresented: $isShowAvatarSelectSheet) {
+//                            Text("123")
+                            ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet)
+                        }
+
+                        Button {} label: {
+                            Text("确定")
+                        }
+                        .padding(.top, 50)
+                    }
+                }
 
                 // 跳转首页
-                NavigationLink(destination: HomeView(), isActive: $isGoLayoutView) {
+                NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
                     EmptyView()
                 }
 //                .isDetailLink(false)
@@ -170,7 +247,7 @@ struct LoginView: View {
             case .success(let data):
                 if data.code == 200 {
                     // 改变文本框聚焦状态
-                    focus = .code
+                    self.focus = .code
                 }
             case .failure:
                 print("获取邮箱验证码失败")
@@ -196,14 +273,24 @@ struct LoginView: View {
 
         API.userLoginEmail(params: ["email": email, "code": code]) { result in
 
-            isLoginButtonDisabled = false
+            self.isLoginButtonDisabled = false
 
             switch result {
             case .success(let data):
                 if data.code == 200 && data.data != nil {
-                    isGoLayoutView = true
+                    // 如果是新用户，继续完善信息
+                    if data.data!.is_new_user {
+                        self.userId = data.data!.id
 
-                    UserCache.shared.saveInfo(info: data.data!)
+                        withAnimation {
+                            self.loginState = .name
+                        }
+                    }
+                    // 否则跳转到首页
+                    else {
+                        UserCache.shared.saveInfo(info: data.data!)
+                        self.isToHomeView = true // 跳转到首页
+                    }
                 }
             case .failure:
                 print("邮箱验证登录失败")
