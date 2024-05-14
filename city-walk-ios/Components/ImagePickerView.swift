@@ -14,6 +14,8 @@ struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage?
     // 用于控制相册选择器的显示状态的绑定属性
     @Binding var isImagePickerPresented: Bool
+    // 用于在选择图片后执行的回调闭包
+    var onImagePicked: (() -> Void)?
     
     // 创建并返回一个 PHPickerViewController 实例
     func makeUIViewController(context: Context) -> PHPickerViewController {
@@ -56,6 +58,8 @@ struct ImagePicker: UIViewControllerRepresentable {
                     if let image = image as? UIImage {
                         // 使用 self 显式地指明引用父类属性
                         self.parent.selectedImage = image
+                        // 在选择图片后执行回调闭包
+                        self.parent.onImagePicked?()
                     }
                 }
             }

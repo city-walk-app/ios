@@ -179,3 +179,9 @@ struct CreatePositionRecord: Decodable {
     var code: Int
     var data: CreatePositionRecordData?
 }
+
+/// 用户头像上传
+struct UserInfoUpAvatar: Decodable {
+    var message: String
+    var code: Int
+}

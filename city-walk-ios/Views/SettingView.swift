@@ -15,6 +15,10 @@ struct UserInfoDataModel {
 }
 
 struct SettingView: View {
+    let API = ApiBasic()
+    
+    /// token
+    private let token = UserCache.shared.getInfo()?.token
     /// 是否跳转到登录页面
     @State private var isGoLoginView = false
     /// 是否显示退出登录的按钮确认框
@@ -34,7 +38,7 @@ struct SettingView: View {
         UserInfoDataModel(title: "手机", key: "mobel", icon: "circle.square", color: .orange),
         UserInfoDataModel(title: "签名", key: "signature", icon: "house", color: .green)
     ]
-
+    
     var body: some View {
         NavigationStack {
             // 跳转到登录页面
@@ -44,7 +48,7 @@ struct SettingView: View {
             ) {
                 EmptyView()
             }
-
+            
             // 选项列表
             VStack {
                 List {
@@ -67,22 +71,26 @@ struct SettingView: View {
                                         .frame(width: 70, height: 70)
                                         .mask(Circle())
                                 }
-
+                                
                                 Text("欢迎使用 City Walk!")
                                     .foregroundStyle(.black)
-
+                                
                                 Spacer()
-
+                                
                                 Image(systemName: "chevron.right")
                                     .foregroundStyle(.gray)
                             }
                         }
                         // 选择头像的弹出层
                         .sheet(isPresented: $isShowAvatarSelectSheet) {
-                            ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet)
+                            ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet) {
+                                if let image = selectAvatarImage {
+                                    self.uploadImageToBackend(image: image)
+                                }
+                            }
                         }
                     }
-
+                    
                     // 信息
                     Section {
                         ForEach(userInfoItems.indices, id: \.self) { index in
@@ -95,82 +103,82 @@ struct SettingView: View {
                                             Image(systemName: userInfoItems[index].icon)
                                                 .foregroundColor(.white)
                                         }
-
+                                    
                                     Text(userInfoItems[index].title)
                                         .foregroundStyle(.black)
-
+                                    
                                     Spacer()
-
+                                    
                                     // 使用 userInfoDataModel.data 字典中对应 key 的值作为文本
                                     //                                if let value = userInfoDataModel.data?[userInfoItems[index].key] {
                                     //                                    Text(value)
                                     //                                }
-
+                                    
                                     Image(systemName: "chevron.right")
                                         .foregroundColor(.gray)
                                 }
                             }
                         }
                     }
-
+                    
                     // 赞助
                     Section {
                         Button {} label: {
                             Text("赞助")
                         }
                     }
-
+                    
                     // 作者
                     Section(header: Text("作者")) {
                         Button {} label: {
                             HStack {
                                 Text("微信")
-
+                                
                                 Spacer()
-
+                                
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.gray)
                             }
                         }
-
+                        
                         Button {} label: {
                             HStack {
                                 Text("𝕏")
-
+                                
                                 Spacer()
-
+                                
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.gray)
                             }
                         }
-
+                        
                         Button {} label: {
                             HStack {
                                 Text("Github")
-
+                                
                                 Spacer()
-
+                                
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.gray)
                             }
                         }
                     }
-
+                    
                     // 应用服务
                     Section {
                         Button {} label: {
                             Text("给个好评")
                         }
-
+                        
                         Button {} label: {
                             Text("分享给好友")
                         }
-
+                        
                         Button {} label: {
                             Text("加入CityWalk开发者")
                         }
                     }
-
+                    
                     // 退出登录
                     Section {
                         Button {
@@ -201,9 +209,74 @@ struct SettingView: View {
             .navigationTitle("设置")
         }
     }
+    
+    /// 头像上传
+    /// - Parameter image: 图片对象
+    private func uploadImageToBackend(image: UIImage) {
+        print("avatar", image)
+        
+        guard let url = URL(string: BASE_URL + "/user/info/up_avatar") else {
+            print("Invalid URL")
+            return
+        }
+        
+        print("url", url)
+            
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+            
+        let boundary = UUID().uuidString
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue(token, forHTTPHeaderField: "token") // 添加 token
+        
+        let imageData = image.jpegData(compressionQuality: 1.0)
+        let body = createBody(with: imageData, boundary: boundary, fieldName: "image", fileName: "image")
+            
+        request.httpBody = body
+            
+        let session = URLSession.shared
+        let task = session.dataTask(with: request) { _, response, error in
+            if let error = error {
+                print("Error uploading image: \(error)")
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 {
+                print("成功", httpResponse)
+            } else {
+                print("失败 to upload image")
+            }
+        }
+            
+        task.resume()
+    }
+        
+    private func createBody(with imageData: Data?, boundary: String, fieldName: String, fileName: String) -> Data {
+        var body = Data()
+            
+        if let imageData = imageData {
+            body.appendString("--\(boundary)\r\n")
+            body.appendString("Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(fileName)\"\r\n")
+            body.appendString("Content-Type: image/jpeg\r\n\r\n")
+            body.append(imageData)
+            body.appendString("\r\n")
+        }
+            
+        body.appendString("--\(boundary)--\r\n")
+            
+        return body
+    }
 }
 
 #Preview {
     SettingView()
         .environmentObject(UserInfoData())
+}
+
+extension Data {
+    mutating func appendString(_ string: String) {
+        if let data = string.data(using: .utf8) {
+            append(data)
+        }
+    }
 }

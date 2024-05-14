@@ -175,4 +175,9 @@ struct ApiBasic {
     func createPositionRecord(params: [String: Any], callback: @escaping (Result<CreatePositionRecord, Error>) -> Void) {
         request(url: "/gps/create_position_record", params: params, method: .post, type: CreatePositionRecord.self, callback: callback)
     }
+
+    /// 用户头像上传
+    func userInfoUpAvatar(params: [String: Any], callback: @escaping (Result<UserInfoUpAvatar, Error>) -> Void) {
+        request(url: "/user/info/up_avatar", params: params, method: .post, type: UserInfoUpAvatar.self, callback: callback)
+    }
 }

@@ -23,7 +23,7 @@ struct LoginView: View {
     }
 
     /// 当前登录页的状态
-    @State var loginState: LoginState = .avatar
+    @State var loginState: LoginState = .login
     /// 邮箱
     @State private var email = ""
     /// 验证码
