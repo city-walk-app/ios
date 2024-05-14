@@ -9,10 +9,10 @@ import Foundation
 
 class GlobalData: ObservableObject {
     /// 排行榜数据
-    @Published var rankingData: [ExperienceRanking.ExperienceRankingData] = []
+    @Published var rankingData: [ExperienceRanking.ExperienceRankingData]?
 
     /// 步行记录数据
-    @Published var routerData: [GetRouteList.GetRouteListData] = []
+    @Published var routerData: [GetRouteList.GetRouteListData]?
 
     /// 设置排行榜数据
     /// - Parameter data: 数据

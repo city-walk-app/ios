@@ -29,7 +29,6 @@
 		26B998712BBD97D5000D1E88 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998702BBD97D4000D1E88 /* LoginView.swift */; };
 		26B998732BBD97FF000D1E88 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998722BBD97FF000D1E88 /* MainView.swift */; };
 		26B998752BBD982A000D1E88 /* RankingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998742BBD982A000D1E88 /* RankingView.swift */; };
-		26B998772BBD9851000D1E88 /* RouterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998762BBD9851000D1E88 /* RouterView.swift */; };
 		26B998792BBD9874000D1E88 /* URLImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998782BBD9874000D1E88 /* URLImage.swift */; };
 /* End PBXBuildFile section */
 
@@ -58,7 +57,6 @@
 		26B998702BBD97D4000D1E88 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		26B998722BBD97FF000D1E88 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		26B998742BBD982A000D1E88 /* RankingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingView.swift; sourceTree = "<group>"; };
-		26B998762BBD9851000D1E88 /* RouterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterView.swift; sourceTree = "<group>"; };
 		26B998782BBD9874000D1E88 /* URLImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -149,7 +147,6 @@
 				26B998702BBD97D4000D1E88 /* LoginView.swift */,
 				26B998722BBD97FF000D1E88 /* MainView.swift */,
 				26B998742BBD982A000D1E88 /* RankingView.swift */,
-				26B998762BBD9851000D1E88 /* RouterView.swift */,
 				2623684F2BBE3A6100264BD9 /* MapView.swift */,
 				2670A68E2BD403290004E3A1 /* SettingView.swift */,
 				26A624022BE253FE0074352D /* LaunchView.swift */,
@@ -265,7 +262,6 @@
 				26B9986F2BBD9788000D1E88 /* ApiResultType.swift in Sources */,
 				262368542BC3715400264BD9 /* LocationDataManager.swift in Sources */,
 				26B998562BBD92EF000D1E88 /* city_walk_iosApp.swift in Sources */,
-				26B998772BBD9851000D1E88 /* RouterView.swift in Sources */,
 				26A624072BE52A5C0074352D /* UserInfoData.swift in Sources */,
 				26B998792BBD9874000D1E88 /* URLImage.swift in Sources */,
 				26B9986B2BBD9723000D1E88 /* UserCache.swift in Sources */,

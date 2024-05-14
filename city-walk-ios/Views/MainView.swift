@@ -13,6 +13,8 @@ struct MainView: View {
     let API = ApiBasic()
     /// 缓存信息
     let cacheInfo = UserCache.shared.getInfo()!
+    /// 非自己，其它用户的身份信息
+    @State private var otherUserInfo: UserInfo.UserInfoData?
     /// 用户信息数据
     @EnvironmentObject var userInfoDataModel: UserInfoData
     /// 全局数据
@@ -25,36 +27,41 @@ struct MainView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
-                // 头像
-                HStack(alignment: .center) {
-                    if userInfoDataModel.data != nil {
-                        URLImage(url: URL(string: "\(BASE_URL)/\(userInfoDataModel.data!.avatar ?? "")")!)
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 140, height: 140)
-                            .mask(Circle())
+                // 身份信息，如果有其它人的信息，显示其它的，否则显示自己的信息
+                if let info =
+                    self.userId == userInfoDataModel.data!.id
+                        ? self.userInfoDataModel.data
+                        : self.otherUserInfo
+                {
+                    // 头像
+                    HStack(alignment: .center) {
+                        if info.avatar != nil {
+                            URLImage(url: URL(string: "\(BASE_URL)/\(info.avatar!)")!)
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 140, height: 140)
+                                .mask(Circle())
 
-                    } else {
-                        Image(systemName: "person")
+                        } else {
+                            Image(systemName: "person")
+                        }
                     }
+
+                    // 昵称
+                    Text("\(info.nick_name ?? "")")
+                        .font(.title)
+
+                    // 签名
+                    Text(info.signature ?? "")
+                        .padding(.top, 4)
+
+                    // 位置信息
+                    HStack {
+                        Text(info.province ?? "")
+                        Text("-")
+                        Text(info.city ?? "")
+                    }
+                    .foregroundStyle(.gray)
                 }
-
-                Text("\(userId)")
-
-                // 昵称
-                Text("\(userInfoDataModel.data?.nick_name ?? "")")
-                    .font(.title)
-
-                // 签名
-                Text(userInfoDataModel.data?.signature ?? "")
-                    .padding(.top, 4)
-
-                // 位置信息
-                HStack {
-                    Text(userInfoDataModel.data?.province ?? "")
-                    Text("-")
-                    Text(userInfoDataModel.data?.city ?? "")
-                }
-                .foregroundStyle(.gray)
 
                 // 省份版图列表
                 if userProvince.count != 0 {
@@ -98,17 +105,17 @@ struct MainView: View {
                 }
 
                 // 用户的打卡记录
-                if globalDataModel.routerData.count != 0 {
-                    ForEach(globalDataModel.routerData.indices, id: \.self) { index in
-                        NavigationLink(destination: MapView(listId: globalDataModel.routerData[index].id)) {
+                if let routerList = globalDataModel.routerData {
+                    ForEach(routerList.indices, id: \.self) { index in
+                        NavigationLink(destination: MapView(listId: routerList[index].id)) {
                             HStack {
                                 Image(systemName: "figure.run.circle.fill")
                                     .font(.system(size: 30))
                                     .foregroundStyle(Color.green)
 
-                                Text("打卡\(globalDataModel.routerData[index].route_detail)个位置")
+                                Text("打卡\(routerList[index].route_detail)个位置")
                                 Spacer()
-                                Text("\(globalDataModel.routerData[index].city)")
+                                Text("\(routerList[index].city)")
                             }
                             .padding(.vertical, 20)
                             .padding(.horizontal, 22)
@@ -146,11 +153,11 @@ struct MainView: View {
 
     /// 获取用户信息
     private func loadUserInfo() {
-        API.userInfo(params: ["id": userId]) { result in
+        API.userInfo(params: ["id": "\(userId)"]) { result in
             switch result {
             case .success(let data):
                 if data.code == 200 && data.data != nil {
-                    userInfoDataModel.set(data.data!)
+                    self.otherUserInfo = data.data!
                 }
             case .failure:
                 print("接口错误")

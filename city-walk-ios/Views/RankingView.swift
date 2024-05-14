@@ -17,33 +17,36 @@ struct RankingView: View {
         NavigationView {
             ScrollView(showsIndicators: false) {
                 VStack {
-                    ForEach(globalDataModel.rankingData.indices, id: \.self) { index in
-
-                        HStack {
-                            NavigationLink(destination: MainView(userId: globalDataModel.rankingData[index].user_id)) {
-                                URLImage(url: URL(string: "\(BASE_URL)/\(globalDataModel.rankingData[index].user_info.avatar ?? "")")!)
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 70, height: 70)
-                                    .mask(Circle())
-                            }
-
-                            VStack(alignment: .leading) {
-                                Text("\(globalDataModel.rankingData[index].user_info.nick_name ?? "")")
-                                    .font(.title2)
-
-                                HStack {
-                                    Image(systemName: "star")
-                                    Text("500")
+                    if let rankingList = globalDataModel.rankingData {
+                        ForEach(rankingList.indices, id: \.self) { index in
+                            HStack {
+                                NavigationLink(destination: MainView(userId: rankingList[index].user_id)) {
+                                    URLImage(url: URL(string: "\(BASE_URL)/\(rankingList[index].user_info.avatar ?? "")")!)
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 70, height: 70)
+                                        .mask(Circle())
                                 }
-                                .padding(.top, 4)
-                            }
-                            .padding(.leading, 8)
 
-                            Spacer()
+                                VStack(alignment: .leading) {
+                                    Text("\(rankingList[index].user_info.nick_name ?? "")")
+                                        .font(.title2)
+
+                                    HStack {
+                                        Image(systemName: "star")
+                                        Text("500")
+                                    }
+                                    .padding(.top, 4)
+                                }
+                                .padding(.leading, 8)
+
+                                Spacer()
+                            }
+                            .padding(.vertical, 20)
+                            .padding(.horizontal, 22)
+                            .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 22))
                         }
-                        .padding(.vertical, 20)
-                        .padding(.horizontal, 22)
-                        .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 22))
+                    } else {
+                        Text("暂无数据")
                     }
                 }
                 .padding(20)
