@@ -177,7 +177,12 @@ struct ApiBasic {
     }
 
     /// 用户头像上传
-    func userInfoUpAvatar(params: [String: Any], callback: @escaping (Result<UserInfoUpAvatar, Error>) -> Void) {
-        request(url: "/user/info/up_avatar", params: params, method: .post, type: UserInfoUpAvatar.self, callback: callback)
+    func userInfoUpAvatar(params: [String: Any], callback: @escaping (Result<BasicResult, Error>) -> Void) {
+        request(url: "/user/info/up_avatar", params: params, method: .post, type: BasicResult.self, callback: callback)
+    }
+
+    /// 设置用户信息
+    func setUserInfo(params: [String: Any], callback: @escaping (Result<BasicResult, Error>) -> Void) {
+        request(url: "/user/info/set_user_info", params: params, method: .post, type: BasicResult.self, callback: callback)
     }
 }

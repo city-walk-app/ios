@@ -147,7 +147,7 @@ struct HomeView: View {
     }
     
     /// 获取用户信息
-    public func loadUserInfo() {
+    private func loadUserInfo() {
         // 将 id 转换为字符串发送请求
         if let value = cacheInfo?.id {
             let id = String(describing: value)
@@ -170,12 +170,12 @@ struct HomeView: View {
     }
     
     /// 请求获取位置权限
-    public func requestLocationAuthorization() {
+    private func requestLocationAuthorization() {
         locationManager.requestWhenInUseAuthorization()
     }
     
     /// 打卡当前地点
-    public func createPositionRecord(longitude: String, latitude: String) {
+    private func createPositionRecord(longitude: String, latitude: String) {
         print("获取到的参数\(longitude),\(latitude)")
         
         API.createPositionRecord(params:
@@ -200,7 +200,7 @@ struct HomeView: View {
     }
     
     /// 点击再次获取当前位置信息
-    public func currentLocation() {
+    private func currentLocation() {
         requestLocationAuthorization()
         
         switch locationDataManager.locationManager.authorizationStatus {

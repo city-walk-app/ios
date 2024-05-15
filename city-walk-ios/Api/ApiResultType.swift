@@ -180,8 +180,8 @@ struct CreatePositionRecord: Decodable {
     var data: CreatePositionRecordData?
 }
 
-/// 用户头像上传
-struct UserInfoUpAvatar: Decodable {
+/// 基本的返回数据
+struct BasicResult: Decodable {
     var message: String
     var code: Int
 }

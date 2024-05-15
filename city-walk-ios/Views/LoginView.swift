@@ -22,8 +22,10 @@ struct LoginView: View {
         case login, name, avatar
     }
 
+    /// 缓存的用户信息
+    private let sharedInfo = UserCache.shared.getInfo()
     /// 当前登录页的状态
-    @State var loginState: LoginState = .login
+    @State var loginState: LoginState = .name
     /// 邮箱
     @State private var email = ""
     /// 验证码
@@ -61,14 +63,14 @@ struct LoginView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 40, height: 40)
                             .mask(Circle())
-
+                        
                         Text("Welcome")
                             .font(.title)
                             .bold()
-
+                        
                         Spacer()
                     }
-
+                    
                     /// 邮箱
                     HStack {
                         TextField("请输入邮箱", text: $email)
@@ -83,7 +85,7 @@ struct LoginView: View {
                             .onSubmit { // 监听提交事件
                                 self.validateEmail()
                             }
-
+                        
                         // 获取验证码按钮
                         if isCountingDown {
                             Text("\(countdownSeconds)s后再试")
@@ -99,7 +101,7 @@ struct LoginView: View {
                     .padding(.horizontal, 23)
                     .background(.white, in: RoundedRectangle(cornerRadius: 35))
                     .padding(.top, 20)
-
+                    
                     /// 验证码
                     HStack {
                         TextField("邮箱验证码", text: $code)
@@ -114,7 +116,7 @@ struct LoginView: View {
                     }
                     .padding(.horizontal, 23)
                     .background(.white, in: RoundedRectangle(cornerRadius: 35))
-
+                    
                     /// 登录按钮
                     Button {
                         self.userLoginEmail()
@@ -133,13 +135,21 @@ struct LoginView: View {
                 else if loginState == .name {
                     Text("设置你的名字")
                     TextField("你的名字", text: $nickName)
-
+                        .frame(maxWidth: .infinity, maxHeight: 60)
+                        .padding(.horizontal)
+                        .background(.gray.opacity(0.1))
+                        .foregroundStyle(.black)
+                        
                     Button {
-                        withAnimation {
-                            self.loginState = .avatar
-                        }
+                        self.setUserInfo() // 设置用户信息
                     } label: {
-                        Text("确定")
+                        RoundedRectangle(cornerRadius: 13)
+                            .frame(width: 120, height: 60)
+                            .overlay {
+                                Text("确定")
+                                    .foregroundStyle(.white)
+                                    .font(.system(size: 20))
+                            }
                     }
                 }
                 // 设置头像步骤
@@ -166,7 +176,7 @@ struct LoginView: View {
                                                 .font(.system(size: 44))
                                         }
                                 }
-
+                                
                                 HStack {
                                     Spacer()
                                     Text("设置你的头像")
@@ -176,25 +186,25 @@ struct LoginView: View {
                         }
                         // 选择头像的弹出层
                         .sheet(isPresented: $isShowAvatarSelectSheet) {
-                            ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet)
+                            ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet) {
+                                if let image = selectAvatarImage {
+                                    self.uploadImageToBackend(image: image)
+                                }
+                            }
+                            
+                            Button {} label: {
+                                Text("确定")
+                            }
+                            .padding(.top, 50)
                         }
-
-                        Button {} label: {
-                            Text("确定")
-                        }
-                        .padding(.top, 50)
+                    }
+                    
+                    // 跳转首页
+                    NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
+                        EmptyView()
                     }
                 }
-
-                // 跳转首页
-                NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
-                    EmptyView()
-                }
-//                .isDetailLink(false)
-//                NavigationLink(value: LayoutView()) {
-//                    EmptyView()
-//                }
-
+                
                 Spacer()
             }
             .padding(20)
@@ -204,42 +214,39 @@ struct LoginView: View {
             .onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
-//            .navigationDestination(isPresented: $isGoLayoutView) {
-//                EmptyView()
-//            }
-        }
-        .navigationBarBackButtonHidden(true)
-        .onAppear {
-            // 页面展示的时候将验证码输入框聚焦
-            // https://fatbobman.com/zh/posts/textfield-event-focus-keyboard/
-            // 在视图初始化阶段赋值是无效的。即使在 onAppear 中，也必须要有一定延时才能让 TextField 焦点
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                focus = .email
+            .navigationBarBackButtonHidden(true)
+            .onAppear {
+                // 页面展示的时候将验证码输入框聚焦
+                // https://fatbobman.com/zh/posts/textfield-event-focus-keyboard/
+                // 在视图初始化阶段赋值是无效的。即使在 onAppear 中，也必须要有一定延时才能让 TextField 焦点
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    focus = .email
+                }
             }
-        }
-        .onReceive(timer) { _ in
-            if isCountingDown {
-                if countdownSeconds > 0 {
-                    countdownSeconds -= 1 // 每秒减少一秒
-                } else {
-                    isCountingDown = false // 倒计时结束后停止倒计时
+            .onReceive(timer) { _ in
+                if isCountingDown {
+                    if countdownSeconds > 0 {
+                        countdownSeconds -= 1 // 每秒减少一秒
+                    } else {
+                        isCountingDown = false // 倒计时结束后停止倒计时
+                    }
                 }
             }
         }
     }
-
+    
     /// 检测是否为邮箱格式
     private func isValidEmail(_ email: String) -> Bool {
         // 使用正则表达式验证邮箱格式
         let emailRegex = #"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"#
         return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)
     }
-
+    
     /// 获取邮箱验证码
     private func emailSend() {
         isCountingDown = true // 开启倒计时
         countdownSeconds = 10 // 恢复时间
-
+        
         API.emailSend(params: ["email": email]) { result in
             switch result {
             case .success(let data):
@@ -252,34 +259,34 @@ struct LoginView: View {
             }
         }
     }
-
+    
     /// 验证邮箱
     private func validateEmail() {
         // 邮箱格式验证
         if email != "" && isValidEmail(email) {
             print("获取验证码")
             emailSend() // 获取邮箱验证码
-
+            
         } else {
             print("邮箱格式错误")
         }
     }
-
+    
     /// 邮箱验证码登录
     private func userLoginEmail() {
         isLoginButtonDisabled = true
-
+        
         API.userLoginEmail(params: ["email": email, "code": code]) { result in
-
+            
             self.isLoginButtonDisabled = false
-
+            
             switch result {
             case .success(let data):
                 if data.code == 200 && data.data != nil {
                     // 如果是新用户，继续完善信息
                     if data.data!.is_new_user {
                         self.userId = data.data!.id
-
+                        
                         withAnimation {
                             self.loginState = .name
                         }
@@ -295,7 +302,7 @@ struct LoginView: View {
             }
         }
     }
-
+    
     /// 检测输入框最大长度
     /// - Parameters:
     ///   - content: 输入框的内容
@@ -303,6 +310,89 @@ struct LoginView: View {
     private func limitMaxLength(content: inout String, maxLength: Int) {
         if content.count > maxLength {
             content = String(content.prefix(maxLength))
+        }
+    }
+    
+    /// 头像上传
+    /// - Parameter image: 图片对象
+    private func uploadImageToBackend(image: UIImage) {
+        print("avatar", image)
+        
+        guard let url = URL(string: BASE_URL + "/user/info/up_avatar") else {
+            print("Invalid URL")
+            return
+        }
+        
+        print("url", url)
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        let boundary = UUID().uuidString
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.setValue(sharedInfo!.token, forHTTPHeaderField: "token") // 添加 token
+        
+        let imageData = image.jpegData(compressionQuality: 1.0)
+        let body = createBody(with: imageData, boundary: boundary, fieldName: "image", fileName: "image")
+        
+        request.httpBody = body
+        
+        let session = URLSession.shared
+        let task = session.dataTask(with: request) { _, response, error in
+            if let error = error {
+                print("Error uploading image: \(error)")
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 {
+                print("成功", httpResponse)
+                self.isToHomeView.toggle()
+            } else {
+                print("失败 to upload image")
+            }
+        }
+        
+        task.resume()
+    }
+    
+    /// 创建请求体参数
+    /// - Parameters:
+    ///   - imageData:
+    ///   - boundary:
+    ///   - fieldName:
+    ///   - fileName:
+    /// - Returns:
+    private func createBody(with imageData: Data?, boundary: String, fieldName: String, fileName: String) -> Data {
+        var body = Data()
+        
+        if let imageData = imageData {
+            body.appendString("--\(boundary)\r\n")
+            body.appendString("Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(fileName)\"\r\n")
+            body.appendString("Content-Type: image/jpeg\r\n\r\n")
+            body.append(imageData)
+            body.appendString("\r\n")
+        }
+        
+        body.appendString("--\(boundary)--\r\n")
+        
+        return body
+    }
+    
+    /// 设置用户信息
+    private func setUserInfo() {
+        print("nick", nickName)
+        API.setUserInfo(params: ["nick_name": nickName]) { result in
+            switch result {
+            case .success(let data):
+                if data.code == 200 {
+                    print("设置成功")
+                    withAnimation {
+                        self.loginState = .avatar
+                    }
+                }
+            case .failure:
+                print("设置失败")
+            }
         }
     }
 }
