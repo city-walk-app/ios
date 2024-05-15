@@ -43,7 +43,7 @@ struct UserLoginEmail: Decodable {
         var is_new_user: Bool
         var id: Int
         var email: String
-        var avatar: String
+        var avatar: String?
     }
 
     var message: String

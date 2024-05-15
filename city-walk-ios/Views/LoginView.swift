@@ -25,7 +25,7 @@ struct LoginView: View {
     /// 缓存的用户信息
     private let sharedInfo = UserCache.shared.getInfo()
     /// 当前登录页的状态
-    @State var loginState: LoginState = .name
+    @State var loginState: LoginState = .login
     /// 邮箱
     @State private var email = ""
     /// 验证码
@@ -92,7 +92,7 @@ struct LoginView: View {
                                 .foregroundStyle(.gray)
                         } else {
                             Button {
-                                validateEmail()
+                                self.validateEmail()
                             } label: {
                                 Text("获取验证码")
                             }
@@ -198,14 +198,14 @@ struct LoginView: View {
                             .padding(.top, 50)
                         }
                     }
-                    
-                    // 跳转首页
-                    NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
-                        EmptyView()
-                    }
                 }
                 
                 Spacer()
+                
+                // 跳转首页
+                NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
+                    EmptyView()
+                }
             }
             .padding(20)
             .padding(.top, 80)
@@ -220,7 +220,7 @@ struct LoginView: View {
                 // https://fatbobman.com/zh/posts/textfield-event-focus-keyboard/
                 // 在视图初始化阶段赋值是无效的。即使在 onAppear 中，也必须要有一定延时才能让 TextField 焦点
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    focus = .email
+                    self.focus = .email
                 }
             }
             .onReceive(timer) { _ in
@@ -289,6 +289,7 @@ struct LoginView: View {
                         
                         withAnimation {
                             self.loginState = .name
+                            self.focus = .name
                         }
                     }
                     // 否则跳转到首页
@@ -382,6 +383,7 @@ struct LoginView: View {
     private func setUserInfo() {
         print("nick", nickName)
         API.setUserInfo(params: ["nick_name": nickName]) { result in
+            print(result)
             switch result {
             case .success(let data):
                 if data.code == 200 {
