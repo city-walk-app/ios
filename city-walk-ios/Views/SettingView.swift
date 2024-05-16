@@ -7,16 +7,28 @@
 
 import SwiftUI
 
-struct UserInfoDataModel {
-    let title: String
-    let key: String
-    let icon: String
-    let color: Color
-}
-
 struct SettingView: View {
     let API = ApiBasic()
     
+    /// 用户信息编辑键
+    enum UserInfoKey {
+        case nick_name, gender, city, email, mobel, signature
+    }
+    
+    /// 创建用户信息设置项
+    struct UserInfoDataModel {
+        let title: String
+        let key: UserInfoKey
+        let icon: String
+        let color: Color
+    }
+
+    /// 新的名字
+    @State private var newNickName = ""
+    /// 编辑用户信息的弹窗内部的编辑状态
+    @State private var setUserInfoSheetState: UserInfoKey = .nick_name
+    /// 是否显示编辑信息的弹窗
+    @State private var isShowSetInfo = false
     /// token
     private let token = UserCache.shared.getInfo()?.token
     /// 是否跳转到登录页面
@@ -31,12 +43,11 @@ struct SettingView: View {
     @EnvironmentObject var userInfoDataModel: UserInfoData
     /// 用户信息列表选项
     let userInfoItems: [UserInfoDataModel] = [
-        UserInfoDataModel(title: "名字", key: "nick_name", icon: "person.fill", color: .blue),
-        UserInfoDataModel(title: "性别", key: "gender", icon: "mic.square.fill", color: .red),
-        UserInfoDataModel(title: "城市", key: "city", icon: "mic.square.fill", color: .red),
-        UserInfoDataModel(title: "邮箱", key: "nick_name", icon: "person.fill", color: .blue),
-        UserInfoDataModel(title: "手机", key: "mobel", icon: "circle.square", color: .orange),
-        UserInfoDataModel(title: "签名", key: "signature", icon: "house", color: .green)
+        UserInfoDataModel(title: "名字", key: .nick_name, icon: "person.fill", color: .blue),
+        UserInfoDataModel(title: "性别", key: .gender, icon: "mic.square.fill", color: .red),
+        UserInfoDataModel(title: "邮箱", key: .email, icon: "person.fill", color: .blue),
+        UserInfoDataModel(title: "手机", key: .mobel, icon: "circle.square", color: .orange),
+        UserInfoDataModel(title: "签名", key: .signature, icon: "house", color: .green)
     ]
     
     var body: some View {
@@ -94,7 +105,11 @@ struct SettingView: View {
                     // 信息
                     Section {
                         ForEach(userInfoItems.indices, id: \.self) { index in
-                            Button {} label: {
+                            Button {
+                                self.isShowSetInfo = true
+                                self.setUserInfoSheetState = userInfoItems[index].key
+                                
+                            } label: {
                                 HStack {
                                     RoundedRectangle(cornerRadius: 10)
                                         .frame(width: 36, height: 36)
@@ -130,7 +145,11 @@ struct SettingView: View {
                     
                     // 作者
                     Section(header: Text("作者")) {
-                        Button {} label: {
+                        Button {
+                            if let url = URL(string: "https://github.com/Tyh2001/images/blob/master/my/we-chat.jpg") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
                             HStack {
                                 Text("微信")
                                 
@@ -141,7 +160,11 @@ struct SettingView: View {
                             }
                         }
                         
-                        Button {} label: {
+                        Button {
+                            if let url = URL(string: "https://twitter.com/tyh20011") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
                             HStack {
                                 Text("𝕏")
                                 
@@ -152,7 +175,11 @@ struct SettingView: View {
                             }
                         }
                         
-                        Button {} label: {
+                        Button {
+                            if let url = URL(string: "https://github.com/Tyh2001") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
                             HStack {
                                 Text("Github")
                                 
@@ -207,6 +234,43 @@ struct SettingView: View {
                 }
             }
             .navigationTitle("设置")
+        }
+        // 设置信息
+        .sheet(isPresented: $isShowSetInfo) {
+            NavigationStack {
+                VStack {
+                    // 名字
+                    if self.setUserInfoSheetState == .nick_name {
+                        HStack {
+                            Text("名字")
+                            TextField("请输入名字", text: $newNickName)
+                        }
+                    }
+                    // 邮箱
+                    else if self.setUserInfoSheetState == .email {
+                        HStack {
+                            Text("邮箱")
+                            TextField("请输入邮箱", text: $newNickName)
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {} label: {
+                            Text("保存")
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            self.isShowAvatarSelectSheet.toggle()
+                        } label: {
+                            Text("取消")
+                        }
+                    }
+                }
+            }
         }
     }
     

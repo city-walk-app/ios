@@ -7,13 +7,32 @@
 
 /// https://developer.apple.com/documentation/corelocation/
 import CoreLocation
+import MapKit
 
 // import PhotosUI
 import SwiftUI
 
+struct HomePhotoView: View {
+    /// 选择的头像图片
+    @State private var isShowAvatarSelectSheet = false
+    @State private var isGoHome = false
+    @Binding var seletImage: UIImage?
+    
+    var body: some View {
+        ImagePicker(selectedImage: $seletImage, isImagePickerPresented: $isShowAvatarSelectSheet) {
+            if let image = seletImage {
+                self.seletImage = image
+                // 返回上一层
+            }
+        }
+    }
+}
+
 struct HomeView: View {
     let API = ApiBasic()
     
+    /// 选择的图片
+    @State private var seletImage: UIImage?
     /// 缓存信息
     let cacheInfo = UserCache.shared.getInfo()
     /// 底部选中的索引
@@ -21,7 +40,7 @@ struct HomeView: View {
     /// 这一刻的想法
     @State private var text = ""
     /// 是否显示打卡弹窗
-    @State private var isCurrentLocation = false
+    @State private var isCurrentLocation = true
     /// 用户信息
 //    @State private var userInfo: UserInfo.UserInfoData?
     /// 定位服务相关
@@ -30,111 +49,152 @@ struct HomeView: View {
     @StateObject private var locationDataManager = LocationDataManager()
     /// 用户信息数据
     @EnvironmentObject var userInfoDataModel: UserInfoData
+    private var region = MKCoordinateRegion(
+        // 地图的中心坐标
+        center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
+        // 地图显示区域的范围
+        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+    )
+    /// 颜色标签
+    let colorTags = [Color.red, Color.orange, Color.yellow, Color.green, Color.blue, Color.purple, Color.gray, Color.black]
     
     var body: some View {
         NavigationStack {
-            VStack {
-                // 头部信息
-                HStack {
-                    if userInfoDataModel.data == nil {
-                        NavigationLink(destination: LoginView()) {
-                            Image(systemName: "person")
-                                .font(.system(size: 24))
+            ZStack {
+                // 地图
+                Map(initialPosition: .region(region))
+                    .onMapCameraChange(frequency: .continuous) { context in
+//                        region = context.region
+                        print("改变地图", context)
+                    }
+                
+                // 操作选项
+                VStack {
+                    // 头部信息
+                    HStack {
+                        if userInfoDataModel.data == nil {
+                            NavigationLink(destination: LoginView()) {
+                                Image(systemName: "person")
+                                    .font(.system(size: 24))
+                                    .foregroundStyle(.black)
+                            }
+                        } else {
+                            NavigationLink(destination: MainView(userId: cacheInfo!.id)) {
+                                URLImage(url: URL(string: "\(BASE_URL)/\(userInfoDataModel.data!.avatar ?? "")")!)
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 48, height: 48)
+                                    .mask(Circle())
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        NavigationLink(destination: SettingView()) {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.system(size: 23))
                                 .foregroundStyle(.black)
                         }
-                    } else {
-                        NavigationLink(destination: MainView(userId: cacheInfo!.id)) {
-                            URLImage(url: URL(string: "\(BASE_URL)/\(userInfoDataModel.data!.avatar ?? "")")!)
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 48, height: 48)
-                                .mask(Circle())
-                        }
                     }
+                    .padding()
                     
                     Spacer()
                     
-                    NavigationLink(destination: SettingView()) {
-                        Image(systemName: "slider.horizontal.3")
-                            .font(.system(size: 23))
-                            .foregroundStyle(.black)
-                    }
-                }
-                .padding()
-                
-                Spacer()
-                
-                Text("🌏")
-                    .font(.system(size: 230))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.yellow, .red],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .shadow(radius: 15)
-                
-                VStack {
-                    NavigationLink(destination: RankingView()) {
-                        Text("排行榜")
-                    }
-                    Button {
-                        isCurrentLocation.toggle()
-                    } label: {
-                        Text("打卡当前地点")
-                    }
-                    .sheet(isPresented: $isCurrentLocation) {
-                        VStack {
-                            VStack {
-                                HStack {
-                                    Spacer()
-                                        
-                                    Button {
-                                        isCurrentLocation.toggle()
-                                    } label: {
-                                        Image(systemName: "xmark.circle")
-                                            .font(.system(size: 27))
-                                            .foregroundStyle(.gray)
-                                    }
-                                }
-                                    
-                                VStack(alignment: .leading) {
-                                    Text("当前位置")
-                                        .font(.title)
-                                        .bold()
-                                    
-                                    Text("\(locationDataManager.locationManager.location?.coordinate.latitude.description ?? "Error loading")")
-                                        .font(.title2)
-                                       
-                                    Text("\(locationDataManager.locationManager.location?.coordinate.longitude.description ?? "Error loading")")
-                                        .font(.title2)
-                                      
-                                    TextField("这一刻的想法？", text: $text)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                                        .padding()
-                                        
-                                    Spacer()
-                                }
-                            }
-                            
-                            // 确认按钮
-                            Button {
-                                self.currentLocation()
-                            } label: {
-                                Spacer()
-                                Text("就这样")
-                                Spacer()
-                            }
-                            .frame(height: 50)
-                            .foregroundStyle(.black.opacity(0.8))
-                            .bold()
-                            .background(.blue.opacity(0.07), in: RoundedRectangle(cornerRadius: 17))
+                    HStack {
+                        // 打卡当前地点
+                        Button {
+                            isCurrentLocation.toggle()
+                        } label: {
+                            Text("打卡当前地点")
+                                .frame(height: 60)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 50)
+                                .background(.blue, in: RoundedRectangle(cornerRadius: 33))
                         }
-                        .padding(20)
+                        .padding(.trailing, 16)
+                        .sheet(isPresented: $isCurrentLocation) {
+                            NavigationStack {
+                                VStack {
+                                    VStack {
+                                        HStack {
+                                            Spacer()
+                                            
+                                            Button {
+                                                isCurrentLocation.toggle()
+                                            } label: {
+                                                Image(systemName: "xmark.circle")
+                                                    .font(.system(size: 27))
+                                                    .foregroundStyle(.gray)
+                                            }
+                                        }
+                                        
+                                        VStack(alignment: .leading) {
+                                            Text("颜色标签")
+                                            
+                                            HStack {
+                                                ForEach(colorTags.indices, id: \.self) { index in
+                                                    Circle()
+                                                        .fill(colorTags[index])
+                                                        .frame(width: 20, height: 20)
+                                                }
+                                            }
+                                            
+                                            Text("这一刻的想法")
+                                            
+                                            TextField("这一刻的想法？", text: $text)
+                                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                                
+                                            Text("选择当前的照片")
+                                            
+                                            NavigationLink(destination: HomePhotoView(seletImage: $seletImage)) {
+                                                if let image = self.seletImage {
+                                                    Image(uiImage: image)
+                                                        .resizable()
+                                                        .scaledToFill()
+                                                        .frame(width: 200, height: 200)
+                                                } else {
+                                                    Rectangle()
+                                                        .fill(.gray.opacity(0.1))
+                                                        .frame(width: 200, height: 200)
+                                                        .overlay {
+                                                            Image(systemName: "photo")
+                                                        }
+                                                }
+                                            }
+                                            
+                                            Spacer()
+                                        }
+                                    }
+                                    
+                                    // 确认按钮
+                                    Button {
+                                        self.currentLocation()
+                                    } label: {
+                                        Spacer()
+                                        Text("就这样")
+                                        Spacer()
+                                    }
+                                    .frame(height: 50)
+                                    .foregroundStyle(.white)
+                                    .bold()
+                                    .background(.blue, in: RoundedRectangle(cornerRadius: 30))
+                                }
+                                .padding(20)
+                            }
+                        }
+                        
+                        // 跳转排行榜
+                        NavigationLink(destination: RankingView()) {
+                            Circle()
+                                .frame(width: 60, height: 60)
+                                .overlay {
+                                    Image(systemName: "list.star")
+                                        .foregroundStyle(.white)
+                                        .font(.title2)
+                                }
+                        }
                     }
+                    .padding(.bottom, 30)
                 }
-                
-                Spacer()
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -220,7 +280,7 @@ struct HomeView: View {
         }
     }
 }
-    
+
 #Preview {
     HomeView()
         .environmentObject(UserInfoData())
