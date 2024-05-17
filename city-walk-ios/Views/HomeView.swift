@@ -15,14 +15,15 @@ import SwiftUI
 struct HomePhotoView: View {
     /// 选择的头像图片
     @State private var isShowAvatarSelectSheet = false
-    @State private var isGoHome = false
     @Binding var seletImage: UIImage?
+    @Binding var isActive: Bool
     
     var body: some View {
         ImagePicker(selectedImage: $seletImage, isImagePickerPresented: $isShowAvatarSelectSheet) {
             if let image = seletImage {
                 self.seletImage = image
                 // 返回上一层
+                self.isActive = false
             }
         }
     }
@@ -31,6 +32,7 @@ struct HomePhotoView: View {
 struct HomeView: View {
     let API = ApiBasic()
     
+    @State private var isImageSelectRouter = false
     /// 选择的图片
     @State private var seletImage: UIImage?
     /// 缓存信息
@@ -63,9 +65,9 @@ struct HomeView: View {
             ZStack {
                 // 地图
                 Map(initialPosition: .region(region))
-                    .onMapCameraChange(frequency: .continuous) { context in
+                    .onMapCameraChange(frequency: .continuous) { _ in
 //                        region = context.region
-                        print("改变地图", context)
+//                        print("改变地图", context)
                     }
                 
                 // 操作选项
@@ -112,7 +114,7 @@ struct HomeView: View {
                         }
                         .padding(.trailing, 16)
                         .sheet(isPresented: $isCurrentLocation) {
-                            NavigationStack {
+                            NavigationView {
                                 VStack {
                                     VStack {
                                         HStack {
@@ -145,19 +147,26 @@ struct HomeView: View {
                                                 
                                             Text("选择当前的照片")
                                             
-                                            NavigationLink(destination: HomePhotoView(seletImage: $seletImage)) {
-                                                if let image = self.seletImage {
-                                                    Image(uiImage: image)
-                                                        .resizable()
-                                                        .scaledToFill()
-                                                        .frame(width: 200, height: 200)
-                                                } else {
-                                                    Rectangle()
-                                                        .fill(.gray.opacity(0.1))
-                                                        .frame(width: 200, height: 200)
-                                                        .overlay {
-                                                            Image(systemName: "photo")
-                                                        }
+                                            NavigationLink(
+                                                destination: HomePhotoView(seletImage: $seletImage, isActive: $isImageSelectRouter),
+                                                isActive: $isImageSelectRouter
+                                            ) {
+                                                Button {
+                                                    self.isImageSelectRouter = true
+                                                } label: {
+                                                    if let image = self.seletImage {
+                                                        Image(uiImage: image)
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                            .frame(width: 200, height: 200)
+                                                    } else {
+                                                        Rectangle()
+                                                            .fill(.gray.opacity(0.1))
+                                                            .frame(width: 200, height: 200)
+                                                            .overlay {
+                                                                Image(systemName: "photo")
+                                                            }
+                                                    }
                                                 }
                                             }
                                             
