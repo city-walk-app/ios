@@ -29,6 +29,56 @@ struct HomePhotoView: View {
     }
 }
 
+class Coordinator: NSObject, MKMapViewDelegate {
+    var parent: HomeMapView
+    
+    init(parent: HomeMapView) {
+        self.parent = parent
+    }
+    
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        // 地图区域变化后的事件处理
+        parent.region = mapView.region
+        
+        // getPopularLocations
+        
+        // 调用传递的闭包
+        parent.onRegionChange?()
+        
+//        parent.getPopularLocations()
+        print("地图区域变化：\(mapView.region.center.latitude), \(mapView.region.center.longitude)")
+    }
+}
+
+struct HomeMapView: UIViewRepresentable {
+    @Binding var region: MKCoordinateRegion
+    var onRegionChange: (() -> Void)? // 闭包属性
+    @Binding var landmarks: [Landmark]
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+    
+    func makeUIView(context: Context) -> MKMapView {
+        let mapView = MKMapView()
+        mapView.delegate = context.coordinator
+        mapView.setRegion(region, animated: true)
+        return mapView
+    }
+    
+    func updateUIView(_ uiView: MKMapView, context: Context) {
+        uiView.setRegion(region, animated: true)
+        uiView.removeAnnotations(uiView.annotations) // 移除旧的标注
+        let annotations = landmarks.map { landmark in
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = landmark.coordinate
+            annotation.title = landmark.name
+            return annotation
+        }
+        uiView.addAnnotations(annotations) // 添加新的标注
+    }
+}
+
 struct HomeView: View {
     let API = ApiBasic()
     
@@ -68,24 +118,27 @@ struct HomeView: View {
         NavigationStack {
             ZStack {
                 // 地图
-                Map(coordinateRegion: $region, annotationItems: landmarks) { landmark in
-                    // 为每个地标创建标注视图
-                    MapAnnotation(coordinate: landmark.coordinate) {
-                        VStack {
-//                            Image(systemName: "mappin.circle.fill")
-//                                .foregroundColor(.red)
-//                                .font(.title)
-//                            Text(landmark.name)
-                            Text("🔥")
-                                .font(.system(size: 20))
-                        }
-                    }
-                }
-//                Map(initialPosition: .region(region))
-//                    .onMapCameraChange(frequency: .continuous) { _ in
-                ////                        region = context.region
-                ////                        print("改变地图", context)
+//                Map(coordinateRegion: $region, annotationItems: landmarks) { landmark in
+//                    // 为每个地标创建标注视图
+//                    MapAnnotation(coordinate: landmark.coordinate) {
+//                        VStack {
+//                            Text("🔥")
+//                                .font(.system(size: 20))
+//                        }
 //                    }
+//                }
+                HomeMapView(region: $region, onRegionChange: getPopularLocations, landmarks: $landmarks)
+                    .edgesIgnoringSafeArea(.all) // 忽略安全区域边界
+//                .onMapCameraChange(frequency: .continuous) { context in
+//                    // 地图相机位置变化时获取新的经纬度
+//                    let newCenter = context.region.center
+//                    let currentLatitude = newCenter.latitude
+//                    let currentLongitude = newCenter.longitude
+//
+//                    print("Latitude: \(currentLatitude), Longitude: \(currentLongitude)")
+//                    print(context) // 调试信息
+//                }
+//                Map(initialPosition: .region(region), annotationItems: landmark)
                 
                 // 操作选项
                 VStack {
@@ -121,7 +174,7 @@ struct HomeView: View {
                     HStack {
                         // 打卡当前地点
                         Button {
-                            isCurrentLocation.toggle()
+                            self.isCurrentLocation.toggle()
                         } label: {
                             Text("打卡当前地点")
                                 .frame(height: 60)
@@ -138,7 +191,7 @@ struct HomeView: View {
                                             Spacer()
                                             
                                             Button {
-                                                isCurrentLocation.toggle()
+                                                self.isCurrentLocation.toggle()
                                             } label: {
                                                 Image(systemName: "xmark.circle")
                                                     .font(.system(size: 27))
@@ -227,7 +280,7 @@ struct HomeView: View {
         .toolbar(.hidden)
         // 当视图出现时执行的方法
         .onAppear {
-            print("123")
+//            print("123")
             self.getPopularLocations() // 获取周边热门地点
             self.loadUserInfo() // 获取用户信息
             self.requestLocationAuthorization() // 请求位置权限
@@ -236,25 +289,33 @@ struct HomeView: View {
     
     /// 获取周边热门地点
     private func getPopularLocations() {
-        print("456")
+//        let longitude = "\(locationDataManager.locationManager.location?.coordinate.longitude.description ?? "")"
+//        let latitude = "\(locationDataManager.locationManager.location?.coordinate.latitude.description ?? "")"
             
-        API.getPopularLocations(params: ["longitude": "120", "latitude": "30"]) { result in
-            print("799")
+        let longitude = "\(region.center.longitude)"
+        let latitude = "\(region.center.latitude)"
+        
+        print("获取周边热门地", longitude, latitude)
+            
+//        API.getPopularLocations(params: ["longitude": "120", "latitude": "30"]) { result in
+        API.getPopularLocations(params: ["longitude": longitude, "latitude": latitude]) { result in
+//                print("799")
             switch result {
             case .success(let data):
-                print(data, "000")
                 if data.code == 200 && data.data != nil {
-//                    print("ddata", data.data)
-                   
+                    //                    print("ddata", data.data)
+                       
                     let list = data.data!
+                    
+                    print(list)
 
                     let _landmarks = list.map { item in
                         Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
                     }
-                    
-                    print("数据", _landmarks)
-                    
-//                    self.popularLocations = data.data!
+                        
+//                        print("数据", _landmarks)
+                        
+                    //                    self.popularLocations = data.data!
                     self.landmarks = _landmarks
                 }
             case .failure:
