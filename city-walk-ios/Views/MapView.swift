@@ -44,37 +44,8 @@ struct MapView: View {
                         }
                     }
                 }
-
-                // 底部内容
-//                VStack {
-//                    ScrollView(showsIndicators: false) {
-//                        ForEach(routeDetail.indices, id: \.self) { index in
-//                            HStack {
-//                                Image(systemName: "paperplane.circle")
-//                                Text("\(routeDetail[index].name)")
-//                                    .frame(width: 100)
-//                                    .lineLimit(1)
-//                                    .truncationMode(.tail)
-//
-//                                Spacer()
-//
-//                                Text("\(routeDetail[index].create_at)")
-//                                    .frame(width: 110)
-//                                    .lineLimit(1)
-//                                    .truncationMode(.tail)
-//                            }
-//                            .padding()
-//                        }
-//                    }
-//                    .padding(.vertical)
-//                    .frame(height: 200)
-//                }
-//                .background(.white, in: RoundedRectangle(cornerRadius: 20))
-//                .shadow(color: Color.gray.opacity(0.5), radius: 5, x: 0, y: -5)
-//                .padding()
             }
         }
-//        .navigationBarHidden(true) // 隐藏导航栏
         .ignoresSafeArea(.all) // 忽略安全区域边缘
         .onAppear {
             self.gpsGetRouteHistory() // 获取指定步行记录历史打卡记录列表
@@ -98,15 +69,15 @@ struct MapView: View {
 
                     let firstItem = list[0]
 
-                    region = MKCoordinateRegion(
+                    self.region = MKCoordinateRegion(
                         center: CLLocationCoordinate2D(latitude: Double(firstItem.latitude) ?? 0, longitude: Double(firstItem.longitude) ?? 0),
                         span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
                     )
 
                     print("地图配置参数", region)
 
-                    landmarks = _landmarks
-                    routeDetail = list
+                    self.landmarks = _landmarks
+                    self.routeDetail = list
                 }
             case .failure:
                 print("获取步行打卡记录列表失败")

@@ -42,7 +42,7 @@ struct HomeView: View {
     /// 这一刻的想法
     @State private var text = ""
     /// 是否显示打卡弹窗
-    @State private var isCurrentLocation = true
+    @State private var isCurrentLocation = false
     /// 用户信息
 //    @State private var userInfo: UserInfo.UserInfoData?
     /// 定位服务相关
@@ -51,7 +51,7 @@ struct HomeView: View {
     @StateObject private var locationDataManager = LocationDataManager()
     /// 用户信息数据
     @EnvironmentObject var userInfoDataModel: UserInfoData
-    private var region = MKCoordinateRegion(
+    @State private var region = MKCoordinateRegion(
         // 地图的中心坐标
         center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
         // 地图显示区域的范围
@@ -59,16 +59,33 @@ struct HomeView: View {
     )
     /// 颜色标签
     let colorTags = [Color.red, Color.orange, Color.yellow, Color.green, Color.blue, Color.purple, Color.gray, Color.black]
+    /// 推荐的地点
+//    @State private var popularLocations: [GetPopularLocations.GetPopularLocationsData]?
+    // 标注列表
+    @State private var landmarks: [Landmark] = []
     
     var body: some View {
         NavigationStack {
             ZStack {
                 // 地图
-                Map(initialPosition: .region(region))
-                    .onMapCameraChange(frequency: .continuous) { _ in
-//                        region = context.region
-//                        print("改变地图", context)
+                Map(coordinateRegion: $region, annotationItems: landmarks) { landmark in
+                    // 为每个地标创建标注视图
+                    MapAnnotation(coordinate: landmark.coordinate) {
+                        VStack {
+//                            Image(systemName: "mappin.circle.fill")
+//                                .foregroundColor(.red)
+//                                .font(.title)
+//                            Text(landmark.name)
+                            Text("🔥")
+                                .font(.system(size: 20))
+                        }
                     }
+                }
+//                Map(initialPosition: .region(region))
+//                    .onMapCameraChange(frequency: .continuous) { _ in
+                ////                        region = context.region
+                ////                        print("改变地图", context)
+//                    }
                 
                 // 操作选项
                 VStack {
@@ -210,8 +227,39 @@ struct HomeView: View {
         .toolbar(.hidden)
         // 当视图出现时执行的方法
         .onAppear {
+            print("123")
+            self.getPopularLocations() // 获取周边热门地点
             self.loadUserInfo() // 获取用户信息
             self.requestLocationAuthorization() // 请求位置权限
+        }
+    }
+    
+    /// 获取周边热门地点
+    private func getPopularLocations() {
+        print("456")
+            
+        API.getPopularLocations(params: ["longitude": "120", "latitude": "30"]) { result in
+            print("799")
+            switch result {
+            case .success(let data):
+                print(data, "000")
+                if data.code == 200 && data.data != nil {
+//                    print("ddata", data.data)
+                   
+                    let list = data.data!
+
+                    let _landmarks = list.map { item in
+                        Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
+                    }
+                    
+                    print("数据", _landmarks)
+                    
+//                    self.popularLocations = data.data!
+                    self.landmarks = _landmarks
+                }
+            case .failure:
+                print("接口错误")
+            }
         }
     }
     

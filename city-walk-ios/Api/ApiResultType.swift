@@ -185,3 +185,18 @@ struct BasicResult: Decodable {
     var message: String
     var code: Int
 }
+
+/// 获取周边热门地点
+struct GetPopularLocations: Decodable {
+    struct GetPopularLocationsData: Codable {
+        var longitude: Double
+        var latitude: Double
+        var name: String
+        var province: String
+        var city: String
+    }
+
+    var message: String
+    var code: Int
+    var data: [GetPopularLocationsData]?
+}
