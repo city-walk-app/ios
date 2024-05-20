@@ -49,7 +49,7 @@ struct HomeMapView: UIViewRepresentable {
         
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
             parent.region = mapView.region
-            parent.onRegionChange?()
+//            parent.onRegionChange?()
             print("地图区域变化：\(mapView.region.center.latitude), \(mapView.region.center.longitude)")
         }
     }

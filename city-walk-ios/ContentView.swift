@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    /// 启动页面数据
     @EnvironmentObject var launchScreenDataModel: LaunchScreenData
+    /// 用户数据
     @EnvironmentObject var userInfoDataModel: UserInfoData
 
     var body: some View {

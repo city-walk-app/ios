@@ -53,7 +53,7 @@ struct HomeView: View {
                 
                 // 头部和底部操作视图
                 VStack {
-                    HomeHeaderView(userInfoDataModel: userInfoDataModel)
+                    HomeHeaderView()
                     
                     Spacer()
                     
