@@ -53,163 +53,172 @@ struct LoginView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                // 登录状态
-                if loginState == .login {
-                    // 标题
-                    HStack {
-                        Image("logo")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 40, height: 40)
-                            .mask(Circle())
+            ZStack {
+                // 背景图
+                Image("background-1")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .edgesIgnoringSafeArea(.all)
+                
+                // 登录操作
+                VStack(spacing: 20) {
+                    // 登录状态
+                    if loginState == .login {
+                        // 标题
+                        HStack {
+                            Image("logo")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 40, height: 40)
+                                .mask(Circle())
+                            
+                            Text("Welcome")
+                                .font(.title)
+                                .bold()
+                                .foregroundStyle(.black)
+                            
+                            Spacer()
+                        }
                         
-                        Text("Welcome")
-                            .font(.title)
-                            .bold()
-                        
-                        Spacer()
-                    }
-                    
-                    /// 邮箱
-                    HStack {
-                        TextField("请输入邮箱", text: $email)
-                            .padding(.vertical, 20)
-                            .keyboardType(.URL)
-                            .focused($focus, equals: .email)
-                            .textContentType(.emailAddress)
-                            .submitLabel(.next)
-                            .onReceive(Just(code), perform: { _ in
-                                limitMaxLength(content: &code, maxLength: 50)
-                            })
-                            .onSubmit { // 监听提交事件
-                                self.validateEmail()
-                            }
-                        
-                        // 获取验证码按钮
-                        if isCountingDown {
-                            Text("\(countdownSeconds)s后再试")
-                                .foregroundStyle(.gray)
-                        } else {
-                            Button {
-                                self.validateEmail()
-                            } label: {
-                                Text("获取验证码")
+                        /// 邮箱
+                        HStack {
+                            TextField("请输入邮箱", text: $email)
+                                .padding(.vertical, 20)
+                                .keyboardType(.URL)
+                                .focused($focus, equals: .email)
+                                .textContentType(.emailAddress)
+                                .submitLabel(.next)
+                                .onReceive(Just(code), perform: { _ in
+                                    limitMaxLength(content: &code, maxLength: 50)
+                                })
+                                .onSubmit { // 监听提交事件
+                                    self.validateEmail()
+                                }
+                            
+                            // 获取验证码按钮
+                            if isCountingDown {
+                                Text("\(countdownSeconds)s后再试")
+                                    .foregroundStyle(.gray)
+                            } else {
+                                Button {
+                                    self.validateEmail()
+                                } label: {
+                                    Text("获取验证码")
+                                }
                             }
                         }
-                    }
-                    .padding(.horizontal, 23)
-                    .background(.white, in: RoundedRectangle(cornerRadius: 35))
-                    .padding(.top, 20)
-                    
-                    /// 验证码
-                    HStack {
-                        TextField("邮箱验证码", text: $code)
-                            .keyboardType(.numberPad) // 设置键盘类型为数字键盘
-                            .textContentType(.oneTimeCode) // 设置内容类型为一次性代码，以便系统知道右下角按钮应该显示为“确认”
-                            .padding(.vertical, 20)
-                            .focused($focus, equals: .code)
-                            .submitLabel(.return)
-                            .onReceive(Just(code), perform: { _ in
-                                limitMaxLength(content: &code, maxLength: 6)
-                            }) // 最大长度为 6 位
-                    }
-                    .padding(.horizontal, 23)
-                    .background(.white, in: RoundedRectangle(cornerRadius: 35))
-                    
-                    /// 登录按钮
-                    Button {
-                        self.userLoginEmail()
-                    } label: {
-                        Circle()
-                            .frame(width: 80, height: 80)
-                            .overlay {
-                                Image(systemName: "chevron.right")
-                                    .foregroundStyle(.white)
-                                    .font(.system(size: 20))
-                            }
-                    }
-                    .disabled(isLoginButtonDisabled)
-                }
-                // 设置名字步骤
-                else if loginState == .name {
-                    Text("设置你的名字")
-                    TextField("你的名字", text: $nickName)
-                        .frame(maxWidth: .infinity, maxHeight: 60)
-                        .padding(.horizontal)
-                        .background(.gray.opacity(0.1))
-                        .foregroundStyle(.black)
+                        .padding(.horizontal, 23)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 35))
+                        .padding(.top, 20)
                         
-                    Button {
-                        self.setUserInfo() // 设置用户信息
-                    } label: {
-                        RoundedRectangle(cornerRadius: 13)
-                            .frame(width: 120, height: 60)
-                            .overlay {
-                                Text("确定")
-                                    .foregroundStyle(.white)
-                                    .font(.system(size: 20))
-                            }
-                    }
-                }
-                // 设置头像步骤
-                else if loginState == .avatar {
-                    VStack {
-                        // 点击选择头像
+                        /// 验证码
+                        HStack {
+                            TextField("邮箱验证码", text: $code)
+                                .keyboardType(.numberPad) // 设置键盘类型为数字键盘
+                                .textContentType(.oneTimeCode) // 设置内容类型为一次性代码，以便系统知道右下角按钮应该显示为“确认”
+                                .padding(.vertical, 20)
+                                .focused($focus, equals: .code)
+                                .submitLabel(.return)
+                                .onReceive(Just(code), perform: { _ in
+                                    limitMaxLength(content: &code, maxLength: 6)
+                                }) // 最大长度为 6 位
+                        }
+                        .padding(.horizontal, 23)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 35))
+                        
+                        /// 登录按钮
                         Button {
-                            self.isShowAvatarSelectSheet.toggle()
+                            self.userLoginEmail()
                         } label: {
-                            VStack {
-                                if let image = selectAvatarImage {
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 100, height: 100)
-                                        .clipShape(Circle())
-                                } else {
-                                    Circle()
-                                        .frame(width: 100, height: 100)
-                                        .foregroundStyle(.gray.opacity(0.3))
-                                        .overlay {
-                                            Image(systemName: "person")
-                                                .foregroundStyle(.white)
-                                                .font(.system(size: 44))
-                                        }
+                            Circle()
+                                .frame(width: 80, height: 80)
+                                .overlay {
+                                    Image(systemName: "chevron.right")
+                                        .foregroundStyle(.white)
+                                        .font(.system(size: 20))
+                                }
+                        }
+                        .disabled(isLoginButtonDisabled)
+                    }
+                    // 设置名字步骤
+                    else if loginState == .name {
+                        Text("设置你的名字")
+                        TextField("你的名字", text: $nickName)
+                            .frame(maxWidth: .infinity, maxHeight: 60)
+                            .padding(.horizontal)
+                            .background(.gray.opacity(0.1))
+                            .foregroundStyle(.black)
+                        
+                        Button {
+                            self.setUserInfo() // 设置用户信息
+                        } label: {
+                            RoundedRectangle(cornerRadius: 13)
+                                .frame(width: 120, height: 60)
+                                .overlay {
+                                    Text("确定")
+                                        .foregroundStyle(.white)
+                                        .font(.system(size: 20))
+                                }
+                        }
+                    }
+                    // 设置头像步骤
+                    else if loginState == .avatar {
+                        VStack {
+                            // 点击选择头像
+                            Button {
+                                self.isShowAvatarSelectSheet.toggle()
+                            } label: {
+                                VStack {
+                                    if let image = selectAvatarImage {
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 100, height: 100)
+                                            .clipShape(Circle())
+                                    } else {
+                                        Circle()
+                                            .frame(width: 100, height: 100)
+                                            .foregroundStyle(.gray.opacity(0.3))
+                                            .overlay {
+                                                Image(systemName: "person")
+                                                    .foregroundStyle(.white)
+                                                    .font(.system(size: 44))
+                                            }
+                                    }
+                                    
+                                    HStack {
+                                        Spacer()
+                                        Text("设置你的头像")
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            // 选择头像的弹出层
+                            .sheet(isPresented: $isShowAvatarSelectSheet) {
+                                ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet) {
+                                    if let image = selectAvatarImage {
+                                        self.uploadImageToBackend(image: image)
+                                    }
                                 }
                                 
-                                HStack {
-                                    Spacer()
-                                    Text("设置你的头像")
-                                    Spacer()
+                                Button {} label: {
+                                    Text("确定")
                                 }
+                                .padding(.top, 50)
                             }
-                        }
-                        // 选择头像的弹出层
-                        .sheet(isPresented: $isShowAvatarSelectSheet) {
-                            ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet) {
-                                if let image = selectAvatarImage {
-                                    self.uploadImageToBackend(image: image)
-                                }
-                            }
-                            
-                            Button {} label: {
-                                Text("确定")
-                            }
-                            .padding(.top, 50)
                         }
                     }
+                    
+                    Spacer()
+                    
+                    // 跳转首页
+                    NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
+                        EmptyView()
+                    }
                 }
-                
-                Spacer()
-                
-                // 跳转首页
-                NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
-                    EmptyView()
-                }
+                .padding(20)
+                .padding(.top, 80)
             }
-            .padding(20)
-            .padding(.top, 80)
-            .background(.gray.opacity(0.08))
             // 点击空白处隐藏输入框
             .onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
