@@ -31,10 +31,11 @@
 		26B998692BBD9681000D1E88 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998682BBD9681000D1E88 /* Api.swift */; };
 		26B9986B2BBD9723000D1E88 /* UserCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B9986A2BBD9723000D1E88 /* UserCache.swift */; };
 		26B9986F2BBD9788000D1E88 /* ApiResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B9986E2BBD9788000D1E88 /* ApiResultType.swift */; };
-		26B998712BBD97D5000D1E88 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998702BBD97D4000D1E88 /* LoginView.swift */; };
 		26B998732BBD97FF000D1E88 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998722BBD97FF000D1E88 /* MainView.swift */; };
 		26B998752BBD982A000D1E88 /* RankingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998742BBD982A000D1E88 /* RankingView.swift */; };
 		26B998792BBD9874000D1E88 /* URLImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998782BBD9874000D1E88 /* URLImage.swift */; };
+		26CE0B932C1143B4001984D9 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26CE0B922C1143B4001984D9 /* LoginView.swift */; };
+		26CE0B952C1143FC001984D9 /* LoginFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26CE0B942C1143FC001984D9 /* LoginFormView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,10 +65,11 @@
 		26B998682BBD9681000D1E88 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		26B9986A2BBD9723000D1E88 /* UserCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCache.swift; sourceTree = "<group>"; };
 		26B9986E2BBD9788000D1E88 /* ApiResultType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiResultType.swift; sourceTree = "<group>"; };
-		26B998702BBD97D4000D1E88 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		26B998722BBD97FF000D1E88 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		26B998742BBD982A000D1E88 /* RankingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingView.swift; sourceTree = "<group>"; };
 		26B998782BBD9874000D1E88 /* URLImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLImage.swift; sourceTree = "<group>"; };
+		26CE0B922C1143B4001984D9 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		26CE0B942C1143FC001984D9 /* LoginFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginFormView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,8 +176,8 @@
 		26B998632BBD9619000D1E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				26CE0B902C11437C001984D9 /* Login */,
 				2622AB482BF8ECF4003C31E0 /* Home */,
-				26B998702BBD97D4000D1E88 /* LoginView.swift */,
 				26B998722BBD97FF000D1E88 /* MainView.swift */,
 				26B998742BBD982A000D1E88 /* RankingView.swift */,
 				2623684F2BBE3A6100264BD9 /* MapView.swift */,
@@ -203,6 +205,23 @@
 				262368532BC3715400264BD9 /* LocationDataManager.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		26CE0B902C11437C001984D9 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				26CE0B912C114386001984D9 /* SubViews */,
+				26CE0B922C1143B4001984D9 /* LoginView.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		26CE0B912C114386001984D9 /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				26CE0B942C1143FC001984D9 /* LoginFormView.swift */,
+			);
+			path = SubViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -293,6 +312,7 @@
 				26A624092BE636E60074352D /* GlobalData.swift in Sources */,
 				2622AB4F2BF8EE55003C31E0 /* HomeFooterView.swift in Sources */,
 				26B9986F2BBD9788000D1E88 /* ApiResultType.swift in Sources */,
+				26CE0B932C1143B4001984D9 /* LoginView.swift in Sources */,
 				262368542BC3715400264BD9 /* LocationDataManager.swift in Sources */,
 				26B998562BBD92EF000D1E88 /* city_walk_iosApp.swift in Sources */,
 				26A624072BE52A5C0074352D /* UserInfoData.swift in Sources */,
@@ -303,7 +323,7 @@
 				26B9986B2BBD9723000D1E88 /* UserCache.swift in Sources */,
 				26B998752BBD982A000D1E88 /* RankingView.swift in Sources */,
 				26AB72512BC8086000F12616 /* Path.swift in Sources */,
-				26B998712BBD97D5000D1E88 /* LoginView.swift in Sources */,
+				26CE0B952C1143FC001984D9 /* LoginFormView.swift in Sources */,
 				26A624012BDFCFF10074352D /* ImagePickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
