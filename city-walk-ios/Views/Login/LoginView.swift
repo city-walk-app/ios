@@ -78,79 +78,21 @@ struct LoginView: View {
                         }
                         // 设置名字步骤
                         else if loginState == .name {
-                            Text("设置你的名字")
-                            TextField("你的名字", text: $nickName)
-                                .frame(maxWidth: .infinity, maxHeight: 60)
-                                .padding(.horizontal)
-                                .background(.gray.opacity(0.1))
-                                .foregroundStyle(.black)
-                            
-                            Button {
-                                self.setUserInfo() // 设置用户信息
-                            } label: {
-                                RoundedRectangle(cornerRadius: 13)
-                                    .frame(width: 120, height: 60)
-                                    .overlay {
-                                        Text("确定")
-                                            .foregroundStyle(.white)
-                                            .font(.system(size: 20))
-                                    }
-                            }
+                            LoginNameView(
+                                nickName: $nickName,
+                                setUserInfo: setUserInfo
+                            )
                         }
                         // 设置头像步骤
                         else if loginState == .avatar {
-                            VStack {
-                                // 点击选择头像
-                                Button {
-                                    self.isShowAvatarSelectSheet.toggle()
-                                } label: {
-                                    VStack {
-                                        if let image = selectAvatarImage {
-                                            Image(uiImage: image)
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 100, height: 100)
-                                                .clipShape(Circle())
-                                        } else {
-                                            Circle()
-                                                .frame(width: 100, height: 100)
-                                                .foregroundStyle(.gray.opacity(0.3))
-                                                .overlay {
-                                                    Image(systemName: "person")
-                                                        .foregroundStyle(.white)
-                                                        .font(.system(size: 44))
-                                                }
-                                        }
-                                        
-                                        HStack {
-                                            Spacer()
-                                            Text("设置你的头像")
-                                            Spacer()
-                                        }
-                                    }
-                                }
-                                // 选择头像的弹出层
-                                .sheet(isPresented: $isShowAvatarSelectSheet) {
-                                    ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet) {
-                                        if let image = selectAvatarImage {
-                                            self.uploadImageToBackend(image: image)
-                                        }
-                                    }
-                                    
-                                    Button {} label: {
-                                        Text("确定")
-                                    }
-                                    .padding(.top, 50)
-                                }
-                            }
+                            LoginAvatarView(
+                                selectAvatarImage: $selectAvatarImage,
+                                isShowAvatarSelectSheet: $isShowAvatarSelectSheet,
+                                uploadImageToBackend: uploadImageToBackend
+                            )
                         }
                         
                         Spacer()
-                        
-                        // 跳转首页
-                        NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
-                            EmptyView()
-                        }
                     }
                     .padding(20)
                     .padding(.top, 80)
@@ -179,6 +121,9 @@ struct LoginView: View {
                     }
                 }
             }
+        }
+        .navigationDestination(isPresented: $isToHomeView) {
+            HomeView()
         }
     }
     
