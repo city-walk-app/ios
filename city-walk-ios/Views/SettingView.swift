@@ -52,14 +52,6 @@ struct SettingView: View {
     
     var body: some View {
         NavigationStack {
-            // 跳转到登录页面
-            NavigationLink(
-                destination: LoginView(),
-                isActive: $isGoLoginView
-            ) {
-                EmptyView()
-            }
-            
             // 选项列表
             VStack {
                 List {
@@ -235,6 +227,10 @@ struct SettingView: View {
             }
             .navigationTitle("设置")
         }
+        // 跳转到登录页面
+        .navigationDestination(isPresented: $isGoLoginView, destination: {
+            LoginView()
+        })
         // 设置信息
         .sheet(isPresented: $isShowSetInfo) {
             NavigationStack {
@@ -332,15 +328,15 @@ struct SettingView: View {
     }
 }
 
-#Preview {
-    SettingView()
-        .environmentObject(UserInfoData())
-}
-
 extension Data {
     mutating func appendString(_ string: String) {
         if let data = string.data(using: .utf8) {
             append(data)
         }
     }
+}
+
+#Preview {
+    SettingView()
+        .environmentObject(UserInfoData())
 }

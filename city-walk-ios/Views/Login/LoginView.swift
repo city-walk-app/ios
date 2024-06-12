@@ -122,6 +122,7 @@ struct LoginView: View {
                 }
             }
         }
+        // 登录成功之后跳转到首页
         .navigationDestination(isPresented: $isToHomeView) {
             HomeView()
         }

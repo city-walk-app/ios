@@ -14,49 +14,54 @@ struct LoginAvatarView: View {
     var uploadImageToBackend: (UIImage) -> Void
 
     var body: some View {
-        VStack {
-            // 点击选择头像
-            Button {
-                self.isShowAvatarSelectSheet.toggle()
-            } label: {
-                VStack {
-                    if let image = selectAvatarImage {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
-                    } else {
-                        Circle()
-                            .frame(width: 100, height: 100)
-                            .foregroundStyle(.gray.opacity(0.3))
-                            .overlay {
-                                Image(systemName: "person")
-                                    .foregroundStyle(.white)
-                                    .font(.system(size: 44))
-                            }
-                    }
+        // 点击选择头像
+        Button {
+            self.isShowAvatarSelectSheet.toggle()
+        } label: {
+            VStack {
+                if let image = selectAvatarImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 100, height: 100)
+                        .clipShape(Circle())
+                } else {
+                    Circle()
+                        .frame(width: 100, height: 100)
+                        .foregroundStyle(.gray.opacity(0.3))
+                        .overlay {
+                            Image(systemName: "person")
+                                .foregroundStyle(.white)
+                                .font(.system(size: 44))
+                        }
+                }
 
-                    HStack {
-                        Spacer()
-                        Text("设置你的头像")
-                        Spacer()
-                    }
+                HStack {
+                    Spacer()
+                    Text("设置你的头像")
+                    Spacer()
                 }
             }
-            // 选择头像的弹出层
-            .sheet(isPresented: $isShowAvatarSelectSheet) {
-                ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet) {
-                    if let image = selectAvatarImage {
-                        self.uploadImageToBackend(image)
-                    }
+        }
+        // 选择头像的弹出层
+        .sheet(isPresented: $isShowAvatarSelectSheet) {
+            ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet) {
+                if let image = selectAvatarImage {
+                    self.uploadImageToBackend(image)
                 }
+            }
 
-                Button {} label: {
+            Button {} label: {
+                HStack {
+                    Spacer()
                     Text("确定")
+                    Spacer()
                 }
-                .padding(.top, 50)
+                .padding()
+                .background(.blue)
+                .foregroundStyle(.white)
             }
+            .padding(.top, 50)
         }
     }
 }
