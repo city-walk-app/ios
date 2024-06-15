@@ -54,11 +54,16 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // 背景图
-                Image("background-1")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .edgesIgnoringSafeArea(.all)
+//                MeshGradient()
+//                LinearGradient(gradient:
+//                    Gradient(
+//                        colors: [.white, .blue, .black]
+//                    ),
+//                    startPoint: .top, endPoint: .bottom)
+//                Image("background-1")
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fill)
+//                    .edgesIgnoringSafeArea(.all)
                 
                 // 登录操作
                 ScrollView {
@@ -99,6 +104,7 @@ struct LoginView: View {
                 }
             }
             .ignoresSafeArea(.keyboard, edges: .bottom)
+            .background(.gray.opacity(0.1))
             // 点击空白处隐藏输入框
             .onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -189,6 +195,7 @@ struct LoginView: View {
                     else {
                         UserCache.shared.saveInfo(info: data.data!)
                         self.isToHomeView = true // 跳转到首页
+                        print("开始跳转到首页")
                     }
                 }
             case .failure:
