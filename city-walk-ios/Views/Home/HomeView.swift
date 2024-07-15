@@ -12,7 +12,7 @@ import SwiftUI
 /// 主视图，用于显示地图和操作选项
 struct HomeView: View {
     /// API对象，用于进行网络请求
-    let API = ApiBasic()
+    let API = Api()
     
     /// 控制图片选择路由的状态
     @State private var isImageSelectRouter = false
@@ -74,9 +74,13 @@ struct HomeView: View {
             // 获取周边热门地点
             self.getPopularLocations()
             // 获取用户信息
-            self.loadUserInfo()
+//            self.loadUserInfo()
             // 请求位置权限
             self.requestLocationAuthorization()
+            
+            Task {
+                await self.loadUserInfo()
+            }
         }
     }
     
@@ -85,39 +89,53 @@ struct HomeView: View {
         let longitude = "\(region.center.longitude)"
         let latitude = "\(region.center.latitude)"
         
-        API.getPopularLocations(params: ["longitude": longitude, "latitude": latitude]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 && data.data != nil {
-                    let list = data.data!
-                    let _landmarks = list.map { item in
-                        Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
-                    }
-                    self.landmarks = _landmarks
-                }
-            case .failure:
-                print("接口错误")
-            }
-        }
+//        API.getPopularLocations(params: ["longitude": longitude, "latitude": latitude]) { result in
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 && data.data != nil {
+//                    let list = data.data!
+//                    let _landmarks = list.map { item in
+//                        Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
+//                    }
+//                    self.landmarks = _landmarks
+//                }
+//            case .failure:
+//                print("接口错误")
+//            }
+//        }
     }
     
     /// 获取用户信息
-    private func loadUserInfo() {
-        if let value = cacheInfo?.id {
-            let id = String(describing: value)
-            API.userInfo(params: ["id": id]) { result in
-                switch result {
-                case .success(let data):
-                    if data.code == 200 && data.data != nil {
-                        userInfoDataModel.set(data.data!)
-                    }
-                case .failure:
-                    print("接口错误")
-                }
+    private func loadUserInfo() async {
+        do {
+            let params: [String: Any] = ["user_id": "U131995175454824711531011225172573302849"] // 根据您的实际参数
+            let res = try await Api.shared.getUserInfo(params: params)
+
+            print("获取的用户信息", res)
+
+            if res.code == 200 {
+//                otherUserInfo = res.data!
             }
-        } else {
-            print("身份信息不存在")
+//            userInfo = info
+        } catch {
+            print("获取用户信息异常")
         }
+        
+//        if let value = cacheInfo?.id {
+//            let id = String(describing: value)
+//            API.userInfo(params: ["id": id]) { result in
+//                switch result {
+//                case .success(let data):
+//                    if data.code == 200 && data.data != nil {
+//                        userInfoDataModel.set(data.data!)
+//                    }
+//                case .failure:
+//                    print("接口错误")
+//                }
+//            }
+//        } else {
+//            print("身份信息不存在")
+//        }
     }
     
     /// 请求获取位置权限
@@ -127,16 +145,16 @@ struct HomeView: View {
     
     /// 打卡当前地点
     private func createPositionRecord(longitude: String, latitude: String) {
-        API.createPositionRecord(params: ["longitude": longitude, "latitude": latitude, "address": "地址", "name": "名字"]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 {
-                    isCurrentLocation.toggle()
-                }
-            case .failure:
-                print("获取失败")
-            }
-        }
+//        API.createPositionRecord(params: ["longitude": longitude, "latitude": latitude, "address": "地址", "name": "名字"]) { result in
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 {
+//                    isCurrentLocation.toggle()
+//                }
+//            case .failure:
+//                print("获取失败")
+//            }
+//        }
     }
     
     /// 获取当前位置并打卡

@@ -14,9 +14,9 @@ enum HTTPMethods: String {
 }
 
 /// 使用 Swift 基础库实现的网络请求
-struct ApiBasic {
+struct ApiBasicOld {
     /// 单例模式
-    static let shared = ApiBasic()
+    static let shared = ApiBasicOld()
     /// 基础请求地址
     private let baseUrl = BASE_URL
     /// json 解析器
@@ -42,18 +42,6 @@ struct ApiBasic {
             return
         }
         
-        // 3. 构建 URLQueryItem 参数
-        // https://developer.apple.com/documentation/foundation/urlqueryitem/
-        if method == .get {
-            var queryItems = [URLQueryItem]()
-            for (key, value) in params {
-                if let stringValue = value as? String {
-                    queryItems.append(URLQueryItem(name: key, value: stringValue))
-                }
-            }
-            urlComponents.queryItems = queryItems
-        }
-        
         // 4. 创建 URL 对象
         guard let url = urlComponents.url else {
             print("URL 对象创建失败")
@@ -63,18 +51,18 @@ struct ApiBasic {
         // 5. 创建 URLRequest 对象并设置参数
         var request = URLRequest(url: url)
         
-        if method == .post {
-            guard let httpBody = try? JSONSerialization.data(withJSONObject: params) else {
-                print("Failed to create HTTP body")
-                return
-            }
-            
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = httpBody
-        } else if method == .get {
-            request.httpMethod = "GET"
+//        if method == .post {
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: params) else {
+            print("Failed to create HTTP body")
+            return
         }
+            
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = httpBody
+//        } else if method == .get {
+//            request.httpMethod = "GET"
+//        }
         
         // 6. 设置请求头字段
         request.setValue(token, forHTTPHeaderField: "token")
@@ -132,38 +120,8 @@ struct ApiBasic {
     }
     
     /// 获取用户信息
-    func userInfo(params: [String: Any], callback: @escaping (Result<UserInfo, Error>) -> Void) {
-        request(url: "/user/info", params: params, method: .get, type: UserInfo.self, callback: callback)
-    }
-    
-    /// 获取指定用户去过的省份
-    func getRouteList(params: [String: Any], callback: @escaping (Result<GetRouteList, Error>) -> Void) {
-        request(url: "/gps/get_route_list", params: params, method: .get, type: GetRouteList.self, callback: callback)
-    }
-    
-    /// 获取经验排行榜
-    func experienceRanking(params: [String: Any], callback: @escaping (Result<ExperienceRanking, Error>) -> Void) {
-        request(url: "/experience/ranking", params: params, method: .get, type: ExperienceRanking.self, callback: callback)
-    }
-    
-    /// 获取用户的动态发布日历热力图
-    func userGetCalendarHeatmap(params: [String: Any], callback: @escaping (Result<UserGetCalendarHeatmap, Error>) -> Void) {
-        request(url: "/user/get_calendar_heatmap", params: params, method: .get, type: UserGetCalendarHeatmap.self, callback: callback)
-    }
-    
-    /// 获取指定用户去过的省份
-    func getUserProvince(params: [String: Any], callback: @escaping (Result<GetUserProvince, Error>) -> Void) {
-        request(url: "/gps/get_user_province", params: params, method: .get, type: GetUserProvince.self, callback: callback)
-    }
-    
-    /// 获取指定步行记录历史打卡记录列表
-    func gpsGetRouteHistory(params: [String: Any], callback: @escaping (Result<GpsGetRouteHistory, Error>) -> Void) {
-        request(url: "/gps/get_route_history", params: params, method: .get, type: GpsGetRouteHistory.self, callback: callback)
-    }
-    
-    /// 发送邮箱验证码
-    func emailSend(params: [String: Any], callback: @escaping (Result<EmailSend, Error>) -> Void) {
-        request(url: "/email/send", params: params, method: .post, type: EmailSend.self, callback: callback)
+    func getUserInfo(params: [String: Any], callback: @escaping (Result<UserInfo, Error>) -> Void) {
+        request(url: "/user/get/user_info", params: params, method: .post, type: UserInfo.self, callback: callback)
     }
     
     /// 邮箱验证码登录
@@ -171,23 +129,18 @@ struct ApiBasic {
         request(url: "/user/login/email", params: params, method: .post, type: UserLoginEmail.self, callback: callback)
     }
     
-    /// 创建当前位置记录
-    func createPositionRecord(params: [String: Any], callback: @escaping (Result<CreatePositionRecord, Error>) -> Void) {
-        request(url: "/gps/create_position_record", params: params, method: .post, type: CreatePositionRecord.self, callback: callback)
-    }
-    
-    /// 用户头像上传
-    func userInfoUpAvatar(params: [String: Any], callback: @escaping (Result<BasicResult, Error>) -> Void) {
-        request(url: "/user/info/up_avatar", params: params, method: .post, type: BasicResult.self, callback: callback)
-    }
-    
     /// 设置用户信息
-    func setUserInfo(params: [String: Any], callback: @escaping (Result<BasicResult, Error>) -> Void) {
-        request(url: "/user/info/set_user_info", params: params, method: .post, type: BasicResult.self, callback: callback)
+    func setUserInfo(params: [String: Any], callback: @escaping (Result<UserLoginEmail, Error>) -> Void) {
+        request(url: "/user/set/user_info", params: params, method: .post, type: UserLoginEmail.self, callback: callback)
     }
     
-    /// 获取周边热门地点
-    func getPopularLocations(params: [String: Any], callback: @escaping (Result<GetPopularLocations, Error>) -> Void) {
-        request(url: "/gps/get/popular/locations", params: params, method: .get, type: GetPopularLocations.self, callback: callback)
+    /// 发送邮箱验证码
+    func emailSend(params: [String: Any], callback: @escaping (Result<EmailSend, Error>) -> Void) {
+        request(url: "/email/send", params: params, method: .post, type: EmailSend.self, callback: callback)
+    }
+    
+    /// 获取经验排行榜
+    func experienceRanking(params: [String: Any], callback: @escaping (Result<ExperienceRanking, Error>) -> Void) {
+        request(url: "/experience/ranking", params: params, method: .post, type: ExperienceRanking.self, callback: callback)
     }
 }

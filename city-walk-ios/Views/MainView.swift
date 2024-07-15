@@ -10,7 +10,7 @@ import SwiftUI
 struct MainView: View {
     var userId: Int
 
-    let API = ApiBasic()
+    let API = Api()
     /// 缓存信息
     let cacheInfo = UserCache.shared.getInfo()!
     /// 非自己，其它用户的身份信息
@@ -130,68 +130,70 @@ struct MainView: View {
             .padding(.top, 20)
         }
         .onAppear {
-            self.loadGetUserProvince() // 获取指定用户去过的省份
-            self.loadUserGetCalendarHeatmap() // 获取用户的动态发布日历热力图
-            self.getRouteList() // 获取指定用户的打卡记录
-            self.loadUserInfo() // 获取用户信息
-        }
-    }
-
-    /// 获取用户的动态发布日历热力图
-    private func loadUserGetCalendarHeatmap() {
-        API.userGetCalendarHeatmap(params: ["year": "2023"]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 && (data.data?.isEmpty) != nil {
-                    calendarHeatmap = data.data!
-                }
-            case .failure:
-                print("接口错误")
+//            self.loadGetUserProvince() // 获取指定用户去过的省份
+//            self.getRouteList() // 获取指定用户的打卡记录
+            Task {
+                await self.loadUserInfo() // 获取用户信息
             }
         }
     }
 
     /// 获取用户信息
-    private func loadUserInfo() {
-        API.userInfo(params: ["id": "\(userId)"]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 && data.data != nil {
-                    self.otherUserInfo = data.data!
-                }
-            case .failure:
-                print("接口错误")
+    private func loadUserInfo() async {
+        do {
+            let params: [String: Any] = ["user_id": "U131995175454824711531011225172573302849"] // 根据您的实际参数
+            let res = try await Api.shared.getUserInfo(params: params)
+
+            print("获取的用户信息", res)
+
+            if res.code == 200 {
+                otherUserInfo = res.data!
             }
+//            userInfo = info
+        } catch {
+            print("获取用户信息异常")
         }
+
+//        try await API.emailSend(params: ["user_id": "1121"])
+//        API.userInfo(params: ["id": "\(userId)"]) { result in
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 && data.data != nil {
+//                    self.otherUserInfo = data.data!
+//                }
+//            case .failure:
+//                print("接口错误")
+//            }
+//        }
     }
 
-    /// 获取指定用户的打卡记录
-    private func getRouteList() {
-        API.getRouteList(params: ["page": "1", "page_size": "20"]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 && ((data.data?.isEmpty) != nil) {
-                    globalDataModel.setRouterData(data.data!)
-                }
-            case .failure:
-                print("获取失败")
-            }
-        }
-    }
-
-    /// 获取指定用户去过的省份
-    private func loadGetUserProvince() {
-        API.getUserProvince(params: ["data": String(userId)]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 && (data.data?.isEmpty) != nil {
-                    userProvince = data.data!
-                }
-            case .failure:
-                print("接口错误")
-            }
-        }
-    }
+//    /// 获取指定用户的打卡记录
+//    private func getRouteList() {
+//        API.getRouteList(params: ["page": "1", "page_size": "20"]) { result in
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 && ((data.data?.isEmpty) != nil) {
+//                    globalDataModel.setRouterData(data.data!)
+//                }
+//            case .failure:
+//                print("获取失败")
+//            }
+//        }
+//    }
+//
+//    /// 获取指定用户去过的省份
+//    private func loadGetUserProvince() {
+//        API.getUserProvince(params: ["data": String(userId)]) { result in
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 && (data.data?.isEmpty) != nil {
+//                    userProvince = data.data!
+//                }
+//            case .failure:
+//                print("接口错误")
+//            }
+//        }
+//    }
 }
 
 #Preview {

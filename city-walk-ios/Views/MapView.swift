@@ -9,7 +9,7 @@ import MapKit
 import SwiftUI
 
 struct MapView: View {
-    let API = ApiBasic()
+    let API = Api()
 
     /// 查询的步行列表 id
     var listId: Int
@@ -55,34 +55,34 @@ struct MapView: View {
     /// 获取指定步行记录历史打卡记录列表
     private func gpsGetRouteHistory() {
         print("请求参数", ["id": "\(listId)"])
-        API.gpsGetRouteHistory(params: ["id": "\(listId)"]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 && (data.data?.isEmpty) != nil {
-                    let list = data.data!
-
-                    let _landmarks = list.map { item in
-                        Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude) ?? 0, longitude: Double(item.longitude) ?? 0), name: item.address)
-                    }
-
-                    print("第一项", list[0])
-
-                    let firstItem = list[0]
-
-                    self.region = MKCoordinateRegion(
-                        center: CLLocationCoordinate2D(latitude: Double(firstItem.latitude) ?? 0, longitude: Double(firstItem.longitude) ?? 0),
-                        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-                    )
-
-                    print("地图配置参数", region)
-
-                    self.landmarks = _landmarks
-                    self.routeDetail = list
-                }
-            case .failure:
-                print("获取步行打卡记录列表失败")
-            }
-        }
+//        API.gpsGetRouteHistory(params: ["id": "\(listId)"]) { result in
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 && (data.data?.isEmpty) != nil {
+//                    let list = data.data!
+//
+//                    let _landmarks = list.map { item in
+//                        Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude) ?? 0, longitude: Double(item.longitude) ?? 0), name: item.address)
+//                    }
+//
+//                    print("第一项", list[0])
+//
+//                    let firstItem = list[0]
+//
+//                    self.region = MKCoordinateRegion(
+//                        center: CLLocationCoordinate2D(latitude: Double(firstItem.latitude) ?? 0, longitude: Double(firstItem.longitude) ?? 0),
+//                        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+//                    )
+//
+//                    print("地图配置参数", region)
+//
+//                    self.landmarks = _landmarks
+//                    self.routeDetail = list
+//                }
+//            case .failure:
+//                print("获取步行打卡记录列表失败")
+//            }
+//        }
     }
 }
 

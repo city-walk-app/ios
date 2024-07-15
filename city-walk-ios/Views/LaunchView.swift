@@ -10,7 +10,7 @@ import Network
 import SwiftUI
 
 struct LaunchView: View {
-    let API = ApiBasic()
+    let API = Api()
 
     /// 用于存储定位权限状态的状态变量，默认为未确定状态
 //    @State private var locationAuthorizationStatus: CLAuthorizationStatus = .notDetermined
@@ -107,51 +107,51 @@ struct LaunchView: View {
     /// 获取用户信息
     private func loadUserInfo() {
         // 将 id 转换为字符串发送请求
-        if let value = cacheInfo?.id {
-            let id = String(describing: value)
-
-            API.userInfo(params: ["id": id]) { result in
-                switch result {
-                case .success(let data):
-                    if data.code == 200 && data.data != nil {
-                        userInfoDataModel.set(data.data!)
-                    }
-                case .failure:
-                    print("接口错误")
-                }
-            }
-
-        } else {
-            print("身份信息不存在")
-        }
+//        if let value = cacheInfo?.id {
+//            let id = String(describing: value)
+//
+//            API.userInfo(params: ["id": id]) { result in
+//                switch result {
+//                case .success(let data):
+//                    if data.code == 200 && data.data != nil {
+//                        userInfoDataModel.set(data.data!)
+//                    }
+//                case .failure:
+//                    print("接口错误")
+//                }
+//            }
+//
+//        } else {
+//            print("身份信息不存在")
+//        }
     }
 
     /// 获取经验排行榜
     private func experienceRanking() {
-        API.experienceRanking(params: ["province_code": "330000"]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 && (data.data?.isEmpty) != nil {
-                    self.globalDataModel.setRankingData(data.data!)
-                }
-            case .failure:
-                print("获取失败")
-            }
-        }
+//        API.experienceRanking(params: ["province_code": "330000"]) { result in
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 && (data.data?.isEmpty) != nil {
+//                    self.globalDataModel.setRankingData(data.data!)
+//                }
+//            case .failure:
+//                print("获取失败")
+//            }
+//        }
     }
 
     /// 获取指定用户去过的省份
     private func getRouteList() {
-        API.getRouteList(params: ["page": "1", "page_size": "20"]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 && ((data.data?.isEmpty) != nil) {
-                    globalDataModel.setRouterData(data.data!)
-                }
-            case .failure:
-                print("获取失败")
-            }
-        }
+//        API.getRouteList(params: ["page": "1", "page_size": "20"]) { result in
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 && ((data.data?.isEmpty) != nil) {
+//                    globalDataModel.setRouterData(data.data!)
+//                }
+//            case .failure:
+//                print("获取失败")
+//            }
+//        }
     }
 
     /// 开始跳转首页

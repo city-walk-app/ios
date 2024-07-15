@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SettingView: View {
-    let API = ApiBasic()
+    let API = Api()
     
     /// 用户信息编辑键
     enum UserInfoKey {

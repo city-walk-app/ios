@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct LoginView: View {
-    let API = ApiBasic()
+    let API = Api()
     
     /// 聚焦的输入框枚举
     enum FocusedField: Hashable {
@@ -146,17 +146,17 @@ struct LoginView: View {
         isCountingDown = true // 开启倒计时
         countdownSeconds = 10 // 恢复时间
         
-        API.emailSend(params: ["email": email]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 {
-                    // 改变文本框聚焦状态
-                    self.focus = .code
-                }
-            case .failure:
-                print("获取邮箱验证码失败")
-            }
-        }
+//        API.emailSend(params: ["email": email]) { result in
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 {
+//                    // 改变文本框聚焦状态
+//                    self.focus = .code
+//                }
+//            case .failure:
+//                print("获取邮箱验证码失败")
+//            }
+//        }
     }
     
     /// 验证邮箱
@@ -175,33 +175,33 @@ struct LoginView: View {
     private func userLoginEmail() {
         isLoginButtonDisabled = true
         
-        API.userLoginEmail(params: ["email": email, "code": code]) { result in
-            
-            self.isLoginButtonDisabled = false
-            
-            switch result {
-            case .success(let data):
-                if data.code == 200 && data.data != nil {
-                    // 如果是新用户，继续完善信息
-                    if data.data!.is_new_user {
-                        self.userId = data.data!.id
-                        
-                        withAnimation {
-                            self.loginState = .name
-                            self.focus = .name
-                        }
-                    }
-                    // 否则跳转到首页
-                    else {
-                        UserCache.shared.saveInfo(info: data.data!)
-                        self.isToHomeView = true // 跳转到首页
-                        print("开始跳转到首页")
-                    }
-                }
-            case .failure:
-                print("邮箱验证登录失败")
-            }
-        }
+//        API.userLoginEmail(params: ["email": email, "code": code]) { result in
+//            
+//            self.isLoginButtonDisabled = false
+//            
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 && data.data != nil {
+//                    // 如果是新用户，继续完善信息
+//                    if data.data!.is_new_user {
+//                        self.userId = data.data!.id
+//                        
+//                        withAnimation {
+//                            self.loginState = .name
+//                            self.focus = .name
+//                        }
+//                    }
+//                    // 否则跳转到首页
+//                    else {
+//                        UserCache.shared.saveInfo(info: data.data!)
+//                        self.isToHomeView = true // 跳转到首页
+//                        print("开始跳转到首页")
+//                    }
+//                }
+//            case .failure:
+//                print("邮箱验证登录失败")
+//            }
+//        }
     }
     
     /// 检测输入框最大长度
@@ -281,21 +281,21 @@ struct LoginView: View {
     
     /// 设置用户信息
     private func setUserInfo() {
-        print("nick", nickName)
-        API.setUserInfo(params: ["nick_name": nickName]) { result in
-            print(result)
-            switch result {
-            case .success(let data):
-                if data.code == 200 {
-                    print("设置成功")
-                    withAnimation {
-                        self.loginState = .avatar
-                    }
-                }
-            case .failure:
-                print("设置失败")
-            }
-        }
+//        print("nick", nickName)
+//        API.setUserInfo(params: ["nick_name": nickName]) { result in
+//            print(result)
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 {
+//                    print("设置成功")
+//                    withAnimation {
+//                        self.loginState = .avatar
+//                    }
+//                }
+//            case .failure:
+//                print("设置失败")
+//            }
+//        }
     }
 }
 

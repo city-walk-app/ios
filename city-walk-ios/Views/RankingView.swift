@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RankingView: View {
-    let API = ApiBasic()
+    let API = Api()
 
     /// tab 切换数据
     @EnvironmentObject var globalDataModel: GlobalData
@@ -61,16 +61,16 @@ struct RankingView: View {
 
     /// 获取经验排行榜
     private func experienceRanking() {
-        API.experienceRanking(params: ["province_code": "330000"]) { result in
-            switch result {
-            case .success(let data):
-                if data.code == 200 && (data.data?.isEmpty) != nil {
-                    self.globalDataModel.setRankingData(data.data!)
-                }
-            case .failure:
-                print("获取失败")
-            }
-        }
+//        API.experienceRanking(params: ["province_code": "330000"]) { result in
+//            switch result {
+//            case .success(let data):
+//                if data.code == 200 && (data.data?.isEmpty) != nil {
+//                    self.globalDataModel.setRankingData(data.data!)
+//                }
+//            case .failure:
+//                print("获取失败")
+//            }
+//        }
     }
 }
 
