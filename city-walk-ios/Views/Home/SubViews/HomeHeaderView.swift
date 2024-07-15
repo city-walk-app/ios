@@ -15,7 +15,7 @@ struct HomeHeaderView: View {
     var body: some View {
         HStack {
             if let info = userInfoDataModel.data {
-                NavigationLink(destination: MainView(userId: info.id)) {
+                NavigationLink(destination: MainView(user_id: info.user_id)) {
                     URLImage(url: URL(string: "\(BASE_URL)/\(info.avatar ?? "")")!)
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 48, height: 48)

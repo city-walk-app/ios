@@ -20,12 +20,12 @@ struct RankingView: View {
                     if let rankingList = globalDataModel.rankingData {
                         ForEach(rankingList.indices, id: \.self) { index in
                             HStack {
-                                NavigationLink(destination: MainView(userId: rankingList[index].user_id)) {
-                                    URLImage(url: URL(string: "\(BASE_URL)/\(rankingList[index].user_info.avatar ?? "")")!)
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 70, height: 70)
-                                        .mask(Circle())
-                                }
+//                                NavigationLink(destination: MainView(user_id: rankingList[index].user_id)) {
+//                                    URLImage(url: URL(string: "\(BASE_URL)/\(rankingList[index].user_info.avatar ?? "")")!)
+//                                        .aspectRatio(contentMode: .fill)
+//                                        .frame(width: 70, height: 70)
+//                                        .mask(Circle())
+//                                }
 
                                 VStack(alignment: .leading) {
                                     Text("\(rankingList[index].user_info.nick_name ?? "")")

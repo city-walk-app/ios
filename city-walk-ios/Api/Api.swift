@@ -12,7 +12,7 @@ class Api {
     static let shared = Api()
     
     /// 获取用户信息
-    func getUserInfo(params: [String: Any]) async throws -> UserInfo {
+    func getUserInfo(params: [String: String]) async throws -> UserInfo {
         print("获取用户信息", params)
         return try await Request.shared.request(
             url: "/user/get/user_info",
@@ -22,6 +22,7 @@ class Api {
         )
     }
     
+    /// 邮箱验证码登录
     func userLoginEmail(params: [String: Any]) async throws -> UserLoginEmail {
         return try await Request.shared.request(
             url: "/user/login/email",

@@ -107,35 +107,24 @@ struct HomeView: View {
     
     /// 获取用户信息
     private func loadUserInfo() async {
-        do {
-            let params: [String: Any] = ["user_id": "U131995175454824711531011225172573302849"] // 根据您的实际参数
-            let res = try await Api.shared.getUserInfo(params: params)
-
-            print("获取的用户信息", res)
-
-            if res.code == 200 {
-//                otherUserInfo = res.data!
+        if let value = cacheInfo?.user_id {
+            let user_id = String(describing: value)
+            do {
+                let params = ["user_id": user_id] // 根据您的实际参数
+                let res = try await Api.shared.getUserInfo(params: params)
+                
+                print("获取的用户信息", res)
+                
+                if res.code == 200 && res.data != nil {
+//                    otherUserInfo = res.data!
+                    userInfoDataModel.set(res.data!)
+                }
+            } catch {
+                print("获取用户信息异常")
             }
-//            userInfo = info
-        } catch {
-            print("获取用户信息异常")
+        } else {
+            print("身份信息不存在请登录")
         }
-        
-//        if let value = cacheInfo?.id {
-//            let id = String(describing: value)
-//            API.userInfo(params: ["id": id]) { result in
-//                switch result {
-//                case .success(let data):
-//                    if data.code == 200 && data.data != nil {
-//                        userInfoDataModel.set(data.data!)
-//                    }
-//                case .failure:
-//                    print("接口错误")
-//                }
-//            }
-//        } else {
-//            print("身份信息不存在")
-//        }
     }
     
     /// 请求获取位置权限

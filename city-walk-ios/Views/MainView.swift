@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MainView: View {
-    var userId: Int
+    var user_id: String
 
     let API = Api()
     /// 缓存信息
@@ -29,7 +29,7 @@ struct MainView: View {
             VStack {
                 // 身份信息，如果有其它人的信息，显示其它的，否则显示自己的信息
                 if let info =
-                    self.userId == userInfoDataModel.data!.id
+                    self.user_id == userInfoDataModel.data!.user_id
                         ? self.userInfoDataModel.data
                         : self.otherUserInfo
                 {
@@ -139,20 +139,37 @@ struct MainView: View {
     }
 
     /// 获取用户信息
+    ///     /// 获取用户信息
     private func loadUserInfo() async {
         do {
-            let params: [String: Any] = ["user_id": "U131995175454824711531011225172573302849"] // 根据您的实际参数
-            let res = try await Api.shared.getUserInfo(params: params)
+//            let params = ["user_id": user_id]  根据您的实际参数
+            let res = try await Api.shared.getUserInfo(params: ["user_id": user_id])
 
             print("获取的用户信息", res)
 
-            if res.code == 200 {
-                otherUserInfo = res.data!
+            if res.code == 200 && res.data != nil {
+//                    otherUserInfo = res.data!
+                userInfoDataModel.set(res.data!)
             }
-//            userInfo = info
         } catch {
             print("获取用户信息异常")
         }
+    }
+//    private func loadUserInfo() async {
+//        do {
+//            let params: [String: Any] = ["user_id": "U131995175454824711531011225172573302849"] // 根据您的实际参数
+//            let res = try await Api.shared.getUserInfo(params: params)
+//
+//            print("获取的用户信息", res)
+//
+//            if res.code == 200 {
+//                otherUserInfo = res.data!
+//            }
+//            //            userInfo = info
+//        } catch {
+//            print("获取用户信息异常")
+//        }
+//    }
 
 //        try await API.emailSend(params: ["user_id": "1121"])
 //        API.userInfo(params: ["id": "\(userId)"]) { result in
@@ -165,7 +182,7 @@ struct MainView: View {
 //                print("接口错误")
 //            }
 //        }
-    }
+//    }
 
 //    /// 获取指定用户的打卡记录
 //    private func getRouteList() {
@@ -197,7 +214,7 @@ struct MainView: View {
 }
 
 #Preview {
-    MainView(userId: 1)
+    MainView(user_id: "U131995175454824711531011225172573302849")
         .environmentObject(UserInfoData())
         .environmentObject(GlobalData())
 }

@@ -11,6 +11,7 @@ import Foundation
 struct UserInfo: Decodable {
     struct UserInfoData: Codable {
         var id: Int
+        var user_id: String
         var nick_name: String?
         var email: String
         var mobile: String?
@@ -41,7 +42,7 @@ struct UserLoginEmail: Decodable {
     struct UserLoginEmailData: Codable {
         var token: String
         var is_new_user: Bool
-        var id: Int
+        var user_id: String
         var email: String
         var avatar: String?
     }

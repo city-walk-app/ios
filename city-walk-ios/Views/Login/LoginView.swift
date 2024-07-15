@@ -134,6 +134,7 @@ struct LoginView: View {
         do {
             let res = try await Api.shared.emailSend(params: ["email": email])
         
+            if res.code == 200 {}
             print("获取邮箱验证码结果", res)
             
         } catch {
@@ -159,7 +160,7 @@ struct LoginView: View {
         if email != "" && isValidEmail(email) {
             print("获取验证码")
             Task {
-                await self.emailSend() // 获取邮箱验证码
+                await emailSend() // 获取邮箱验证码
             }
             
         } else {
@@ -168,8 +169,20 @@ struct LoginView: View {
     }
     
     /// 邮箱验证码登录
-    private func userLoginEmail() {
+    private func userLoginEmail() async {
         isLoginButtonDisabled = true
+      
+        do {
+            let res = try await Api.shared.userLoginEmail(params: ["email": email, "code": code])
+            
+            print("登录响应结果", res)
+            if res.code == 200 {
+                UserCache.shared.saveInfo(info: res.data!)
+                isToHomeView = true // 跳转到首页
+            }
+        } catch {
+            print("邮箱登录错误")
+        }
         
 //        API.userLoginEmail(params: ["email": email, "code": code]) { result in
 //

@@ -18,7 +18,7 @@ struct LoginFormView: View {
     @Binding var isLoginButtonDisabled: Bool
     
     var validateEmail: () -> Void
-    var userLoginEmail: () -> Void
+    var userLoginEmail: () async -> Void
     
     var body: some View {
         // 标题
@@ -85,7 +85,9 @@ struct LoginFormView: View {
         
         /// 登录按钮
         Button {
-            self.userLoginEmail()
+            Task {
+                await self.userLoginEmail()
+            }
             print("点击登录")
         } label: {
             Circle()
