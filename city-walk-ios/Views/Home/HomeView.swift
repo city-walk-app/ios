@@ -12,7 +12,7 @@ import SwiftUI
 /// 主视图，用于显示地图和操作选项
 struct HomeView: View {
     /// API对象，用于进行网络请求
-    let API = Api()
+//    let API = Api()
     
     /// 控制图片选择路由的状态
     @State private var isImageSelectRouter = false

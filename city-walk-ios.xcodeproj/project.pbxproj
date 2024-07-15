@@ -38,8 +38,6 @@
 		26B998792BBD9874000D1E88 /* URLImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998782BBD9874000D1E88 /* URLImage.swift */; };
 		26CE0B932C1143B4001984D9 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26CE0B922C1143B4001984D9 /* LoginView.swift */; };
 		26CE0B952C1143FC001984D9 /* LoginFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26CE0B942C1143FC001984D9 /* LoginFormView.swift */; };
-		26D1586E2C186B8000010DEF /* LoginNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26D1586D2C186B7F00010DEF /* LoginNameView.swift */; };
-		26D158702C186DA000010DEF /* LoginAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26D1586F2C186DA000010DEF /* LoginAvatarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,8 +74,6 @@
 		26B998782BBD9874000D1E88 /* URLImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLImage.swift; sourceTree = "<group>"; };
 		26CE0B922C1143B4001984D9 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		26CE0B942C1143FC001984D9 /* LoginFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginFormView.swift; sourceTree = "<group>"; };
-		26D1586D2C186B7F00010DEF /* LoginNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginNameView.swift; sourceTree = "<group>"; };
-		26D1586F2C186DA000010DEF /* LoginAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAvatarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -230,8 +226,6 @@
 			isa = PBXGroup;
 			children = (
 				26CE0B942C1143FC001984D9 /* LoginFormView.swift */,
-				26D1586D2C186B7F00010DEF /* LoginNameView.swift */,
-				26D1586F2C186DA000010DEF /* LoginAvatarView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -314,7 +308,6 @@
 				2622AB532BF8EE8C003C31E0 /* HomePhotoView.swift in Sources */,
 				264B8F132BEC57D100AA2E79 /* LaunchScreenData.swift in Sources */,
 				26A624032BE253FE0074352D /* LaunchView.swift in Sources */,
-				26D1586E2C186B8000010DEF /* LoginNameView.swift in Sources */,
 				262368502BBE3A6100264BD9 /* MapView.swift in Sources */,
 				26B998732BBD97FF000D1E88 /* MainView.swift in Sources */,
 				265ED6942C44AF3F009142A7 /* Request.swift in Sources */,
@@ -323,7 +316,6 @@
 				26AB724E2BC8081800F12616 /* ApiBasic.swift in Sources */,
 				26B998582BBD92EF000D1E88 /* ContentView.swift in Sources */,
 				26B998692BBD9681000D1E88 /* ApiOld.swift in Sources */,
-				26D158702C186DA000010DEF /* LoginAvatarView.swift in Sources */,
 				26A624092BE636E60074352D /* GlobalData.swift in Sources */,
 				2622AB4F2BF8EE55003C31E0 /* HomeFooterView.swift in Sources */,
 				26B9986F2BBD9788000D1E88 /* ApiResultType.swift in Sources */,

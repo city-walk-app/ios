@@ -27,35 +27,53 @@ class Request {
     ///   - type: 解析类型
     /// - Returns: 请求结果
     func request<T: Decodable>(url: String, params: [String: Any], method: HTTPMethods, type: T.Type) async throws -> T {
-        guard var urlComponents = URLComponents(string: baseUrl + url) else {
+        guard let urlComponents = URLComponents(string: baseUrl + url) else {
             throw URLError(.badURL)
         }
 
+        print("请求地址", urlComponents)
+
         var request = URLRequest(url: urlComponents.url!)
 
-        if method == .get {
-            urlComponents.queryItems = params.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
-            request.url = urlComponents.url
-            request.httpMethod = method.rawValue
-        } else if method == .post {
+        print("创建请求", request)
+
+        if method == .post {
             request.httpMethod = method.rawValue
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             guard let httpBody = try? JSONSerialization.data(withJSONObject: params) else {
                 throw URLError(.cannotParseResponse)
             }
+            // 6. 设置请求头字段
+            let token = UserCache.shared.getInfo()?.token
+            request.setValue(token, forHTTPHeaderField: "token")
             request.httpBody = httpBody
         }
 
         let (data, response) = try await session.data(for: request)
 
-        guard let httpResponse = response as? HTTPURLResponse, (200 ... 299).contains(httpResponse.statusCode) else {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("错误响应----")
             throw URLError(.badServerResponse)
         }
 
+        print("响应详情", httpResponse)
+//        print("HTTP 状态码:", httpResponse.statusCode)
+//        print("响应头:", httpResponse.allHeaderFields)
+
+        // 检查返回的数据是否为空
+        if data.isEmpty {
+            print("响应内容为空")
+            throw URLError(.zeroByteResource)
+        }
+
+        print("请求响应", data)
+
         do {
             let decodedData = try self.decoder.decode(type, from: data)
+            print("json 解析", decodedData)
             return decodedData
         } catch {
+            print("响应解析错误", error)
             throw error
         }
     }

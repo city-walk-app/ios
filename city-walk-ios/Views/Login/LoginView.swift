@@ -81,22 +81,7 @@ struct LoginView: View {
                                 userLoginEmail: userLoginEmail
                             )
                         }
-                        // 设置名字步骤
-                        else if loginState == .name {
-                            LoginNameView(
-                                nickName: $nickName,
-                                setUserInfo: setUserInfo
-                            )
-                        }
-                        // 设置头像步骤
-                        else if loginState == .avatar {
-                            LoginAvatarView(
-                                selectAvatarImage: $selectAvatarImage,
-                                isShowAvatarSelectSheet: $isShowAvatarSelectSheet,
-                                uploadImageToBackend: uploadImageToBackend
-                            )
-                        }
-                        
+                    
                         Spacer()
                     }
                     .padding(20)
@@ -142,10 +127,19 @@ struct LoginView: View {
     }
     
     /// 获取邮箱验证码
-    private func emailSend() {
+    private func emailSend() async {
         isCountingDown = true // 开启倒计时
         countdownSeconds = 10 // 恢复时间
         
+        do {
+            let res = try await Api.shared.emailSend(params: ["email": email])
+        
+            print("获取邮箱验证码结果", res)
+            
+        } catch {
+            print("获取验证码错误")
+        }
+            
 //        API.emailSend(params: ["email": email]) { result in
 //            switch result {
 //            case .success(let data):
@@ -164,7 +158,9 @@ struct LoginView: View {
         // 邮箱格式验证
         if email != "" && isValidEmail(email) {
             print("获取验证码")
-            emailSend() // 获取邮箱验证码
+            Task {
+                await self.emailSend() // 获取邮箱验证码
+            }
             
         } else {
             print("邮箱格式错误")
@@ -176,16 +172,16 @@ struct LoginView: View {
         isLoginButtonDisabled = true
         
 //        API.userLoginEmail(params: ["email": email, "code": code]) { result in
-//            
+//
 //            self.isLoginButtonDisabled = false
-//            
+//
 //            switch result {
 //            case .success(let data):
 //                if data.code == 200 && data.data != nil {
 //                    // 如果是新用户，继续完善信息
 //                    if data.data!.is_new_user {
 //                        self.userId = data.data!.id
-//                        
+//
 //                        withAnimation {
 //                            self.loginState = .name
 //                            self.focus = .name
@@ -212,90 +208,6 @@ struct LoginView: View {
         if content.count > maxLength {
             content = String(content.prefix(maxLength))
         }
-    }
-    
-    /// 头像上传
-    /// - Parameter image: 图片对象
-    private func uploadImageToBackend(image: UIImage) {
-        print("avatar", image)
-        
-        guard let url = URL(string: BASE_URL + "/user/info/up_avatar") else {
-            print("Invalid URL")
-            return
-        }
-        
-        print("url", url)
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        
-        let boundary = UUID().uuidString
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue(sharedInfo!.token, forHTTPHeaderField: "token") // 添加 token
-        
-        let imageData = image.jpegData(compressionQuality: 1.0)
-        let body = createBody(with: imageData, boundary: boundary, fieldName: "image", fileName: "image")
-        
-        request.httpBody = body
-        
-        let session = URLSession.shared
-        let task = session.dataTask(with: request) { _, response, error in
-            if let error = error {
-                print("Error uploading image: \(error)")
-                return
-            }
-            
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 {
-                print("成功", httpResponse)
-                self.isToHomeView.toggle()
-            } else {
-                print("失败 to upload image")
-            }
-        }
-        
-        task.resume()
-    }
-    
-    /// 创建请求体参数
-    /// - Parameters:
-    ///   - imageData:
-    ///   - boundary:
-    ///   - fieldName:
-    ///   - fileName:
-    /// - Returns:
-    private func createBody(with imageData: Data?, boundary: String, fieldName: String, fileName: String) -> Data {
-        var body = Data()
-        
-        if let imageData = imageData {
-            body.appendString("--\(boundary)\r\n")
-            body.appendString("Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(fileName)\"\r\n")
-            body.appendString("Content-Type: image/jpeg\r\n\r\n")
-            body.append(imageData)
-            body.appendString("\r\n")
-        }
-        
-        body.appendString("--\(boundary)--\r\n")
-        
-        return body
-    }
-    
-    /// 设置用户信息
-    private func setUserInfo() {
-//        print("nick", nickName)
-//        API.setUserInfo(params: ["nick_name": nickName]) { result in
-//            print(result)
-//            switch result {
-//            case .success(let data):
-//                if data.code == 200 {
-//                    print("设置成功")
-//                    withAnimation {
-//                        self.loginState = .avatar
-//                    }
-//                }
-//            case .failure:
-//                print("设置失败")
-//            }
-//        }
     }
 }
 
