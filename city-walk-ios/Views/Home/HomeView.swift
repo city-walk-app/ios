@@ -57,14 +57,49 @@ struct HomeView: View {
                     
                     Spacer()
                     
-                    FooterView(
-                        isCurrentLocation: $isCurrentLocation,
-                        text: $text,
-                        colorTags: colorTags,
-                        seletImage: $seletImage,
-                        isImageSelectRouter: $isImageSelectRouter
-                    )
-                    .padding(.bottom, 30)
+                    VStack {
+                        HStack {
+                            NavigationLink(destination: InviteView()) {
+                                Text("邀请朋友")
+                                    .frame(height: 60)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 50)
+                                    .background(.blue, in: RoundedRectangle(cornerRadius: 33))
+                            }
+//                            NavigationLink(destination: InviteView()) {
+                            Text("地点打卡")
+                                .frame(height: 60)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 50)
+                                .background(.blue, in: RoundedRectangle(cornerRadius: 33))
+//                            }
+                        }
+                        HStack {
+                            NavigationLink(destination: FriendsIView()) {
+                                Text("朋友列表")
+                                    .frame(height: 60)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 50)
+                                    .background(.blue, in: RoundedRectangle(cornerRadius: 33))
+                            }
+                            NavigationLink(destination: RankingView()) {
+                                Text("排行榜")
+                                    .frame(height: 60)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 50)
+                                    .background(.blue, in: RoundedRectangle(cornerRadius: 33))
+                            }
+                        }
+                    }
+                    
+//                    FooterView(
+//                        isCurrentLocation: $isCurrentLocation,
+//                        text: $text,
+//                        colorTags: colorTags,
+//                        seletImage: $seletImage,
+//                        isImageSelectRouter: $isImageSelectRouter
+//                    )
+//                    .padding(.bottom, 30)
                 }
             }
         }

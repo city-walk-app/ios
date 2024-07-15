@@ -8,7 +8,7 @@
 import MapKit
 import SwiftUI
 
-struct MapView: View {
+struct RouterDetailView: View {
     let API = Api()
 
     /// 查询的步行列表 id
@@ -93,5 +93,5 @@ struct Landmark: Identifiable {
 }
 
 #Preview {
-    MapView(listId: 29)
+    RouterDetailView(listId: 29)
 }

@@ -107,7 +107,7 @@ struct MainView: View {
                 // 用户的打卡记录
                 if let routerList = globalDataModel.routerData {
                     ForEach(routerList.indices, id: \.self) { index in
-                        NavigationLink(destination: MapView(listId: routerList[index].id)) {
+                        NavigationLink(destination: RouterDetailView(listId: routerList[index].id)) {
                             HStack {
                                 Image(systemName: "figure.run.circle.fill")
                                     .font(.system(size: 30))

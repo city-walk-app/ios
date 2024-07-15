@@ -13,11 +13,13 @@
 		2622AB512BF8EE75003C31E0 /* HomePunchInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2622AB502BF8EE75003C31E0 /* HomePunchInView.swift */; };
 		2622AB532BF8EE8C003C31E0 /* HomePhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2622AB522BF8EE8C003C31E0 /* HomePhotoView.swift */; };
 		2622AB552BF8EEA1003C31E0 /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2622AB542BF8EEA1003C31E0 /* HomeMapView.swift */; };
-		262368502BBE3A6100264BD9 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2623684F2BBE3A6100264BD9 /* MapView.swift */; };
+		262368502BBE3A6100264BD9 /* RouterDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2623684F2BBE3A6100264BD9 /* RouterDetailView.swift */; };
 		262368542BC3715400264BD9 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262368532BC3715400264BD9 /* LocationDataManager.swift */; };
 		264B8F132BEC57D100AA2E79 /* LaunchScreenData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264B8F122BEC57D100AA2E79 /* LaunchScreenData.swift */; };
 		265ED6942C44AF3F009142A7 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265ED6932C44AF3F009142A7 /* Request.swift */; };
 		265ED6962C44BC89009142A7 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265ED6952C44BC89009142A7 /* Api.swift */; };
+		265ED69B2C45018A009142A7 /* InviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265ED69A2C45018A009142A7 /* InviteView.swift */; };
+		265ED69E2C4501D1009142A7 /* FriendsIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265ED69D2C4501D1009142A7 /* FriendsIView.swift */; };
 		2670A68F2BD403290004E3A1 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2670A68E2BD403290004E3A1 /* SettingView.swift */; };
 		26A624012BDFCFF10074352D /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A624002BDFCFF10074352D /* ImagePickerView.swift */; };
 		26A624032BE253FE0074352D /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A624022BE253FE0074352D /* LaunchView.swift */; };
@@ -47,11 +49,13 @@
 		2622AB502BF8EE75003C31E0 /* HomePunchInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePunchInView.swift; sourceTree = "<group>"; };
 		2622AB522BF8EE8C003C31E0 /* HomePhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePhotoView.swift; sourceTree = "<group>"; };
 		2622AB542BF8EEA1003C31E0 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
-		2623684F2BBE3A6100264BD9 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		2623684F2BBE3A6100264BD9 /* RouterDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterDetailView.swift; sourceTree = "<group>"; };
 		262368532BC3715400264BD9 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		264B8F122BEC57D100AA2E79 /* LaunchScreenData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenData.swift; sourceTree = "<group>"; };
 		265ED6932C44AF3F009142A7 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		265ED6952C44BC89009142A7 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		265ED69A2C45018A009142A7 /* InviteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteView.swift; sourceTree = "<group>"; };
+		265ED69D2C4501D1009142A7 /* FriendsIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsIView.swift; sourceTree = "<group>"; };
 		2670A68E2BD403290004E3A1 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		26A624002BDFCFF10074352D /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		26A624022BE253FE0074352D /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
@@ -106,6 +110,62 @@
 				2622AB542BF8EEA1003C31E0 /* HomeMapView.swift */,
 			);
 			path = SubViews;
+			sourceTree = "<group>";
+		};
+		265ED6972C450143009142A7 /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				2670A68E2BD403290004E3A1 /* SettingView.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		265ED6982C45015A009142A7 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				26B998722BBD97FF000D1E88 /* MainView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		265ED6992C45017A009142A7 /* Invite */ = {
+			isa = PBXGroup;
+			children = (
+				265ED69A2C45018A009142A7 /* InviteView.swift */,
+			);
+			path = Invite;
+			sourceTree = "<group>";
+		};
+		265ED69C2C4501BC009142A7 /* Friends */ = {
+			isa = PBXGroup;
+			children = (
+				265ED69D2C4501D1009142A7 /* FriendsIView.swift */,
+			);
+			path = Friends;
+			sourceTree = "<group>";
+		};
+		265ED69F2C4501FE009142A7 /* Ranking */ = {
+			isa = PBXGroup;
+			children = (
+				26B998742BBD982A000D1E88 /* RankingView.swift */,
+			);
+			path = Ranking;
+			sourceTree = "<group>";
+		};
+		265ED6A02C45021A009142A7 /* RouteDetail */ = {
+			isa = PBXGroup;
+			children = (
+				2623684F2BBE3A6100264BD9 /* RouterDetailView.swift */,
+			);
+			path = RouteDetail;
+			sourceTree = "<group>";
+		};
+		265ED6A12C450251009142A7 /* Launch */ = {
+			isa = PBXGroup;
+			children = (
+				26A624022BE253FE0074352D /* LaunchView.swift */,
+			);
+			path = Launch;
 			sourceTree = "<group>";
 		};
 		2670A68B2BD3D9B70004E3A1 /* Components */ = {
@@ -180,13 +240,15 @@
 		26B998632BBD9619000D1E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				265ED6972C450143009142A7 /* Setting */,
+				265ED6A12C450251009142A7 /* Launch */,
+				265ED6A02C45021A009142A7 /* RouteDetail */,
+				265ED69F2C4501FE009142A7 /* Ranking */,
+				265ED69C2C4501BC009142A7 /* Friends */,
+				265ED6992C45017A009142A7 /* Invite */,
+				265ED6982C45015A009142A7 /* Main */,
 				26CE0B902C11437C001984D9 /* Login */,
 				2622AB482BF8ECF4003C31E0 /* Home */,
-				26B998722BBD97FF000D1E88 /* MainView.swift */,
-				26B998742BBD982A000D1E88 /* RankingView.swift */,
-				2623684F2BBE3A6100264BD9 /* MapView.swift */,
-				2670A68E2BD403290004E3A1 /* SettingView.swift */,
-				26A624022BE253FE0074352D /* LaunchView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -308,10 +370,11 @@
 				2622AB532BF8EE8C003C31E0 /* HomePhotoView.swift in Sources */,
 				264B8F132BEC57D100AA2E79 /* LaunchScreenData.swift in Sources */,
 				26A624032BE253FE0074352D /* LaunchView.swift in Sources */,
-				262368502BBE3A6100264BD9 /* MapView.swift in Sources */,
+				262368502BBE3A6100264BD9 /* RouterDetailView.swift in Sources */,
 				26B998732BBD97FF000D1E88 /* MainView.swift in Sources */,
 				265ED6942C44AF3F009142A7 /* Request.swift in Sources */,
 				2670A68F2BD403290004E3A1 /* SettingView.swift in Sources */,
+				265ED69B2C45018A009142A7 /* InviteView.swift in Sources */,
 				2622AB4D2BF8EE1E003C31E0 /* HomeHeaderView.swift in Sources */,
 				26AB724E2BC8081800F12616 /* ApiBasic.swift in Sources */,
 				26B998582BBD92EF000D1E88 /* ContentView.swift in Sources */,
@@ -330,6 +393,7 @@
 				2622AB4A2BF8ED14003C31E0 /* HomeView.swift in Sources */,
 				26B9986B2BBD9723000D1E88 /* UserCache.swift in Sources */,
 				26B998752BBD982A000D1E88 /* RankingView.swift in Sources */,
+				265ED69E2C4501D1009142A7 /* FriendsIView.swift in Sources */,
 				26AB72512BC8086000F12616 /* Path.swift in Sources */,
 				26CE0B952C1143FC001984D9 /* LoginFormView.swift in Sources */,
 				26A624012BDFCFF10074352D /* ImagePickerView.swift in Sources */,
@@ -471,7 +535,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "city-walk-ios/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "城市漫步";
+				INFOPLIST_KEY_CFBundleDisplayName = "City Walk";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "需要使用您的位置信息";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "需要在后台使用您的位置信息";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我们需要获取您的位置以提供相关功能。";
@@ -508,7 +572,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "city-walk-ios/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "城市漫步";
+				INFOPLIST_KEY_CFBundleDisplayName = "City Walk";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "需要使用您的位置信息";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "需要在后台使用您的位置信息";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我们需要获取您的位置以提供相关功能。";

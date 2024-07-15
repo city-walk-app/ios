@@ -15,25 +15,25 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            HomeView()
-                .environmentObject(UserInfoData())
+//            HomeView()
+//                .environmentObject(UserInfoData())
 
             // 离开启动页面进入模板页
-//            if launchScreenDataModel.states == .leave {
-//                // 如果存在信息，进入 layour
-//                if (userInfoDataModel.cacheInfo != nil) && (userInfoDataModel.cacheInfo?.id != nil) {
-//                    HomeView()
-//                        .environmentObject(UserInfoData())
-//                }
-//                // 否则需要登录
-//                else {
-//                    LoginView()
-//                }
-//            } else {
-//                LaunchView()
-//                    .environmentObject(UserInfoData())
-//                    .environmentObject(GlobalData())
-//            }
+            if launchScreenDataModel.states == .leave {
+                // 如果存在信息，进入 layour
+                if (userInfoDataModel.cacheInfo != nil) && (userInfoDataModel.cacheInfo?.user_id != nil) {
+                    HomeView()
+                        .environmentObject(UserInfoData())
+                }
+                // 否则需要登录
+                else {
+                    LoginView()
+                }
+            } else {
+                LaunchView()
+                    .environmentObject(UserInfoData())
+                    .environmentObject(GlobalData())
+            }
         }
     }
 }
