@@ -8,11 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2622AB4A2BF8ED14003C31E0 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2622AB492BF8ED14003C31E0 /* HomeView.swift */; };
-		2622AB4D2BF8EE1E003C31E0 /* HomeHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2622AB4C2BF8EE1E003C31E0 /* HomeHeaderView.swift */; };
-		2622AB4F2BF8EE55003C31E0 /* HomeFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2622AB4E2BF8EE55003C31E0 /* HomeFooterView.swift */; };
-		2622AB512BF8EE75003C31E0 /* HomePunchInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2622AB502BF8EE75003C31E0 /* HomePunchInView.swift */; };
-		2622AB532BF8EE8C003C31E0 /* HomePhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2622AB522BF8EE8C003C31E0 /* HomePhotoView.swift */; };
-		2622AB552BF8EEA1003C31E0 /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2622AB542BF8EEA1003C31E0 /* HomeMapView.swift */; };
 		262368502BBE3A6100264BD9 /* RouterDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2623684F2BBE3A6100264BD9 /* RouterDetailView.swift */; };
 		262368542BC3715400264BD9 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262368532BC3715400264BD9 /* LocationDataManager.swift */; };
 		264B8F132BEC57D100AA2E79 /* LaunchScreenData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264B8F122BEC57D100AA2E79 /* LaunchScreenData.swift */; };
@@ -44,11 +39,6 @@
 
 /* Begin PBXFileReference section */
 		2622AB492BF8ED14003C31E0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		2622AB4C2BF8EE1E003C31E0 /* HomeHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderView.swift; sourceTree = "<group>"; };
-		2622AB4E2BF8EE55003C31E0 /* HomeFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFooterView.swift; sourceTree = "<group>"; };
-		2622AB502BF8EE75003C31E0 /* HomePunchInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePunchInView.swift; sourceTree = "<group>"; };
-		2622AB522BF8EE8C003C31E0 /* HomePhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePhotoView.swift; sourceTree = "<group>"; };
-		2622AB542BF8EEA1003C31E0 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
 		2623684F2BBE3A6100264BD9 /* RouterDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterDetailView.swift; sourceTree = "<group>"; };
 		262368532BC3715400264BD9 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		264B8F122BEC57D100AA2E79 /* LaunchScreenData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenData.swift; sourceTree = "<group>"; };
@@ -91,82 +81,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2622AB482BF8ECF4003C31E0 /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				2622AB4B2BF8ED66003C31E0 /* SubViews */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
-		2622AB4B2BF8ED66003C31E0 /* SubViews */ = {
-			isa = PBXGroup;
-			children = (
-				2622AB4C2BF8EE1E003C31E0 /* HomeHeaderView.swift */,
-				2622AB4E2BF8EE55003C31E0 /* HomeFooterView.swift */,
-				2622AB502BF8EE75003C31E0 /* HomePunchInView.swift */,
-				2622AB522BF8EE8C003C31E0 /* HomePhotoView.swift */,
-				2622AB542BF8EEA1003C31E0 /* HomeMapView.swift */,
-			);
-			path = SubViews;
-			sourceTree = "<group>";
-		};
-		265ED6972C450143009142A7 /* Setting */ = {
-			isa = PBXGroup;
-			children = (
-				2670A68E2BD403290004E3A1 /* SettingView.swift */,
-			);
-			path = Setting;
-			sourceTree = "<group>";
-		};
-		265ED6982C45015A009142A7 /* Main */ = {
-			isa = PBXGroup;
-			children = (
-				26B998722BBD97FF000D1E88 /* MainView.swift */,
-			);
-			path = Main;
-			sourceTree = "<group>";
-		};
-		265ED6992C45017A009142A7 /* Invite */ = {
-			isa = PBXGroup;
-			children = (
-				265ED69A2C45018A009142A7 /* InviteView.swift */,
-			);
-			path = Invite;
-			sourceTree = "<group>";
-		};
-		265ED69C2C4501BC009142A7 /* Friends */ = {
-			isa = PBXGroup;
-			children = (
-				265ED69D2C4501D1009142A7 /* FriendsIView.swift */,
-			);
-			path = Friends;
-			sourceTree = "<group>";
-		};
-		265ED69F2C4501FE009142A7 /* Ranking */ = {
-			isa = PBXGroup;
-			children = (
-				26B998742BBD982A000D1E88 /* RankingView.swift */,
-			);
-			path = Ranking;
-			sourceTree = "<group>";
-		};
-		265ED6A02C45021A009142A7 /* RouteDetail */ = {
-			isa = PBXGroup;
-			children = (
-				2623684F2BBE3A6100264BD9 /* RouterDetailView.swift */,
-			);
-			path = RouteDetail;
-			sourceTree = "<group>";
-		};
-		265ED6A12C450251009142A7 /* Launch */ = {
-			isa = PBXGroup;
-			children = (
-				26A624022BE253FE0074352D /* LaunchView.swift */,
-			);
-			path = Launch;
-			sourceTree = "<group>";
-		};
 		2670A68B2BD3D9B70004E3A1 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -239,16 +153,16 @@
 		26B998632BBD9619000D1E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				26A624022BE253FE0074352D /* LaunchView.swift */,
+				2670A68E2BD403290004E3A1 /* SettingView.swift */,
+				26B998722BBD97FF000D1E88 /* MainView.swift */,
+				26CE0B942C1143FC001984D9 /* LoginFormView.swift */,
+				265ED69D2C4501D1009142A7 /* FriendsIView.swift */,
+				2623684F2BBE3A6100264BD9 /* RouterDetailView.swift */,
+				26B998742BBD982A000D1E88 /* RankingView.swift */,
+				265ED69A2C45018A009142A7 /* InviteView.swift */,
 				2622AB492BF8ED14003C31E0 /* HomeView.swift */,
-				265ED6972C450143009142A7 /* Setting */,
-				265ED6A12C450251009142A7 /* Launch */,
-				265ED6A02C45021A009142A7 /* RouteDetail */,
-				265ED69F2C4501FE009142A7 /* Ranking */,
-				265ED69C2C4501BC009142A7 /* Friends */,
-				265ED6992C45017A009142A7 /* Invite */,
-				265ED6982C45015A009142A7 /* Main */,
-				26CE0B902C11437C001984D9 /* Login */,
-				2622AB482BF8ECF4003C31E0 /* Home */,
+				26CE0B922C1143B4001984D9 /* LoginView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -273,23 +187,6 @@
 				262368532BC3715400264BD9 /* LocationDataManager.swift */,
 			);
 			path = Utils;
-			sourceTree = "<group>";
-		};
-		26CE0B902C11437C001984D9 /* Login */ = {
-			isa = PBXGroup;
-			children = (
-				26CE0B912C114386001984D9 /* SubViews */,
-				26CE0B922C1143B4001984D9 /* LoginView.swift */,
-			);
-			path = Login;
-			sourceTree = "<group>";
-		};
-		26CE0B912C114386001984D9 /* SubViews */ = {
-			isa = PBXGroup;
-			children = (
-				26CE0B942C1143FC001984D9 /* LoginFormView.swift */,
-			);
-			path = SubViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -367,7 +264,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2622AB532BF8EE8C003C31E0 /* HomePhotoView.swift in Sources */,
 				264B8F132BEC57D100AA2E79 /* LaunchScreenData.swift in Sources */,
 				26A624032BE253FE0074352D /* LaunchView.swift in Sources */,
 				262368502BBE3A6100264BD9 /* RouterDetailView.swift in Sources */,
@@ -375,12 +271,10 @@
 				265ED6942C44AF3F009142A7 /* Request.swift in Sources */,
 				2670A68F2BD403290004E3A1 /* SettingView.swift in Sources */,
 				265ED69B2C45018A009142A7 /* InviteView.swift in Sources */,
-				2622AB4D2BF8EE1E003C31E0 /* HomeHeaderView.swift in Sources */,
 				26AB724E2BC8081800F12616 /* ApiBasic.swift in Sources */,
 				26B998582BBD92EF000D1E88 /* ContentView.swift in Sources */,
 				26B998692BBD9681000D1E88 /* ApiOld.swift in Sources */,
 				26A624092BE636E60074352D /* GlobalData.swift in Sources */,
-				2622AB4F2BF8EE55003C31E0 /* HomeFooterView.swift in Sources */,
 				26B9986F2BBD9788000D1E88 /* ApiResultType.swift in Sources */,
 				26CE0B932C1143B4001984D9 /* LoginView.swift in Sources */,
 				262368542BC3715400264BD9 /* LocationDataManager.swift in Sources */,
@@ -388,8 +282,6 @@
 				26B998562BBD92EF000D1E88 /* city_walk_iosApp.swift in Sources */,
 				26A624072BE52A5C0074352D /* UserInfoData.swift in Sources */,
 				26B998792BBD9874000D1E88 /* URLImage.swift in Sources */,
-				2622AB552BF8EEA1003C31E0 /* HomeMapView.swift in Sources */,
-				2622AB512BF8EE75003C31E0 /* HomePunchInView.swift in Sources */,
 				2622AB4A2BF8ED14003C31E0 /* HomeView.swift in Sources */,
 				26B9986B2BBD9723000D1E88 /* UserCache.swift in Sources */,
 				26B998752BBD982A000D1E88 /* RankingView.swift in Sources */,

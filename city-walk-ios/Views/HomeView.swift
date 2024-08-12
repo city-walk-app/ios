@@ -20,12 +20,8 @@ struct HomeView: View {
     @State private var seletImage: UIImage?
     /// 缓存信息
     let cacheInfo = UserCache.shared.getInfo()
-    /// 底部选中的索引
-    @State var selectedIndex = 0
-    /// 用户输入的文字
-    @State private var text = ""
-    /// 控制打卡弹窗的显示状态
-    @State private var isCurrentLocation = false
+    /// 打卡弹窗是否显示
+    @State private var visibleSheet = false
     /// 定位服务管理对象
     @State private var locationManager = CLLocationManager()
     /// 位置权限状态
@@ -56,17 +52,17 @@ struct HomeView: View {
             ZStack {
                 // 地图
                 Map(initialPosition: .region(region))
-                // 地图视图
-//                HomeMapView(region: $region, onRegionChange: getPopularLocations, landmarks: $landmarks)
-//                    .edgesIgnoringSafeArea(.all)
-                
+             
                 // 头部和底部操作视图
                 VStack {
                     // 头部操作栏
                     HStack(alignment: .top) {
-                        Circle()
-                            .frame(width: 48, height: 48)
-                            .foregroundStyle(.red)
+                        NavigationLink(destination: MainView(user_id: "")) {
+                            Circle()
+                                .frame(width: 48, height: 48)
+                                .foregroundStyle(.blue)
+                        }
+                        .buttonStyle(PlainButtonStyle()) // 移除默认的按钮样式
                             
                         Spacer()
                         
@@ -120,7 +116,7 @@ struct HomeView: View {
                     HStack(spacing: 12) {
                         VStack(spacing: 16) {
                             // 我的朋友
-                            NavigationLink(destination: InviteView()) {
+                            NavigationLink(destination: FriendsIView()) {
                                 ZStack(alignment: .topLeading) {
                                     // 背景图片
                                     AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-friends.png")) { image in
@@ -184,7 +180,9 @@ struct HomeView: View {
                         
                         VStack(spacing: 12) {
                             // 地点打卡
-                            NavigationLink(destination: InviteView()) {
+                            Button {
+                                self.visibleSheet.toggle()
+                            } label: {
                                 ZStack(alignment: .topLeading) {
                                     // 背景图片
                                     AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-record.png")) { image in
@@ -215,7 +213,7 @@ struct HomeView: View {
                             }
                             
                             // 排行榜
-                            NavigationLink(destination: InviteView()) {
+                            NavigationLink(destination: RankingView()) {
                                 ZStack(alignment: .topLeading) {
                                     // 背景图片
                                     AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-ranking.png")) { image in
@@ -246,17 +244,12 @@ struct HomeView: View {
                             }
                         }
                     }
-                    
-//                    FooterView(
-//                        isCurrentLocation: $isCurrentLocation,
-//                        text: $text,
-//                        colorTags: colorTags,
-//                        seletImage: $seletImage,
-//                        isImageSelectRouter: $isImageSelectRouter
-//                    )
-//                    .padding(.bottom, 30)
                 }
             }
+        }
+        .background(.black)
+        .sheet(isPresented: $visibleSheet) {
+            Text("打卡")
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
