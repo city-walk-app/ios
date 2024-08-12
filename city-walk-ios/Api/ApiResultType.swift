@@ -49,7 +49,7 @@ struct UserLoginEmail: Decodable {
             var signature: String?
             var birthday: String?
             var gender: String?
-            var preference_type: [String]?
+            var preference_type: String?
         }
 
         var token: String

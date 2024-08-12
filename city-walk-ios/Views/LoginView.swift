@@ -242,9 +242,14 @@ struct LoginView: View {
             let res = try await Api.shared.userLoginEmail(params: ["email": email, "code": code])
             
             print("登录响应结果", res)
+            print("token", res.data.token)
             if res.code == 200 {
                 UserCache.shared.saveInfo(info: res.data.user_info)
                 UserCache.shared.saveToken(token: res.data.token)
+                
+                print("设置的个人信息", UserCache.shared.getInfo())
+                print("设置的token", UserCache.shared.getToken())
+                
                 isToHomeView = true // 跳转到首页
             }
         } catch {

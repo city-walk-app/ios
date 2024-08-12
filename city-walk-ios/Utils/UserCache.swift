@@ -48,9 +48,8 @@ class UserCache {
     }
 
     func getToken() -> String {
-        if let data = userDefaults.data(forKey: USER_TOKEN) {
-//            return data
-            return String(data: data, encoding: .utf8) ?? ""
+        if let token = userDefaults.string(forKey: USER_TOKEN) {
+            return token
         }
 
         return ""

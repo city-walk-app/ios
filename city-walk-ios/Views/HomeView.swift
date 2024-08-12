@@ -254,6 +254,9 @@ struct HomeView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
         .onAppear {
+            print("设置的个人信息", UserCache.shared.getInfo())
+            print("设置的token", UserCache.shared.getToken())
+            
             // 获取周边热门地点
 //            self.getPopularLocations()
 //            // 获取用户信息
