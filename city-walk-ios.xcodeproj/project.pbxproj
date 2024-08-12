@@ -95,7 +95,6 @@
 			isa = PBXGroup;
 			children = (
 				2622AB4B2BF8ED66003C31E0 /* SubViews */,
-				2622AB492BF8ED14003C31E0 /* HomeView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -240,6 +239,7 @@
 		26B998632BBD9619000D1E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2622AB492BF8ED14003C31E0 /* HomeView.swift */,
 				265ED6972C450143009142A7 /* Setting */,
 				265ED6A12C450251009142A7 /* Launch */,
 				265ED6A02C45021A009142A7 /* RouteDetail */,
