@@ -12,10 +12,12 @@ class UserCache {
     static let shared = UserCache() // 创建单例模式
 
     private let USER_INFO = "USER_INFO"
+    private let USER_TOKEN = "USER_TOKEN"
+
     private let userDefaults = UserDefaults.standard
 
     /// 存储信息
-    func saveInfo(info: UserLoginEmail.UserLoginEmailData) {
+    func saveInfo(info: UserLoginEmail.UserLoginEmailData.UserLoginEmailUserInfo) {
         do {
             let codeData = try JSONEncoder().encode(info)
             userDefaults.set(codeData, forKey: USER_INFO)
@@ -25,9 +27,9 @@ class UserCache {
     }
 
     /// 获取信息
-    func getInfo() -> UserLoginEmail.UserLoginEmailData? {
+    func getInfo() -> UserLoginEmail.UserLoginEmailData.UserLoginEmailUserInfo? {
         if let data = userDefaults.data(forKey: USER_INFO),
-           let userData = try? JSONDecoder().decode(UserLoginEmail.UserLoginEmailData.self, from: data)
+           let userData = try? JSONDecoder().decode(UserLoginEmail.UserLoginEmailData.UserLoginEmailUserInfo.self, from: data)
         {
             return userData
         }
@@ -38,5 +40,19 @@ class UserCache {
     /// 删除信息
     func deleteInfo() {
         userDefaults.removeObject(forKey: USER_INFO)
+    }
+
+    /// 设置 token
+    func saveToken(token: String) {
+        userDefaults.set(token, forKey: USER_TOKEN)
+    }
+
+    func getToken() -> String {
+        if let data = userDefaults.data(forKey: USER_TOKEN) {
+//            return data
+            return String(data: data, encoding: .utf8) ?? ""
+        }
+
+        return ""
     }
 }

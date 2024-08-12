@@ -68,7 +68,7 @@ struct HomeView: View {
                         
                         VStack {
                             // 设置按钮
-                            NavigationLink(destination: SettingView()) {
+                            NavigationLink(destination: LoginView()) {
                                 RoundedRectangle(cornerRadius: 8)
                                     .fill(.ultraThinMaterial) // 将毛玻璃效果作为填充色
                                     .frame(width: 42, height: 42)

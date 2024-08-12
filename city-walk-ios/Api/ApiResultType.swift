@@ -40,16 +40,26 @@ struct EmailSend: Decodable {
 // 邮箱验证码登录
 struct UserLoginEmail: Decodable {
     struct UserLoginEmailData: Codable {
+        struct UserLoginEmailUserInfo: Codable {
+            var user_id: String
+            var nick_name: String
+            var email: String
+            var mobile: String?
+            var avatar: String?
+            var signature: String?
+            var birthday: String?
+            var gender: String?
+            var preference_type: [String]?
+        }
+
         var token: String
         var is_new_user: Bool
-        var user_id: String
-        var email: String
-        var avatar: String?
+        var user_info: UserLoginEmailUserInfo
     }
 
     var message: String
     var code: Int
-    var data: UserLoginEmailData?
+    var data: UserLoginEmailData
 }
 
 // 获取用户的动态发布日历热力图

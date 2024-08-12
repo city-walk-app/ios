@@ -44,11 +44,11 @@ class Request {
                 throw URLError(.cannotParseResponse)
             }
             // 6. 设置请求头字段
-            var token = UserCache.shared.getInfo()?.token
+            var token = UserCache.shared.getToken()
 
-            if let token = token {
-                request.setValue(token, forHTTPHeaderField: "token")
-            }
+//            if let token = token {
+            request.setValue(token, forHTTPHeaderField: "token")
+//            }
 
             request.httpBody = httpBody
         }

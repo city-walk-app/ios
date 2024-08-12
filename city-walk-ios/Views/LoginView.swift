@@ -218,18 +218,6 @@ struct LoginView: View {
         } catch {
             print("获取验证码错误")
         }
-            
-//        API.emailSend(params: ["email": email]) { result in
-//            switch result {
-//            case .success(let data):
-//                if data.code == 200 {
-//                    // 改变文本框聚焦状态
-//                    self.focus = .code
-//                }
-//            case .failure:
-//                print("获取邮箱验证码失败")
-//            }
-//        }
     }
     
     /// 验证邮箱
@@ -255,7 +243,8 @@ struct LoginView: View {
             
             print("登录响应结果", res)
             if res.code == 200 {
-                UserCache.shared.saveInfo(info: res.data!)
+                UserCache.shared.saveInfo(info: res.data.user_info)
+                UserCache.shared.saveToken(token: res.data.token)
                 isToHomeView = true // 跳转到首页
             }
         } catch {

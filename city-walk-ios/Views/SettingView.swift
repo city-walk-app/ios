@@ -30,7 +30,7 @@ struct SettingView: View {
     /// 是否显示编辑信息的弹窗
     @State private var isShowSetInfo = false
     /// token
-    private let token = UserCache.shared.getInfo()?.token
+    private let token = UserCache.shared.getToken()
     /// 是否跳转到登录页面
     @State private var isGoLoginView = false
     /// 是否显示退出登录的按钮确认框

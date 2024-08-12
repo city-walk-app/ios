@@ -22,7 +22,7 @@ struct ApiBasicOld {
     /// json 解析器
     private let decoder = JSONDecoder()
     /// token
-    private let token = UserCache.shared.getInfo()?.token
+    private let token = UserCache.shared.getToken()
     
     /// 发送 GET 请求
     /// - Parameters:
