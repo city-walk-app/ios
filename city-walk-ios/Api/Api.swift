@@ -13,7 +13,6 @@ class Api {
     
     /// 获取用户信息
     func getUserInfo(params: [String: String]) async throws -> GetUserInfoType {
-        print("获取用户信息", params)
         return try await Request.shared.request(
             url: "/user/get/user_info",
             params: params,
@@ -32,23 +31,43 @@ class Api {
         )
     }
     
-    func setUserInfo(params: [String: Any]) async throws -> UserLoginEmail {
+    /// 获取用户指定月份打卡热力图
+    func getLocationUserHeatmap(params: [String: Any]) async throws -> GetLocationUserHeatmapType {
         return try await Request.shared.request(
-            url: "/user/set/user_info",
+            url: "/location/get/user/heatmap",
             params: params,
             method: .post,
-            type: UserLoginEmail.self
+            type: GetLocationUserHeatmapType.self
         )
     }
     
     /// 获取邮箱验证码
     func emailSend(params: [String: Any]) async throws -> EmailSend {
-        print("请求参数", params)
         return try await Request.shared.request(
             url: "/email/send",
             params: params,
             method: .post,
             type: EmailSend.self
+        )
+    }
+    
+    /// 获取用户解锁的省份版图列表
+    func getUserProvinceJigsaw(params: [String: Any]) async throws -> GetUserProvinceJigsawType {
+        return try await Request.shared.request(
+            url: "/location/get/user/province/jigsaw",
+            params: params,
+            method: .post,
+            type: GetUserProvinceJigsawType.self
+        )
+    }
+    
+    /// 获取用户步行记录列表
+    func getUserRouteList(params: [String: Any]) async throws -> GetUserRouteListType {
+        return try await Request.shared.request(
+            url: "/location/get/user/route/list",
+            params: params,
+            method: .post,
+            type: GetUserRouteListType.self
         )
     }
     

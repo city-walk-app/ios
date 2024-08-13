@@ -130,32 +130,56 @@ struct MainView: View {
             .padding(.top, 20)
         }
         .onAppear {
-//            self.loadGetUserProvince() // 获取指定用户去过的省份
-//            self.getRouteList() // 获取指定用户的打卡记录
             Task {
                 await self.loadUserInfo() // 获取用户信息
+//                await self.getLocationUserHeatmap() // 获取用户指定月份打卡热力图
+                await self.getUserProvinceJigsaw() // 获取用户解锁的省份版图列表
             }
         }
     }
 
+    /// 获取用户解锁的省份版图列表
+    private func getUserProvinceJigsaw() async {
+        do {
+            let res = try await Api.shared.getUserProvinceJigsaw(params: ["user_id": self.user_id])
+
+            print("获取用户解锁的省份版图列表", res)
+
+            if res.code == 200 && res.data != nil {}
+        } catch {
+            print("获取用户解锁的省份版图列表异常")
+        }
+    }
+
     /// 获取用户信息
-    ///     /// 获取用户信息
     private func loadUserInfo() async {
         do {
-//            let params = ["user_id": user_id]  根据您的实际参数
             let res = try await Api.shared.getUserInfo(params: ["user_id": self.user_id])
 
             print("我的页面获取的用户信息", res)
 
             if res.code == 200 && res.data != nil {
-//                    otherUserInfo = res.data!
                 self.userInfo = res.data
-//                userInfoDataModel.set(res.data!)
             }
         } catch {
             print("获取用户信息异常")
         }
     }
+
+    /// 获取用户指定月份打卡热力图
+    private func getLocationUserHeatmap() async {
+        do {
+            let res = try await API.getLocationUserHeatmap(params: ["user_id": self.user_id])
+
+            print("我的页面获取用户指定月份打卡热力图", res)
+
+            if res.code == 200 && res.data != nil {}
+
+        } catch {
+            print("取用户指定月份打卡热力图异常")
+        }
+    }
+
 //    private func loadUserInfo() async {
 //        do {
 //            let params: [String: Any] = ["user_id": "U131995175454824711531011225172573302849"] // 根据您的实际参数

@@ -37,11 +37,11 @@ class Request {
             throw URLError(.badURL)
         }
 
-        print("请求地址", urlComponents)
+//        print("请求地址", urlComponents)
 
         var request = URLRequest(url: urlComponents.url!)
 
-        print("创建请求", request)
+//        print("创建请求", request)
 
         if method == .post {
             request.httpMethod = method.rawValue
@@ -50,7 +50,7 @@ class Request {
                 throw URLError(.cannotParseResponse)
             }
             // 6. 设置请求头字段
-            var token = UserCache.shared.getToken()
+            let token = UserCache.shared.getToken()
 
 //            if let token = token {
             request.setValue(token, forHTTPHeaderField: "token")
@@ -66,7 +66,7 @@ class Request {
             throw URLError(.badServerResponse)
         }
 
-        print("响应详情", httpResponse)
+//        print("响应详情", httpResponse)
 //        print("HTTP 状态码:", httpResponse.statusCode)
 //        print("响应头:", httpResponse.allHeaderFields)
 
@@ -76,11 +76,11 @@ class Request {
             throw URLError(.zeroByteResource)
         }
 
-        print("请求响应", data)
+//        print("请求响应", data)
 
         do {
             let decodedData = try self.decoder.decode(type, from: data)
-            print("json 解析", decodedData)
+//            print("json 解析", decodedData)
             return decodedData
         } catch {
             print("响应解析错误", error)

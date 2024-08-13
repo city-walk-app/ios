@@ -7,6 +7,7 @@
 
 import Foundation
 
+// 用户信息
 struct UserInfoType: Codable {
     var user_id: String
     var nick_name: String
@@ -16,7 +17,6 @@ struct UserInfoType: Codable {
     var signature: String?
     var birthday: String?
     var gender: String?
-//    var preference_type: String?
     var preference_type: PreferenceType?
 
     enum PreferenceType: Codable {
@@ -49,25 +49,56 @@ struct UserInfoType: Codable {
     }
 }
 
+// 获取用户指定月份打卡热力图
+struct GetLocationUserHeatmapType: Decodable {
+    struct GetLocationUserHeatmapData: Codable {
+        var background_color: String?
+        var experience_value: Int?
+        var province_code: String?
+        var province_name: String?
+        var vis_id: String?
+    }
+
+    var message: String
+    var code: Int
+    var data: [GetLocationUserHeatmapData]?
+}
+
+/// 获取用户解锁的省份版图列表
+struct GetUserProvinceJigsawType: Decodable {
+    struct GetUserProvinceJigsawData: Codable {
+        var background_color: String?
+        var experience_value: Int?
+        var province_code: String?
+        var province_name: String?
+        var vis_id: String?
+    }
+
+    var message: String
+    var code: Int
+    var data: [GetUserProvinceJigsawData]?
+}
+
+/// 获取用户步行记录列表
+struct GetUserRouteListType: Decodable {
+    struct GetUserRouteListData: Codable {
+        var count: Int?
+        var create_at: String?
+        var id: Int?
+        var list_id: String
+        var mood_color: String
+//        var   route:
+        var travel_type: String?
+        var user_id: String
+    }
+
+    var message: String
+    var code: Int
+    var data: [GetUserRouteListData]?
+}
+
 // 获取用户信息
 struct GetUserInfoType: Decodable {
-//    struct UserInfoData: Codable {
-//        var id: Int
-//        var user_id: String
-//        var nick_name: String?
-//        var email: String
-//        var mobile: String?
-//        var avatar: String?
-//        var signature: String?
-//        var province: String?
-//        var city: String?
-//        var created_at: String?
-//        var birthday: String?
-//        var gender: String?
-//        var ip_address: String?
-//        var ip_info: String?
-//    }
-
     var message: String
     var code: Int
     var data: UserInfoType?
