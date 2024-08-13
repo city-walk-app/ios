@@ -17,10 +17,10 @@ struct RankingView: View {
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
-                VStack {
+                VStack(spacing: 20) {
                     if !self.rankingList.isEmpty {
                         ForEach(self.rankingList, id: \.user_id) { item in
-                            HStack {
+                            HStack(spacing: 14) {
                                 // 头像
                                 NavigationLink(destination: MainView(user_id: item.user_id)) {
                                     AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
@@ -38,17 +38,44 @@ struct RankingView: View {
                                     }
                                 }
 
-                                Text("\(item.nick_name ?? "")")
+                                HStack(alignment: .top) {
+                                    // 文案
+                                    VStack(alignment: .leading, spacing: 7) {
+                                        Text("\(item.nick_name ?? "")")
+                                            .foregroundStyle(Color(hex: "#333333"))
+                                            .font(.system(size: 16))
+
+                                        HStack {
+                                            Text("今日共打卡")
+                                            Text("\(item.count)")
+                                                .foregroundStyle(Color(hex: "#F3943F"))
+                                            Text("个地点")
+                                        }
+                                        .font(.system(size: 14))
+                                    }
+
+                                    Spacer()
+
+                                    Text("\(item.experiences)")
+                                        .font(.system(size: 30))
+                                        .foregroundStyle(Color(hex: "#F8D035"))
+                                }
                             }
+                            .padding(.vertical, 17)
+                            .padding(.trailing, 15)
+                            .padding(.leading, 16)
+                            .background(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     } else {
                         Text("暂无排行榜")
                     }
                 }
-                .padding(20)
+                .padding(16)
                 .padding(.bottom, 200)
             }
             .navigationTitle("经验排名")
+            .background(.gray.opacity(0.1))
             .onAppear {
                 Task {
                     await self.friendGetExperienceRanking() // 获取朋友经验排行榜

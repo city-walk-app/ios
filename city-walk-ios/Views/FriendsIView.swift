@@ -16,27 +16,42 @@ struct FriendsIView: View {
             ScrollView {
                 VStack {
                     if !self.friends.isEmpty {
-                        ForEach(self.friends, id: \.user_id) { item in
-                            NavigationLink(destination: MainView(user_id: item.user_id)) {
-                                VStack {
-                                    // 头像
-                                    AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 106, height: 106) // 设置图片的大小
-                                            .clipShape(Circle()) // 将图片裁剪为圆形
-                                    } placeholder: {
-                                        // 占位符，图片加载时显示的内容
-                                        Circle()
-                                            .fill(Color.gray.opacity(0.3))
-                                            .frame(width: 106, height: 106) // 占位符的大小与图片一致
-                                            .overlay(Text("加载失败").foregroundColor(.white))
+                        let columns = [
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                            GridItem(.flexible())
+                        ]
+
+                        LazyVGrid(columns: columns, spacing: 20) {
+                            ForEach(self.friends, id: \.user_id) { item in
+//                            ForEach(0 ..< 20) { _ in
+                                NavigationLink(destination: MainView(user_id: item.user_id)) {
+                                    VStack(spacing: 12) {
+                                        // 头像
+                                        AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
+//                                    AsyncImage(url: URL(string: defaultAvatar)) { image in
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 106, height: 106) // 设置图片的大小
+                                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                        } placeholder: {
+                                            // 占位符，图片加载时显示的内容
+                                            Rectangle()
+                                                .fill(.gray.opacity(0.3))
+                                                .frame(width: 106, height: 106) // 占位符的大小与图片一致
+                                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                                .overlay(
+                                                    Text("加载失败")
+                                                        .foregroundColor(.white)
+                                                )
+                                        }
+
+                                        // 昵称
+                                        Text("\(item.nick_name ?? "")")
+                                            .foregroundStyle(Color(hex: "#666666"))
                                     }
                                 }
-
-                                // 昵称
-                                Text("\(item.nick_name ?? "")")
                             }
                         }
                     } else {
@@ -44,7 +59,7 @@ struct FriendsIView: View {
                     }
                 }
             }
-            .navigationTitle("朋友列表")
+            .navigationTitle("我的朋友")
         }
         .onAppear {
             Task {

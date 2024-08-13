@@ -16,6 +16,7 @@
 		265ED69B2C45018A009142A7 /* InviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265ED69A2C45018A009142A7 /* InviteView.swift */; };
 		265ED69E2C4501D1009142A7 /* FriendsIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265ED69D2C4501D1009142A7 /* FriendsIView.swift */; };
 		2670A68F2BD403290004E3A1 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2670A68E2BD403290004E3A1 /* SettingView.swift */; };
+		2685D0262C6B9E1600892F5B /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2685D0252C6B9E1600892F5B /* Color.swift */; };
 		26A624012BDFCFF10074352D /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A624002BDFCFF10074352D /* ImagePickerView.swift */; };
 		26A624032BE253FE0074352D /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A624022BE253FE0074352D /* LaunchView.swift */; };
 		26A624072BE52A5C0074352D /* UserInfoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A624062BE52A5C0074352D /* UserInfoData.swift */; };
@@ -45,6 +46,7 @@
 		265ED69A2C45018A009142A7 /* InviteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteView.swift; sourceTree = "<group>"; };
 		265ED69D2C4501D1009142A7 /* FriendsIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsIView.swift; sourceTree = "<group>"; };
 		2670A68E2BD403290004E3A1 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
+		2685D0252C6B9E1600892F5B /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		26A624002BDFCFF10074352D /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		26A624022BE253FE0074352D /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		26A624042BE279AE0074352D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 				26B9986A2BBD9723000D1E88 /* UserCache.swift */,
 				26B998782BBD9874000D1E88 /* URLImage.swift */,
 				262368532BC3715400264BD9 /* LocationDataManager.swift */,
+				2685D0252C6B9E1600892F5B /* Color.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 				262368502BBE3A6100264BD9 /* RouterDetailView.swift in Sources */,
 				26B998732BBD97FF000D1E88 /* MainView.swift in Sources */,
 				265ED6942C44AF3F009142A7 /* Request.swift in Sources */,
+				2685D0262C6B9E1600892F5B /* Color.swift in Sources */,
 				2670A68F2BD403290004E3A1 /* SettingView.swift in Sources */,
 				265ED69B2C45018A009142A7 /* InviteView.swift in Sources */,
 				26B998582BBD92EF000D1E88 /* ContentView.swift in Sources */,

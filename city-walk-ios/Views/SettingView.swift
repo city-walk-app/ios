@@ -212,7 +212,7 @@ struct SettingView: View {
                         }
                         
                         Button {
-                            if let url = URL(string: "https://twitter.com/tyh20011") {
+                            if let url = URL(string: "https://x.com/tyh20011") {
                                 UIApplication.shared.open(url)
                             }
                         } label: {
