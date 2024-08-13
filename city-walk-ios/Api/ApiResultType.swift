@@ -277,3 +277,16 @@ struct GetPopularLocations: Decodable {
     var code: Int
     var data: [GetPopularLocationsData]?
 }
+
+/// 获取朋友列表
+struct FriendListType: Decodable {
+    struct FriendListData: Codable, Hashable {
+        var user_id: String
+        var nick_name: String?
+        var avatar: String?
+    }
+
+    var message: String
+    var code: Int
+    var data: [FriendListData]?
+}
