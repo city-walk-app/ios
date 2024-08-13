@@ -52,11 +52,19 @@ struct UserInfoType: Codable {
 // 获取用户指定月份打卡热力图
 struct GetLocationUserHeatmapType: Decodable {
     struct GetLocationUserHeatmapData: Codable {
-        var background_color: String?
-        var experience_value: Int?
-        var province_code: String?
-        var province_name: String?
-        var vis_id: String?
+        struct GetLocationUserHeatmapDataRoutes: Codable {
+            var create_at: String?
+            var city: String?
+            var province: String?
+            var content: String?
+            var address: String?
+            var picture: [String]?
+            var travel_type: String?
+            var mood_color: String?
+        }
+
+        var date: String
+        var routes: [GetLocationUserHeatmapDataRoutes]
     }
 
     var message: String
@@ -66,12 +74,12 @@ struct GetLocationUserHeatmapType: Decodable {
 
 /// 获取用户解锁的省份版图列表
 struct GetUserProvinceJigsawType: Decodable {
-    struct GetUserProvinceJigsawData: Codable {
-        var background_color: String?
-        var experience_value: Int?
-        var province_code: String?
-        var province_name: String?
-        var vis_id: String?
+    struct GetUserProvinceJigsawData: Codable, Hashable {
+        var background_color: String
+        var experience_value: Int
+        var province_code: String
+        var province_name: String
+        var vis_id: String
     }
 
     var message: String
@@ -82,14 +90,11 @@ struct GetUserProvinceJigsawType: Decodable {
 /// 获取用户步行记录列表
 struct GetUserRouteListType: Decodable {
     struct GetUserRouteListData: Codable {
-        var count: Int?
-        var create_at: String?
-        var id: Int?
         var list_id: String
-        var mood_color: String
-//        var   route:
+        var create_at: String
+        var mood_color: String?
         var travel_type: String?
-        var user_id: String
+        var count: Int
     }
 
     var message: String
@@ -113,18 +118,6 @@ struct EmailSend: Decodable {
 // 邮箱验证码登录
 struct UserLoginEmail: Decodable {
     struct UserLoginEmailData: Codable {
-//        struct UserLoginEmailUserInfo: Codable {
-//            var user_id: String
-//            var nick_name: String
-//            var email: String
-//            var mobile: String?
-//            var avatar: String?
-//            var signature: String?
-//            var birthday: String?
-//            var gender: String?
-//            var preference_type: String?
-//        }
-
         var token: String
         var is_new_user: Bool
         var user_info: UserInfoType

@@ -32,6 +32,7 @@
 		26B998752BBD982A000D1E88 /* RankingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998742BBD982A000D1E88 /* RankingView.swift */; };
 		26B998792BBD9874000D1E88 /* URLImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998782BBD9874000D1E88 /* URLImage.swift */; };
 		26CE0B932C1143B4001984D9 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26CE0B922C1143B4001984D9 /* LoginView.swift */; };
+		26DB3C282C6B3C4000D14719 /* Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DB3C272C6B3C4000D14719 /* Default.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		26B998742BBD982A000D1E88 /* RankingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingView.swift; sourceTree = "<group>"; };
 		26B998782BBD9874000D1E88 /* URLImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLImage.swift; sourceTree = "<group>"; };
 		26CE0B922C1143B4001984D9 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		26DB3C272C6B3C4000D14719 /* Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Default.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				26AB72502BC8086000F12616 /* Path.swift */,
+				26DB3C272C6B3C4000D14719 /* Default.swift */,
 			);
 			path = Token;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 				26B998582BBD92EF000D1E88 /* ContentView.swift in Sources */,
 				26A624092BE636E60074352D /* GlobalData.swift in Sources */,
 				26B9986F2BBD9788000D1E88 /* ApiResultType.swift in Sources */,
+				26DB3C282C6B3C4000D14719 /* Default.swift in Sources */,
 				26CE0B932C1143B4001984D9 /* LoginView.swift in Sources */,
 				262368542BC3715400264BD9 /* LocationDataManager.swift in Sources */,
 				265ED6962C44BC89009142A7 /* Api.swift in Sources */,
