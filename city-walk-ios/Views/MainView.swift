@@ -154,5 +154,5 @@ struct MainView: View {
 #Preview {
     MainView(user_id: "U131995175454824711531011225172573302849")
         .environmentObject(UserInfoData())
-        .environmentObject(GlobalData())
+//        .environmentObject(GlobalData())
 }

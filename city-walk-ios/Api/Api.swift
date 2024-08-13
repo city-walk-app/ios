@@ -81,12 +81,13 @@ class Api {
         )
     }
     
-    func experienceRanking(params: [String: Any]) async throws -> ExperienceRanking {
+    /// 获取朋友经验排行榜
+    func friendGetExperienceRanking(params: [String: Any]) async throws -> FriendGetExperienceRankingType {
         return try await Request.shared.request(
-            url: "/experience/ranking",
+            url: "/friend/get/experience/ranking",
             params: params,
             method: .post,
-            type: ExperienceRanking.self
+            type: FriendGetExperienceRankingType.self
         )
     }
 }

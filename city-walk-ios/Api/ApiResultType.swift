@@ -182,26 +182,19 @@ struct GetRouteList: Decodable {
     var data: [GetRouteListData]?
 }
 
-// 获取经验排行榜
-struct ExperienceRanking: Decodable {
-    struct ExperienceRankingData: Codable {
-        struct UserInfo: Codable {
-            var avatar: String?
-            var nick_name: String?
-            var gender: String?
-        }
-
-        var user_info: UserInfo
-        var id: Int
-        var province_code: String
-        var user_id: Int
-        var province_name: String
-        var experience_value: Int
+// 获取朋友经验排行榜
+struct FriendGetExperienceRankingType: Decodable {
+    struct FriendGetExperienceRankingData: Codable {
+        var avatar: String?
+        var count: Int
+        var experiences: Int
+        var nick_name: String?
+        var user_id: String
     }
 
     var message: String
     var code: Int
-    var data: [ExperienceRankingData]?
+    var data: [FriendGetExperienceRankingData]?
 }
 
 /// 获取指定步行记录历史打卡记录列表

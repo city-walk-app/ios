@@ -32,7 +32,7 @@ struct ContentView: View {
             } else {
                 LaunchView()
                     .environmentObject(UserInfoData())
-                    .environmentObject(GlobalData())
+//                    .environmentObject(GlobalData())
             }
         }
     }
@@ -42,5 +42,5 @@ struct ContentView: View {
     ContentView()
         .environmentObject(LaunchScreenData())
         .environmentObject(UserInfoData())
-        .environmentObject(GlobalData())
+//        .environmentObject(GlobalData())
 }

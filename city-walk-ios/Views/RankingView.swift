@@ -11,65 +11,65 @@ struct RankingView: View {
     /// tab 切换数据
 //    @EnvironmentObject var globalDataModel: GlobalData
 
+    /// 排名列表
+    @State private var rankingList: [FriendGetExperienceRankingType.FriendGetExperienceRankingData] = []
+
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
                 VStack {
-                    Text("排行榜")
-//                    if let rankingList = globalDataModel.rankingData {
-//                        ForEach(rankingList.indices, id: \.self) { index in
-//                            HStack {
-////                                NavigationLink(destination: MainView(user_id: rankingList[index].user_id)) {
-////                                    URLImage(url: URL(string: "\(BASE_URL)/\(rankingList[index].user_info.avatar ?? "")")!)
-////                                        .aspectRatio(contentMode: .fill)
-////                                        .frame(width: 70, height: 70)
-////                                        .mask(Circle())
-////                                }
-//
-//                                VStack(alignment: .leading) {
-//                                    Text("\(rankingList[index].user_info.nick_name ?? "")")
-//                                        .font(.title2)
-//
-//                                    HStack {
-//                                        Image(systemName: "star")
-//                                        Text("500")
-//                                    }
-//                                    .padding(.top, 4)
-//                                }
-//                                .padding(.leading, 8)
-//
-//                                Spacer()
-//                            }
-//                            .padding(.vertical, 20)
-//                            .padding(.horizontal, 22)
-//                            .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 22))
-//                        }
-//                    } else {
-//                        Text("暂无数据")
-//                    }
+                    if !self.rankingList.isEmpty {
+                        ForEach(self.rankingList, id: \.user_id) { item in
+                            HStack {
+                                // 头像
+                                NavigationLink(destination: MainView(user_id: item.user_id)) {
+                                    AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 46, height: 46) // 设置图片的大小
+                                            .clipShape(Circle()) // 将图片裁剪为圆形
+                                    } placeholder: {
+                                        // 占位符，图片加载时显示的内容
+                                        Circle()
+                                            .fill(Color.gray.opacity(0.3))
+                                            .frame(width: 46, height: 46) // 占位符的大小与图片一致
+                                            .overlay(Text("加载失败").foregroundColor(.white))
+                                    }
+                                }
+
+                                Text("\(item.nick_name ?? "")")
+                            }
+                        }
+                    } else {
+                        Text("暂无排行榜")
+                    }
                 }
                 .padding(20)
                 .padding(.bottom, 200)
             }
             .navigationTitle("经验排名")
             .onAppear {
-                self.experienceRanking() // 获取经验排行榜
+                Task {
+                    await self.friendGetExperienceRanking() // 获取朋友经验排行榜
+                }
             }
         }
     }
 
-    /// 获取经验排行榜
-    private func experienceRanking() {
-//        API.experienceRanking(params: ["province_code": "330000"]) { result in
-//            switch result {
-//            case .success(let data):
-//                if data.code == 200 && (data.data?.isEmpty) != nil {
-//                    self.globalDataModel.setRankingData(data.data!)
-//                }
-//            case .failure:
-//                print("获取失败")
-//            }
-//        }
+    /// 获取朋友经验排行榜
+    private func friendGetExperienceRanking() async {
+        do {
+            let res = try await Api.shared.friendGetExperienceRanking(params: [:])
+
+            print("获取朋友排行榜信息", res)
+
+            if res.code == 200 && res.data != nil {
+                self.rankingList = res.data!
+            }
+        } catch {
+            print("获取朋友经验排行异常")
+        }
     }
 }
 

@@ -21,7 +21,7 @@ struct LaunchView: View {
     /// 用户信息数据
     /// 通过 @EnvironmentObject 获取全局的 UserInfoData 对象
     @EnvironmentObject var userInfoDataModel: UserInfoData
-    @EnvironmentObject var globalDataModel: GlobalData
+//    @EnvironmentObject var globalDataModel: GlobalData
     @EnvironmentObject var LaunchScreenDataModel: LaunchScreenData
 
     var body: some View {
@@ -166,6 +166,6 @@ struct LaunchView: View {
 #Preview {
     LaunchView()
         .environmentObject(UserInfoData())
-        .environmentObject(GlobalData())
+//        .environmentObject(GlobalData())
         .environmentObject(LaunchScreenData())
 }
