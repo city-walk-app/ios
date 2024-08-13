@@ -38,8 +38,9 @@ class UserCache {
     }
 
     /// 删除信息
-    func deleteInfo() {
+    func clearAll() {
         userDefaults.removeObject(forKey: USER_INFO)
+        userDefaults.removeObject(forKey: USER_TOKEN)
     }
 
     /// 设置 token

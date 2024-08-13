@@ -10,8 +10,6 @@ import Foundation
 import SwiftUI
 
 struct LoginView: View {
-    let API = Api()
-    
     /// 聚焦的输入框枚举
     enum FocusedField: Hashable {
         case email, code, name
@@ -22,8 +20,6 @@ struct LoginView: View {
         case login, name, avatar
     }
 
-    /// 缓存的用户信息
-    private let sharedInfo = UserCache.shared.getInfo()
     /// 当前登录页的状态
     @State var loginState: LoginState = .login
     /// 邮箱
@@ -54,17 +50,6 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-//                MeshGradient()
-//                LinearGradient(gradient:
-//                    Gradient(
-//                        colors: [.white, .blue, .black]
-//                    ),
-//                    startPoint: .top, endPoint: .bottom)
-//                Image("background-1")
-//                    .resizable()
-//                    .aspectRatio(contentMode: .fill)
-//                    .edgesIgnoringSafeArea(.all)
-                
                 // 登录操作
                 ScrollView {
                     VStack(spacing: 20) {
@@ -162,7 +147,7 @@ struct LoginView: View {
             .onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
-            .navigationBarBackButtonHidden(true)
+//            .navigationBarBackButtonHidden(true)
             .onAppear {
                 // 页面展示的时候将验证码输入框聚焦
                 // https://fatbobman.com/zh/posts/textfield-event-focus-keyboard/
@@ -193,17 +178,7 @@ struct LoginView: View {
         let emailRegex = #"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"#
         return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)
     }
-    
-//    /// 检测输入框最大长度
-//    /// - Parameters:
-//    ///   - content: 输入框的内容
-//    ///   - maxLength: 最大长度
-//    private func limitMaxLength(content: inout String, maxLength: Int) {
-//        if content.count > maxLength {
-//            content = String(content.prefix(maxLength))
-//        }
-//    }
-    
+
     /// 获取邮箱验证码
     private func emailSend() async {
         isCountingDown = true // 开启倒计时
@@ -252,34 +227,6 @@ struct LoginView: View {
         } catch {
             print("邮箱登录错误")
         }
-        
-//        API.userLoginEmail(params: ["email": email, "code": code]) { result in
-//
-//            self.isLoginButtonDisabled = false
-//
-//            switch result {
-//            case .success(let data):
-//                if data.code == 200 && data.data != nil {
-//                    // 如果是新用户，继续完善信息
-//                    if data.data!.is_new_user {
-//                        self.userId = data.data!.id
-//
-//                        withAnimation {
-//                            self.loginState = .name
-//                            self.focus = .name
-//                        }
-//                    }
-//                    // 否则跳转到首页
-//                    else {
-//                        UserCache.shared.saveInfo(info: data.data!)
-//                        self.isToHomeView = true // 跳转到首页
-//                        print("开始跳转到首页")
-//                    }
-//                }
-//            case .failure:
-//                print("邮箱验证登录失败")
-//            }
-//        }
     }
     
     /// 检测输入框最大长度

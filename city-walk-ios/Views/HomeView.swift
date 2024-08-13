@@ -82,13 +82,18 @@ struct HomeView: View {
                                         .overlay(Text("无头像").foregroundColor(.white))
                                 }
                             }
+                        } else {
+                            Circle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(width: 48, height: 48)
+                                .overlay(Text("没有登录信息").foregroundColor(.white))
                         }
                             
                         Spacer()
                         
                         VStack {
                             // 设置按钮
-                            NavigationLink(destination: LoginView()) {
+                            NavigationLink(destination: SettingView()) {
                                 RoundedRectangle(cornerRadius: 8)
                                     .fill(.ultraThinMaterial) // 将毛玻璃效果作为填充色
                                     .frame(width: 42, height: 42)

@@ -16,12 +16,12 @@ struct SettingView: View {
     }
     
     /// 创建用户信息设置项
-    struct UserInfoDataModel {
-        let title: String
-        let key: UserInfoKey
-        let icon: String
-        let color: Color
-    }
+//    struct UserInfoDataModel {
+//        let title: String
+//        let key: UserInfoKey
+//        let icon: String
+//        let color: Color
+//    }
 
     /// 新的名字
     @State private var newNickName = ""
@@ -31,6 +31,7 @@ struct SettingView: View {
     @State private var isShowSetInfo = false
     /// token
     private let token = UserCache.shared.getToken()
+    private let userInfo = UserCache.shared.getInfo()
     /// 是否跳转到登录页面
     @State private var isGoLoginView = false
     /// 是否显示退出登录的按钮确认框
@@ -38,18 +39,8 @@ struct SettingView: View {
     /// 选择的头像图片
     @State private var selectAvatarImage: UIImage?
     /// 是否显示选择头像的对话框
-    @State private var isShowAvatarSelectSheet = false
-    /// 用户信息
-    @EnvironmentObject var userInfoDataModel: UserInfoData
-    /// 用户信息列表选项
-    let userInfoItems: [UserInfoDataModel] = [
-        UserInfoDataModel(title: "名字", key: .nick_name, icon: "person.fill", color: .blue),
-        UserInfoDataModel(title: "性别", key: .gender, icon: "mic.square.fill", color: .red),
-        UserInfoDataModel(title: "邮箱", key: .email, icon: "person.fill", color: .blue),
-        UserInfoDataModel(title: "手机", key: .mobel, icon: "circle.square", color: .orange),
-        UserInfoDataModel(title: "签名", key: .signature, icon: "house", color: .green)
-    ]
-    
+    @State private var visibleSheet = false
+
     var body: some View {
         NavigationView {
             // 选项列表
@@ -59,23 +50,25 @@ struct SettingView: View {
                     Section {
                         // 头像设置
                         Button {
-                            self.isShowAvatarSelectSheet.toggle()
+                            self.visibleSheet.toggle()
                         } label: {
                             HStack {
-                                if let image = selectAvatarImage {
-                                    Image(uiImage: image)
+//                                   // 头像
+                                AsyncImage(url: URL(string: self.userInfo?.avatar ?? defaultAvatar)) { image in
+                                    image
                                         .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 70, height: 70)
-                                        .clipShape(Circle())
-                                } else {
-                                    URLImage(url: URL(string: "\(BASE_URL)/\(userInfoDataModel.data!.avatar ?? "")")!)
                                         .aspectRatio(contentMode: .fill)
-                                        .frame(width: 70, height: 70)
-                                        .mask(Circle())
+                                        .frame(width: 60, height: 60) // 设置图片的大小
+                                        .clipShape(Circle()) // 将图片裁剪为圆形
+                                } placeholder: {
+                                    // 占位符，图片加载时显示的内容
+                                    Circle()
+                                        .fill(Color.gray.opacity(0.3))
+                                        .frame(width: 60, height: 60) // 占位符的大小与图片一致
+                                        .overlay(Text("加载失败").foregroundColor(.white))
                                 }
                                 
-                                Text("欢迎使用 City Walk!")
+                                Text("我的头像")
                                     .foregroundStyle(.black)
                                 
                                 Spacer()
@@ -84,46 +77,112 @@ struct SettingView: View {
                                     .foregroundStyle(.gray)
                             }
                         }
-                        // 选择头像的弹出层
-                        .sheet(isPresented: $isShowAvatarSelectSheet) {
-                            ImagePicker(selectedImage: $selectAvatarImage, isImagePickerPresented: $isShowAvatarSelectSheet) {
-                                if let image = selectAvatarImage {
-                                    self.uploadImageToBackend(image: image)
-                                }
-                            }
-                        }
                     }
                     
                     // 信息
                     Section {
-                        ForEach(userInfoItems.indices, id: \.self) { index in
-                            Button {
-                                self.isShowSetInfo = true
-                                self.setUserInfoSheetState = userInfoItems[index].key
+                        Button {
+                            self.visibleSheet.toggle()
+                        } label: {
+                            HStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .frame(width: 36, height: 36)
+                                    .foregroundColor(.blue) // 修改为指定的颜色
+                                    .overlay {
+                                        Image(systemName: "swift")
+                                            .foregroundColor(.white)
+                                    }
+                             
+                                Text("名字")
+                                    .foregroundStyle(.black)
+                                Spacer()
                                 
-                            } label: {
-                                HStack {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .frame(width: 36, height: 36)
-                                        .foregroundColor(userInfoItems[index].color) // 修改为指定的颜色
-                                        .overlay {
-                                            Image(systemName: userInfoItems[index].icon)
-                                                .foregroundColor(.white)
-                                        }
-                                    
-                                    Text(userInfoItems[index].title)
-                                        .foregroundStyle(.black)
-                                    
-                                    Spacer()
-                                    
-                                    // 使用 userInfoDataModel.data 字典中对应 key 的值作为文本
-                                    //                                if let value = userInfoDataModel.data?[userInfoItems[index].key] {
-                                    //                                    Text(value)
-                                    //                                }
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.gray)
-                                }
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        
+                        Button {
+                            self.visibleSheet.toggle()
+                        } label: {
+                            HStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .frame(width: 36, height: 36)
+                                    .foregroundColor(.blue) // 修改为指定的颜色
+                                    .overlay {
+                                        Image(systemName: "swift")
+                                            .foregroundColor(.white)
+                                    }
+                             
+                                Text("名字")
+                                    .foregroundStyle(.black)
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        
+                        Button {
+                            self.visibleSheet.toggle()
+                        } label: {
+                            HStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .frame(width: 36, height: 36)
+                                    .foregroundColor(.blue) // 修改为指定的颜色
+                                    .overlay {
+                                        Image(systemName: "swift")
+                                            .foregroundColor(.white)
+                                    }
+                             
+                                Text("名字")
+                                    .foregroundStyle(.black)
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        
+                        Button {
+                            self.visibleSheet.toggle()
+                        } label: {
+                            HStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .frame(width: 36, height: 36)
+                                    .foregroundColor(.blue) // 修改为指定的颜色
+                                    .overlay {
+                                        Image(systemName: "swift")
+                                            .foregroundColor(.white)
+                                    }
+                             
+                                Text("名字")
+                                    .foregroundStyle(.black)
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        
+                        Button {
+                            self.visibleSheet.toggle()
+                        } label: {
+                            HStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .frame(width: 36, height: 36)
+                                    .foregroundColor(.blue) // 修改为指定的颜色
+                                    .overlay {
+                                        Image(systemName: "swift")
+                                            .foregroundColor(.white)
+                                    }
+                             
+                                Text("名字")
+                                    .foregroundStyle(.black)
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
                             }
                         }
                     }
@@ -216,7 +275,7 @@ struct SettingView: View {
                                 title: Text("提示"),
                                 message: Text("确定退出当前账号吗?"),
                                 primaryButton: .destructive(Text("确定"), action: {
-                                    UserCache.shared.deleteInfo()
+                                    UserCache.shared.clearAll()
                                     isGoLoginView = true
                                 }),
                                 secondaryButton: .cancel(Text("取消"))
@@ -231,43 +290,51 @@ struct SettingView: View {
         .navigationDestination(isPresented: $isGoLoginView, destination: {
             LoginView()
         })
-        // 设置信息
-        .sheet(isPresented: $isShowSetInfo) {
-            NavigationStack {
-                VStack {
-                    // 名字
-                    if self.setUserInfoSheetState == .nick_name {
-                        HStack {
-                            Text("名字")
-                            TextField("请输入名字", text: $newNickName)
-                        }
-                    }
-                    // 邮箱
-                    else if self.setUserInfoSheetState == .email {
-                        HStack {
-                            Text("邮箱")
-                            TextField("请输入邮箱", text: $newNickName)
-                        }
-                    }
-                    
-                    Spacer()
-                }
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {} label: {
-                            Text("保存")
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            self.isShowAvatarSelectSheet.toggle()
-                        } label: {
-                            Text("取消")
-                        }
-                    }
+        // 选择头像的弹出层
+        .sheet(isPresented: $visibleSheet) {
+            ImagePicker(selectedImage: $selectAvatarImage, visible: $visibleSheet) {
+                if let image = selectAvatarImage {
+                    self.uploadImageToBackend(image: image)
                 }
             }
         }
+        // 设置信息
+//        .sheet(isPresented: $isShowSetInfo) {
+//            NavigationStack {
+//                VStack {
+//                    // 名字
+//                    if self.setUserInfoSheetState == .nick_name {
+//                        HStack {
+//                            Text("名字")
+//                            TextField("请输入名字", text: $newNickName)
+//                        }
+//                    }
+//                    // 邮箱
+//                    else if self.setUserInfoSheetState == .email {
+//                        HStack {
+//                            Text("邮箱")
+//                            TextField("请输入邮箱", text: $newNickName)
+//                        }
+//                    }
+//
+//                    Spacer()
+//                }
+//                .toolbar {
+//                    ToolbarItem(placement: .navigationBarTrailing) {
+//                        Button {} label: {
+//                            Text("保存")
+//                        }
+//                    }
+//                    ToolbarItem(placement: .navigationBarLeading) {
+//                        Button {
+//                            self.isShowAvatarSelectSheet.toggle()
+//                        } label: {
+//                            Text("取消")
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
     
     /// 头像上传
@@ -338,5 +405,5 @@ extension Data {
 
 #Preview {
     SettingView()
-        .environmentObject(UserInfoData())
+//        .environmentObject(UserInfoData())
 }

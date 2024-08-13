@@ -13,7 +13,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     // 用于存储从相册中选择的图片的绑定属性
     @Binding var selectedImage: UIImage?
     // 用于控制相册选择器的显示状态的绑定属性
-    @Binding var isImagePickerPresented: Bool
+    @Binding var visible: Bool
     // 用于在选择图片后执行的回调闭包
     var onImagePicked: (() -> Void)?
     
@@ -64,7 +64,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                 }
             }
             // 关闭相册选择器
-            parent.isImagePickerPresented = false
+            parent.visible = false
         }
     }
 }

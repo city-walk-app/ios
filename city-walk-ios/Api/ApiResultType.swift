@@ -51,18 +51,18 @@ struct UserInfoType: Codable {
 
 // 获取用户指定月份打卡热力图
 struct GetLocationUserHeatmapType: Decodable {
-    struct GetLocationUserHeatmapData: Codable {
-        struct GetLocationUserHeatmapDataRoutes: Codable {
-            var create_at: String?
-            var city: String?
-            var province: String?
-            var content: String?
-            var address: String?
-            var picture: [String]?
-            var travel_type: String?
-            var mood_color: String?
-        }
+    struct GetLocationUserHeatmapDataRoutes: Codable {
+        var create_at: String?
+        var city: String?
+        var province: String?
+        var content: String?
+        var address: String?
+        var picture: [String]?
+        var travel_type: String?
+        var mood_color: String?
+    }
 
+    struct GetLocationUserHeatmapData: Codable {
         var date: String
         var routes: [GetLocationUserHeatmapDataRoutes]
     }
@@ -102,20 +102,20 @@ struct GetUserRouteListType: Decodable {
     var data: [GetUserRouteListData]?
 }
 
-// 获取用户信息
+/// 获取用户信息
 struct GetUserInfoType: Decodable {
     var message: String
     var code: Int
     var data: UserInfoType?
 }
 
-// 获取邮箱验证码
+/// 获取邮箱验证码
 struct EmailSend: Decodable {
     var message: String
     var code: Int
 }
 
-// 邮箱验证码登录
+/// 邮箱验证码登录
 struct UserLoginEmail: Decodable {
     struct UserLoginEmailData: Codable {
         var token: String
@@ -128,19 +128,19 @@ struct UserLoginEmail: Decodable {
     var data: UserLoginEmailData
 }
 
-// 获取用户的动态发布日历热力图
+/// 获取用户的动态发布日历热力图
 struct UserGetCalendarHeatmap: Decodable {
-    struct UserGetCalendarHeatmapDataItem: Codable, Hashable {
-        struct UserGetCalendarHeatmapDataItemCount: Codable, Hashable {
-            var id: Int
-            var user_id: Int
-            var create_at: String
-            var route_detail: Int
-            var city: String
-            var province: String
-            var type: String
-        }
+    struct UserGetCalendarHeatmapDataItemCount: Codable, Hashable {
+        var id: Int
+        var user_id: Int
+        var create_at: String
+        var route_detail: Int
+        var city: String
+        var province: String
+        var type: String
+    }
 
+    struct UserGetCalendarHeatmapDataItem: Codable, Hashable {
         var date: String
         var opacity: Double
         var count: [UserGetCalendarHeatmapDataItemCount]
@@ -151,7 +151,7 @@ struct UserGetCalendarHeatmap: Decodable {
     var data: [[UserGetCalendarHeatmapDataItem]]?
 }
 
-// 获取指定用户去过的省份
+/// 获取指定用户去过的省份
 struct GetUserProvince: Decodable {
     struct GetUserProvinceData: Codable {
         var id: Int
@@ -166,7 +166,7 @@ struct GetUserProvince: Decodable {
     var data: [GetUserProvinceData]?
 }
 
-// 获取用户步行记录
+/// 获取用户步行记录
 struct GetRouteList: Decodable {
     struct GetRouteListData: Codable {
         var route_detail: Int
@@ -182,7 +182,7 @@ struct GetRouteList: Decodable {
     var data: [GetRouteListData]?
 }
 
-// 获取朋友经验排行榜
+/// 获取朋友经验排行榜
 struct FriendGetExperienceRankingType: Decodable {
     struct FriendGetExperienceRankingData: Codable {
         var avatar: String?
@@ -248,12 +248,6 @@ struct CreatePositionRecord: Decodable {
     var message: String
     var code: Int
     var data: CreatePositionRecordData?
-}
-
-/// 基本的返回数据
-struct BasicResult: Decodable {
-    var message: String
-    var code: Int
 }
 
 /// 获取周边热门地点
