@@ -12,9 +12,9 @@ struct MainView: View {
 
     let API = Api()
     /// 缓存信息
-    let cacheInfo = UserCache.shared.getInfo()!
+//    let cacheInfo = UserCache.shared.getInfo()!
     /// 非自己，其它用户的身份信息
-    @State private var otherUserInfo: UserInfo.UserInfoData?
+    @State private var userInfo: UserInfoType?
     /// 用户信息数据
     @EnvironmentObject var userInfoDataModel: UserInfoData
     /// 全局数据
@@ -28,103 +28,103 @@ struct MainView: View {
         ScrollView(showsIndicators: false) {
             VStack {
                 // 身份信息，如果有其它人的信息，显示其它的，否则显示自己的信息
-                if let info =
-                    self.user_id == userInfoDataModel.data!.user_id
-                        ? self.userInfoDataModel.data
-                        : self.otherUserInfo
-                {
-                    // 头像
-                    HStack(alignment: .center) {
-                        if info.avatar != nil {
-                            URLImage(url: URL(string: "\(BASE_URL)/\(info.avatar!)")!)
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 140, height: 140)
-                                .mask(Circle())
+//                if let info =
+//                    self.user_id == userInfoDataModel.data!.user_id
+//                        ? self.userInfoDataModel.data
+//                        : self.otherUserInfo
+//                {
+                // 头像
+//                HStack(alignment: .center) {
+//                    if self.userInfo.avatar != nil {
+//                        URLImage(url: URL(string: "\(BASE_URL)/\(info.avatar!)")!)
+//                            .aspectRatio(contentMode: .fill)
+//                            .frame(width: 140, height: 140)
+//                            .mask(Circle())
+//
+//                    } else {
+//                        Image(systemName: "person")
+//                    }
+//                }
 
-                        } else {
-                            Image(systemName: "person")
-                        }
-                    }
+                // 昵称
+                Text("\(self.userInfo?.nick_name ?? "")")
+                    .font(.title)
 
-                    // 昵称
-                    Text("\(info.nick_name ?? "")")
-                        .font(.title)
+                // 签名
+                Text(self.userInfo?.signature ?? "")
+                    .padding(.top, 4)
 
-                    // 签名
-                    Text(info.signature ?? "")
-                        .padding(.top, 4)
+                // 位置信息
+//                HStack {
+//                    Text(userInfo.province ?? "")
+//                    Text("-")
+//                    Text(userInfo.city ?? "")
+//                }
+//                .foregroundStyle(.gray)
+//                }
 
-                    // 位置信息
-                    HStack {
-                        Text(info.province ?? "")
-                        Text("-")
-                        Text(info.city ?? "")
-                    }
-                    .foregroundStyle(.gray)
-                }
+//                // 省份版图列表
+//                if userProvince.count != 0 {
+//                    ScrollView(.horizontal, showsIndicators: false) {
+//                        HStack {
+//                            ForEach(userProvince.indices, id: \.self) { index in
+//                                URLImage(url: URL(string: "\(BASE_URL)/images/province/\(userProvince[index].province_code).png")!)
+//                                    .aspectRatio(contentMode: .fit)
+//                                    .frame(width: 100, height: 100)
+//                                    .mask(Circle())
+//                            }
+//                        }
+//                    }
+//                    .padding(.top, 12)
+//                } else {
+//                    Text("版图信息加载中...")
+//                }
 
-                // 省份版图列表
-                if userProvince.count != 0 {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(userProvince.indices, id: \.self) { index in
-                                URLImage(url: URL(string: "\(BASE_URL)/images/province/\(userProvince[index].province_code).png")!)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 100, height: 100)
-                                    .mask(Circle())
-                            }
-                        }
-                    }
-                    .padding(.top, 12)
-                } else {
-                    Text("版图信息加载中...")
-                }
-
-                // 热力图列表
-                if calendarHeatmap.count != 0 {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .top) {
-                            ForEach(calendarHeatmap.indices, id: \.self) { groupIndex in
-                                VStack {
-                                    ForEach(calendarHeatmap[groupIndex], id: \.self) { innerItem in
-                                        Text(" ")
-                                            .frame(width: 22, height: 22)
-                                            .font(.system(size: 11))
-                                            .background(
-                                                innerItem.opacity == 0 ? .gray.opacity(0.07) : .green.opacity(innerItem.opacity),
-                                                in: RoundedRectangle(cornerRadius: 3)
-                                            )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .padding(.top, 12)
-                } else {
-                    Text("热力图加载中...")
-                }
+//                // 热力图列表
+//                if calendarHeatmap.count != 0 {
+//                    ScrollView(.horizontal, showsIndicators: false) {
+//                        HStack(alignment: .top) {
+//                            ForEach(calendarHeatmap.indices, id: \.self) { groupIndex in
+//                                VStack {
+//                                    ForEach(calendarHeatmap[groupIndex], id: \.self) { innerItem in
+//                                        Text(" ")
+//                                            .frame(width: 22, height: 22)
+//                                            .font(.system(size: 11))
+//                                            .background(
+//                                                innerItem.opacity == 0 ? .gray.opacity(0.07) : .green.opacity(innerItem.opacity),
+//                                                in: RoundedRectangle(cornerRadius: 3)
+//                                            )
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                    .padding(.top, 12)
+//                } else {
+//                    Text("热力图加载中...")
+//                }
 
                 // 用户的打卡记录
-                if let routerList = globalDataModel.routerData {
-                    ForEach(routerList.indices, id: \.self) { index in
-                        NavigationLink(destination: RouterDetailView(listId: routerList[index].id)) {
-                            HStack {
-                                Image(systemName: "figure.run.circle.fill")
-                                    .font(.system(size: 30))
-                                    .foregroundStyle(Color.green)
-
-                                Text("打卡\(routerList[index].route_detail)个位置")
-                                Spacer()
-                                Text("\(routerList[index].city)")
-                            }
-                            .padding(.vertical, 20)
-                            .padding(.horizontal, 22)
-                            .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 22))
-                        }
-                    }
-                } else {
-                    Text("暂无打卡记录")
-                }
+//                if let routerList = globalDataModel.routerData {
+//                    ForEach(routerList.indices, id: \.self) { index in
+//                        NavigationLink(destination: RouterDetailView(listId: routerList[index].id)) {
+//                            HStack {
+//                                Image(systemName: "figure.run.circle.fill")
+//                                    .font(.system(size: 30))
+//                                    .foregroundStyle(Color.green)
+//
+//                                Text("打卡\(routerList[index].route_detail)个位置")
+//                                Spacer()
+//                                Text("\(routerList[index].city)")
+//                            }
+//                            .padding(.vertical, 20)
+//                            .padding(.horizontal, 22)
+//                            .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 22))
+//                        }
+//                    }
+//                } else {
+//                    Text("暂无打卡记录")
+//                }
             }
             .padding(.horizontal, 16)
             .padding(.top, 20)
@@ -143,13 +143,14 @@ struct MainView: View {
     private func loadUserInfo() async {
         do {
 //            let params = ["user_id": user_id]  根据您的实际参数
-            let res = try await Api.shared.getUserInfo(params: ["user_id": user_id])
+            let res = try await Api.shared.getUserInfo(params: ["user_id": self.user_id])
 
-            print("获取的用户信息", res)
+            print("我的页面获取的用户信息", res)
 
             if res.code == 200 && res.data != nil {
 //                    otherUserInfo = res.data!
-                userInfoDataModel.set(res.data!)
+                self.userInfo = res.data
+//                userInfoDataModel.set(res.data!)
             }
         } catch {
             print("获取用户信息异常")

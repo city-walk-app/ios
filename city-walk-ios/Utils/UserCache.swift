@@ -17,7 +17,7 @@ class UserCache {
     private let userDefaults = UserDefaults.standard
 
     /// 存储信息
-    func saveInfo(info: UserLoginEmail.UserLoginEmailData.UserLoginEmailUserInfo) {
+    func saveInfo(info: UserInfoType) {
         do {
             let codeData = try JSONEncoder().encode(info)
             userDefaults.set(codeData, forKey: USER_INFO)
@@ -27,9 +27,9 @@ class UserCache {
     }
 
     /// 获取信息
-    func getInfo() -> UserLoginEmail.UserLoginEmailData.UserLoginEmailUserInfo? {
+    func getInfo() -> UserInfoType? {
         if let data = userDefaults.data(forKey: USER_INFO),
-           let userData = try? JSONDecoder().decode(UserLoginEmail.UserLoginEmailData.UserLoginEmailUserInfo.self, from: data)
+           let userData = try? JSONDecoder().decode(UserInfoType.self, from: data)
         {
             return userData
         }

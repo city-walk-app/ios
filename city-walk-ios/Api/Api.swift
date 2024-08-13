@@ -12,13 +12,13 @@ class Api {
     static let shared = Api()
     
     /// 获取用户信息
-    func getUserInfo(params: [String: String]) async throws -> UserInfo {
+    func getUserInfo(params: [String: String]) async throws -> GetUserInfoType {
         print("获取用户信息", params)
         return try await Request.shared.request(
             url: "/user/get/user_info",
             params: params,
             method: .post,
-            type: UserInfo.self
+            type: GetUserInfoType.self
         )
     }
     

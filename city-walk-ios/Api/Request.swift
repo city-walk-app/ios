@@ -7,6 +7,12 @@
 
 import Foundation
 
+/// HTTP 请求方法
+enum HTTPMethods: String {
+    case get = "GET"
+    case post = "POST"
+}
+
 /// 请求拦截器协议
 protocol RequestInterceptor {
     func intercept(_ request: URLRequest) -> URLRequest

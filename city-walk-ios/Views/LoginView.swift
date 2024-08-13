@@ -247,9 +247,6 @@ struct LoginView: View {
                 UserCache.shared.saveInfo(info: res.data.user_info)
                 UserCache.shared.saveToken(token: res.data.token)
                 
-                print("设置的个人信息", UserCache.shared.getInfo())
-                print("设置的token", UserCache.shared.getToken())
-                
                 isToHomeView = true // 跳转到首页
             }
         } catch {

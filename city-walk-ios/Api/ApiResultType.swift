@@ -7,28 +7,70 @@
 
 import Foundation
 
-// 获取用户信息
-struct UserInfo: Decodable {
-    struct UserInfoData: Codable {
-        var id: Int
-        var user_id: String
-        var nick_name: String?
-        var email: String
-        var mobile: String?
-        var avatar: String?
-        var signature: String?
-        var province: String?
-        var city: String?
-        var created_at: String?
-        var birthday: String?
-        var gender: String?
-        var ip_address: String?
-        var ip_info: String?
+struct UserInfoType: Codable {
+    var user_id: String
+    var nick_name: String
+    var email: String
+    var mobile: String?
+    var avatar: String?
+    var signature: String?
+    var birthday: String?
+    var gender: String?
+//    var preference_type: String?
+    var preference_type: PreferenceType?
+
+    enum PreferenceType: Codable {
+        case string(String)
+        case array([String])
+        case none
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            if let strValue = try? container.decode(String.self) {
+                self = .string(strValue)
+            } else if let arrayValue = try? container.decode([String].self) {
+                self = .array(arrayValue)
+            } else {
+                self = .none
+            }
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            switch self {
+            case .string(let str):
+                try container.encode(str)
+            case .array(let array):
+                try container.encode(array)
+            case .none:
+                try container.encodeNil()
+            }
+        }
     }
+}
+
+// 获取用户信息
+struct GetUserInfoType: Decodable {
+//    struct UserInfoData: Codable {
+//        var id: Int
+//        var user_id: String
+//        var nick_name: String?
+//        var email: String
+//        var mobile: String?
+//        var avatar: String?
+//        var signature: String?
+//        var province: String?
+//        var city: String?
+//        var created_at: String?
+//        var birthday: String?
+//        var gender: String?
+//        var ip_address: String?
+//        var ip_info: String?
+//    }
 
     var message: String
     var code: Int
-    var data: UserInfoData?
+    var data: UserInfoType?
 }
 
 // 获取邮箱验证码
@@ -40,21 +82,21 @@ struct EmailSend: Decodable {
 // 邮箱验证码登录
 struct UserLoginEmail: Decodable {
     struct UserLoginEmailData: Codable {
-        struct UserLoginEmailUserInfo: Codable {
-            var user_id: String
-            var nick_name: String
-            var email: String
-            var mobile: String?
-            var avatar: String?
-            var signature: String?
-            var birthday: String?
-            var gender: String?
-            var preference_type: String?
-        }
+//        struct UserLoginEmailUserInfo: Codable {
+//            var user_id: String
+//            var nick_name: String
+//            var email: String
+//            var mobile: String?
+//            var avatar: String?
+//            var signature: String?
+//            var birthday: String?
+//            var gender: String?
+//            var preference_type: String?
+//        }
 
         var token: String
         var is_new_user: Bool
-        var user_info: UserLoginEmailUserInfo
+        var user_info: UserInfoType
     }
 
     var message: String

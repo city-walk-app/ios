@@ -57,12 +57,32 @@ struct HomeView: View {
                 VStack {
                     // 头部操作栏
                     HStack(alignment: .top) {
-                        NavigationLink(destination: MainView(user_id: "")) {
-                            Circle()
-                                .frame(width: 48, height: 48)
-                                .foregroundStyle(.blue)
+                        if let userInfo = cacheInfo {
+                            NavigationLink(destination: MainView(user_id: userInfo.user_id)) {
+                                if let avatar = userInfo.avatar,
+                                   let url = URL(string: avatar)
+                                {
+                                    AsyncImage(url: url) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 48, height: 48) // 设置图片的大小
+                                            .clipShape(Circle()) // 将图片裁剪为圆形
+                                    } placeholder: {
+                                        // 占位符，图片加载时显示的内容
+                                        Circle()
+                                            .fill(Color.gray.opacity(0.3))
+                                            .frame(width: 48, height: 48) // 占位符的大小与图片一致
+                                            .overlay(Text("加载失败").foregroundColor(.white))
+                                    }
+                                } else {
+                                    Circle()
+                                        .fill(Color.gray.opacity(0.3))
+                                        .frame(width: 48, height: 48)
+                                        .overlay(Text("无头像").foregroundColor(.white))
+                                }
+                            }
                         }
-                        .buttonStyle(PlainButtonStyle()) // 移除默认的按钮样式
                             
                         Spacer()
                         
