@@ -267,7 +267,7 @@ struct MainView: View {
 
                         LazyVGrid(columns: columns, alignment: .center) {
                             ForEach(self.routeList, id: \.list_id) { item in
-                                NavigationLink(destination: RouteDetailView(list_id: item.list_id)) {
+                                NavigationLink(destination: RouteDetailView(list_id: item.list_id, user_id: self.user_id)) {
                                     RoundedRectangle(cornerRadius: 8)
                                         .fill(Color(hex: item.mood_color ?? "#FFCC94"))
                                         .frame(width: 163, height: 116)

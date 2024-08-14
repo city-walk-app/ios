@@ -90,4 +90,14 @@ class Api {
             type: FriendGetExperienceRankingType.self
         )
     }
+    
+    /// 获取用户步行记录详情
+    func getUserRouteDetail(params: [String: Any]) async throws -> GetUserRouteDetailType {
+        return try await Request.shared.request(
+            url: "/location/get/user/route/detail",
+            params: params,
+            method: .post,
+            type: GetUserRouteDetailType.self
+        )
+    }
 }

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct RouteDetailView: View {
     var list_id: String
+    var user_id: String
 
     /// 地图配置
     @State private var region: MKCoordinateRegion = .init(
@@ -45,12 +46,24 @@ struct RouteDetailView: View {
         }
         .ignoresSafeArea(.all) // 忽略安全区域边缘
         .onAppear {
-            self.gpsGetRouteHistory() // 获取指定步行记录历史打卡记录列表
+            Task {
+                await self.getUserRouteDetail() // 获取用户步行记录详情
+            }
         }
     }
 
-    /// 获取指定步行记录历史打卡记录列表
-    private func gpsGetRouteHistory() {
+    /// 获取用户步行记录详情
+    private func getUserRouteDetail() async {
+        do {
+            let res = try await Api.shared.getUserRouteDetail(params: ["list_id": list_id, "user_id": user_id])
+
+            print("获取指定步行记录历史打卡记录列表", res)
+
+            if res.code == 200 && res.data != nil {}
+        } catch {
+            print("错误")
+        }
+
 //        print("请求参数", ["id": "\(listId)"])
 //        API.gpsGetRouteHistory(params: ["id": "\(listId)"]) { result in
 //            switch result {
@@ -90,5 +103,8 @@ struct Landmark: Identifiable {
 }
 
 #Preview {
-    RouteDetailView(list_id: "")
+    RouteDetailView(
+        list_id: "RL121414535105088630027513314120190363780",
+        user_id: "U131995175454824711531011225172573302849"
+    )
 }

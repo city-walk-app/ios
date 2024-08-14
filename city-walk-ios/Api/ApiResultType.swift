@@ -280,3 +280,29 @@ struct FriendListType: Decodable {
     var code: Int
     var data: [FriendListData]?
 }
+
+/// 获取用户步行记录详情
+struct GetUserRouteDetailType: Decodable {
+    struct GetUserRouteDetailData: Codable {
+        var address: String?
+        var city: String?
+        var content: String?
+        var create_at: String
+        var experience_value: Int?
+        var id: Int
+        var latitude: String
+        var list_id: String
+        var longitude: String
+        var mood_color: String?
+        var picture: String?
+        var province: String?
+        var province_code: String?
+        var route_id: String
+        var travel_type: String?
+        var user_id: String
+    }
+
+    var message: String
+    var code: Int
+    var data: [GetUserRouteDetailData]?
+}
