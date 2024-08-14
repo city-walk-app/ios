@@ -23,7 +23,7 @@ struct MainView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack {
+            VStack(spacing: 0) {
                 // 用户信息
                 if let userInfo = self.userInfo {
                     // 头像
@@ -43,9 +43,15 @@ struct MainView: View {
 
                     // 昵称
                     Text("\(userInfo.nick_name)")
+                        .padding(.top, 16)
+                        .foregroundStyle(Color(hex: "#333333"))
+                        .font(.system(size: 18))
 
                     // 签名
                     Text("\(userInfo.signature ?? "")")
+                        .padding(.top, 8)
+                        .foregroundStyle(Color(hex: "#666666"))
+                        .font(.system(size: 14))
                 } else {
                     Text("用户信息加载中")
                 }
@@ -72,12 +78,119 @@ struct MainView: View {
                         }
                     }
                     .scrollIndicators(.hidden)
+                    .padding(.vertical, 24)
+                    .padding(.horizontal, 17)
                 } else {
                     Text("暂无版图")
                 }
+
+                // 日期选择
+                HStack {
+                    Spacer()
+
+                    HStack {
+                        Text("2024 年08月")
+                            .foregroundStyle(Color(hex: "#9A9A9A"))
+                            .font(.system(size: 12))
+
+                        Image(systemName: "chevron.down")
+                            .foregroundStyle(Color(hex: "#9A9A9A"))
+                            .font(.system(size: 12))
+                    }
+                    .padding(.vertical, 5)
+                    .padding(.horizontal, 8)
+                    .background(Color(hex: "#F3F3F3"))
+                }
+                .padding(.horizontal, 16)
+
+                Spacer()
+
+                // 热力图
+                HStack {
+                    // 图例
+                    VStack(spacing: 30) {
+                        HStack(spacing: 7) {
+                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-1.png")) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 15, height: 17) // 设置图片的大小
+                            } placeholder: {}
+
+                            Text("打卡多")
+                                .foregroundStyle(Color(hex: "#666666"))
+                                .font(.system(size: 14))
+                        }
+
+                        HStack(spacing: 7) {
+                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 15, height: 17) // 设置图片的大小
+                            } placeholder: {}
+
+                            Text("打卡少")
+                                .foregroundStyle(Color(hex: "#666666"))
+                                .font(.system(size: 14))
+                        }
+
+                        HStack(spacing: 7) {
+                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 15, height: 17) // 设置图片的大小
+                            } placeholder: {}
+
+                            Text("未打卡")
+                                .foregroundStyle(Color(hex: "#666666"))
+                                .font(.system(size: 14))
+                        }
+                    }
+
+                    // 热力图
+                    GeometryReader { _ in
+                        HStack {
+                            let columns = [
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                                GridItem(.flexible())
+                            ]
+
+                            if !self.heatmap.isEmpty {
+                                LazyVGrid(columns: columns, spacing: 13) {
+                                    ForEach(self.heatmap, id: \.date) { item in
+                                        if
+                                            item.route_count != nil
+                                            && item.route_count! > 0
+                                            && item.background_color != nil
+                                        {
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .fill(Color(hex: "\(item.background_color!)"))
+                                                .frame(width: 26, height: 26)
+
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .fill(Color(hex: "#eeeeee"))
+                                                .frame(width: 26, height: 26)
+                                        }
+                                    }
+                                }
+                            } else {
+                                Text("热力图加载中")
+                            }
+                        }
+                    }
+//                    .frame(width: geometry.size.width) // 让热力图的宽度充满可用空间
+                }
+                .padding(16)
+//                .frame(width: geometry.size.width) // 让热力图的宽度充满可用空间
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 20)
         }
         .onAppear {
             Task {
@@ -94,7 +207,7 @@ struct MainView: View {
         do {
             let res = try await Api.shared.getUserRouteList(params: ["user_id": self.user_id])
 
-            print("获取用户步行记录列表", res)
+//            print("获取用户步行记录列表", res)
 
             if res.code == 200 && res.data != nil {
                 self.routeList = res.data!
@@ -109,7 +222,7 @@ struct MainView: View {
         do {
             let res = try await Api.shared.getUserProvinceJigsaw(params: ["user_id": self.user_id])
 
-            print("获取用户解锁的省份版图列表", res)
+//            print("获取用户解锁的省份版图列表", res)
 
             if res.code == 200 && res.data != nil {
                 self.provinceList = res.data!
@@ -124,7 +237,7 @@ struct MainView: View {
         do {
             let res = try await Api.shared.getUserInfo(params: ["user_id": self.user_id])
 
-            print("我的页面获取的用户信息", res)
+//            print("我的页面获取的用户信息", res)
 
             if res.code == 200 && res.data != nil {
                 self.userInfo = res.data!

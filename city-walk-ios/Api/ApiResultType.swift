@@ -64,6 +64,9 @@ struct GetLocationUserHeatmapType: Decodable {
 
     struct GetLocationUserHeatmapData: Codable {
         var date: String
+        var background_color: String?
+        var list_id: String?
+        var route_count: Int?
         var routes: [GetLocationUserHeatmapDataRoutes]
     }
 
