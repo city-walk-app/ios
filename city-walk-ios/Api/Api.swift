@@ -100,4 +100,14 @@ class Api {
             type: GetUserRouteDetailType.self
         )
     }
+    
+    /// 获取用户步行记录详情
+    func locationCreateRecord(params: [String: Any]) async throws -> LocationCreateRecordType {
+        return try await Request.shared.request(
+            url: "/location/create/record",
+            params: params,
+            method: .post,
+            type: LocationCreateRecordType.self
+        )
+    }
 }

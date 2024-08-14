@@ -306,3 +306,22 @@ struct GetUserRouteDetailType: Decodable {
     var code: Int
     var data: [GetUserRouteDetailData]?
 }
+
+/// 创建当前位置信息
+struct LocationCreateRecordType: Decodable {
+    struct LocationCreateRecordData: Codable {
+        var background_color: String?
+        var city: String?
+        var content: String
+        var experience: Int
+        var is_in_china: Bool
+        var is_new_province: Bool?
+        var province: String?
+        var province_code: String?
+        var route_id: String
+    }
+
+    var message: String
+    var code: Int
+    var data: LocationCreateRecordData?
+}

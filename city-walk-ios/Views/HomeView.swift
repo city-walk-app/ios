@@ -11,13 +11,13 @@ import SwiftUI
 
 /// 主视图，用于显示地图和操作选项
 struct HomeView: View {
-    /// API对象，用于进行网络请求
-//    let API = Api()
+    struct MoodColor {
+        var color: String
+        var borderColor: String
+        var key: String
+        var type: String
+    }
     
-    /// 控制图片选择路由的状态
-    @State private var isImageSelectRouter = false
-    /// 用户选择的图片
-    @State private var seletImage: UIImage?
     /// 缓存信息
     let cacheInfo = UserCache.shared.getInfo()
     /// 打卡弹窗是否显示
@@ -29,23 +29,24 @@ struct HomeView: View {
     /// 定位数据管理对象
     @StateObject private var locationDataManager = LocationDataManager()
     /// 用户信息数据模型
-    @EnvironmentObject var userInfoDataModel: UserInfoData
+//    @EnvironmentObject var userInfoDataModel: UserInfoData
     /// 地图区域
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
         span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
     )
-    /// 颜色标签数组
-    let colorTags = [Color.red, Color.orange, Color.yellow, Color.green, Color.blue, Color.purple, Color.gray, Color.black]
-    /// 标注列表
-    @State private var landmarks: [Landmark] = []
-    
-//    private var region: MKCoordinateRegion {
-//        MKCoordinateRegion(
-//            center: CLLocationCoordinate2D(latitude: 34.011286, longitude: -116.166868),
-//            span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-//        )
-//    }
+    /// 心情颜色
+    let moodColors: [MoodColor] = [
+        MoodColor(color: "#f16a59", borderColor: "#ef442f", key: "EXCITED", type: "兴奋的"),
+        MoodColor(color: "#f6a552", borderColor: "#f39026", key: "ENTHUSIASTIC", type: "热情的"),
+        MoodColor(color: "#fad35c", borderColor: "#fac736", key: "HAPPY", type: "快乐的"),
+        MoodColor(color: "#74cd6d", borderColor: "#50c348", key: "RELAXED", type: "放松的"),
+        MoodColor(color: "#4a8cf9", borderColor: "#1d6ff8", key: "CALM", type: "平静的"),
+        MoodColor(color: "#af72dc", borderColor: "#9b4fd3", key: "MYSTERIOUS", type: "神秘的"),
+        MoodColor(color: "#9b9ca0", borderColor: "#838387", key: "NEUTRAL", type: "中性的"),
+    ]
+    /// 说点什么输入框
+    @State private var content = ""
     
     var body: some View {
         NavigationStack {
@@ -206,7 +207,7 @@ struct HomeView: View {
                         VStack(spacing: 12) {
                             // 地点打卡
                             Button {
-                                self.visibleSheet.toggle()
+                                self.onRecord()
                             } label: {
                                 ZStack(alignment: .topLeading) {
                                     // 背景图片
@@ -274,32 +275,102 @@ struct HomeView: View {
         }
         .background(.black)
         .sheet(isPresented: $visibleSheet) {
-            Text("打卡")
+            VStack {
+                // 省份图
+                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/330000.png")) { image in
+                    image
+                        .resizable()
+                        .frame(width: 154, height: 154)
+                } placeholder: {}
+                
+                Text("再获得100经验版图将会升温版图")
+                    .foregroundStyle(Color(hex: "#333333"))
+                    .padding(.top, 9)
+                    .font(.system(size: 14))
+                
+                VStack(spacing: 0) {
+                    // 发布瞬间
+                    VStack {
+                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")) { image in
+                            image
+                                .resizable()
+                                .frame(width: 69, height: 64)
+                        } placeholder: {}
+                        
+                        Button {} label: {
+                            Text("发布瞬间")
+                                .padding(.vertical, 9)
+                                .padding(.horizontal, 48)
+                                .foregroundStyle(.white)
+                                .background(Color(hex: "#F3943F"))
+                        }
+                    }
+                    .padding(12)
+                    .frame(maxWidth: .infinity)
+                    .background(.blue)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    
+                    // 选择心情颜色
+                    HStack {
+                        ForEach(self.moodColors, id: \.key) { item in
+                            Button {} label: {
+                                Circle()
+                                    .fill(Color(hex: item.color))
+                                    .frame(width: 37, height: 37)
+                            }
+                        }
+                    }
+                    .padding(.top, 16)
+                    
+                    // 选择当前位置
+                    Text("选择当前位置")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 13)
+                        .background(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .padding(.top, 25)
+                    
+                    // 选择当前位置
+                    TextEditor(text: $content)
+                        .padding(16)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 62)
+                        .background(.blue)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .padding(.top, 25)
+                        .onAppear {
+                            UITextView.appearance().backgroundColor = .clear
+                        }
+                }
+                .padding(16)
+                .frame(maxWidth: .infinity)
+                .background(.gray)
+                .clipShape(RoundedRectangle(cornerRadius: 22))
+                .padding(.top, 16)
+                
+                Spacer()
+                
+                HStack {
+                    Text("就这样")
+                        .padding(.vertical, 9)
+                        .padding(.horizontal, 48)
+                        .foregroundStyle(.white)
+                        .background(Color(hex: "#F3943F"))
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 61)
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
-        .onAppear {
-            print("设置的个人信息", UserCache.shared.getInfo())
-            print("设置的token", UserCache.shared.getToken())
-            
-            // 获取周边热门地点
-//            self.getPopularLocations()
-//            // 获取用户信息
-            ////            self.loadUserInfo()
-//            // 请求位置权限
-//            self.requestLocationAuthorization()
-//
-//            Task {
-//                await self.loadUserInfo()
-//            }
-        }
+        .onAppear {}
     }
     
     /// 获取周边热门地点
     private func getPopularLocations() {
-        let longitude = "\(region.center.longitude)"
-        let latitude = "\(region.center.latitude)"
-        
+//        let longitude = "\(region.center.longitude)"
+//        let latitude = "\(region.center.latitude)"
+//
 //        API.getPopularLocations(params: ["longitude": longitude, "latitude": latitude]) { result in
 //            switch result {
 //            case .success(let data):
@@ -318,23 +389,41 @@ struct HomeView: View {
     
     /// 获取用户信息
     private func loadUserInfo() async {
-        if let value = cacheInfo?.user_id {
-            let user_id = String(describing: value)
-            do {
-                let params = ["user_id": user_id] // 根据您的实际参数
-                let res = try await Api.shared.getUserInfo(params: params)
-                
-                print("获取的用户信息", res)
-                
-                if res.code == 200 && res.data != nil {
-//                    otherUserInfo = res.data!
-                    userInfoDataModel.set(res.data!)
-                }
-            } catch {
-                print("获取用户信息异常")
+//        if let value = cacheInfo?.user_id {
+//            let user_id = String(describing: value)
+//            do {
+//                let params = ["user_id": user_id] // 根据您的实际参数
+//                let res = try await Api.shared.getUserInfo(params: params)
+//
+//                print("获取的用户信息", res)
+//
+//                if res.code == 200 && res.data != nil {
+        ////                    otherUserInfo = res.data!
+//                    userInfoDataModel.set(res.data!)
+//                }
+//            } catch {
+//                print("获取用户信息异常")
+//            }
+//        } else {
+//            print("身份信息不存在请登录")
+//        }
+    }
+    
+    /// 打卡当前地点
+    private func locationCreateRecord(longitude: String, latitude: String) async {
+        do {
+            let res = try await Api.shared.locationCreateRecord(params: [
+                "longitude": longitude,
+                "latitude": latitude,
+            ])
+            
+            print("打卡当前地点", res)
+            
+            if res.code == 200 && res.data != nil {
+                visibleSheet.toggle()
             }
-        } else {
-            print("身份信息不存在请登录")
+        } catch {
+            print("打卡当前地点异常")
         }
     }
     
@@ -343,28 +432,18 @@ struct HomeView: View {
         locationManager.requestWhenInUseAuthorization()
     }
     
-    /// 打卡当前地点
-    private func createPositionRecord(longitude: String, latitude: String) {
-//        API.createPositionRecord(params: ["longitude": longitude, "latitude": latitude, "address": "地址", "name": "名字"]) { result in
-//            switch result {
-//            case .success(let data):
-//                if data.code == 200 {
-//                    isCurrentLocation.toggle()
-//                }
-//            case .failure:
-//                print("获取失败")
-//            }
-//        }
-    }
-    
     /// 获取当前位置并打卡
-    private func currentLocation() {
-        requestLocationAuthorization()
+    private func onRecord() {
+        requestLocationAuthorization() // 请求获取位置权限
+        
         switch locationDataManager.locationManager.authorizationStatus {
         case .authorizedWhenInUse:
             let longitude = "\(locationDataManager.locationManager.location?.coordinate.longitude.description ?? "")"
             let latitude = "\(locationDataManager.locationManager.location?.coordinate.latitude.description ?? "")"
-            createPositionRecord(longitude: longitude, latitude: latitude)
+
+            Task {
+                await locationCreateRecord(longitude: longitude, latitude: latitude)
+            }
         case .restricted, .denied:
             print("当前位置数据被限制或拒绝")
         case .notDetermined:
