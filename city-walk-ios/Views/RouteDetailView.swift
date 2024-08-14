@@ -8,11 +8,8 @@
 import MapKit
 import SwiftUI
 
-struct RouterDetailView: View {
-    let API = Api()
-
-    /// 查询的步行列表 id
-    var listId: Int
+struct RouteDetailView: View {
+    var list_id: String
 
     /// 地图配置
     @State private var region: MKCoordinateRegion = .init(
@@ -54,7 +51,7 @@ struct RouterDetailView: View {
 
     /// 获取指定步行记录历史打卡记录列表
     private func gpsGetRouteHistory() {
-        print("请求参数", ["id": "\(listId)"])
+//        print("请求参数", ["id": "\(listId)"])
 //        API.gpsGetRouteHistory(params: ["id": "\(listId)"]) { result in
 //            switch result {
 //            case .success(let data):
@@ -93,5 +90,5 @@ struct Landmark: Identifiable {
 }
 
 #Preview {
-    RouterDetailView(listId: 29)
+    RouteDetailView(list_id: "")
 }

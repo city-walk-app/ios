@@ -10,8 +10,6 @@ import SwiftUI
 struct MainView: View {
     var user_id: String
 
-    let API = Api()
-
     /// 省份列表
     @State private var provinceList: [GetUserProvinceJigsawType.GetUserProvinceJigsawData] = []
     /// 热力图
@@ -150,46 +148,92 @@ struct MainView: View {
                     }
 
                     // 热力图
-                    GeometryReader { _ in
-                        HStack {
-                            let columns = [
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible())
-                            ]
+//                    GeometryReader { _ in
+                    HStack {
+                        let columns = [
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                        ]
 
-                            if !self.heatmap.isEmpty {
-                                LazyVGrid(columns: columns, spacing: 13) {
-                                    ForEach(self.heatmap, id: \.date) { item in
-                                        if
-                                            item.route_count != nil
-                                            && item.route_count! > 0
-                                            && item.background_color != nil
-                                        {
-                                            RoundedRectangle(cornerRadius: 4)
-                                                .fill(Color(hex: "\(item.background_color!)"))
-                                                .frame(width: 26, height: 26)
+                        if !self.heatmap.isEmpty {
+                            LazyVGrid(columns: columns, spacing: 13) {
+                                ForEach(self.heatmap, id: \.date) { item in
+                                    if
+                                        item.route_count != nil
+                                        && item.route_count! > 0
+                                        && item.background_color != nil
+                                    {
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(Color(hex: "\(item.background_color!)"))
+                                            .frame(width: 26, height: 26)
 
-                                        } else {
-                                            RoundedRectangle(cornerRadius: 4)
-                                                .fill(Color(hex: "#eeeeee"))
-                                                .frame(width: 26, height: 26)
-                                        }
+                                    } else {
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(Color(hex: "#eeeeee"))
+                                            .frame(width: 26, height: 26)
                                     }
                                 }
-                            } else {
-                                Text("热力图加载中")
                             }
+                        } else {
+                            Text("热力图加载中")
                         }
                     }
-//                    .frame(width: geometry.size.width) // 让热力图的宽度充满可用空间
                 }
+//                    .frame(width: geometry.size.width) // 让热力图的宽度充满可用空间
+//                }
                 .padding(16)
-//                .frame(width: geometry.size.width) // 让热力图的宽度充满可用空间
+
+                // 步行记录详情
+
+                // 步行记录
+                HStack {
+                    if !self.routeList.isEmpty {
+                        let columns = [
+                            GridItem(.fixed(163)),
+                            GridItem(.fixed(163)),
+                        ]
+
+                        LazyVGrid(columns: columns, alignment: .center) {
+                            ForEach(self.routeList, id: \.list_id) { item in
+                                NavigationLink(destination: RouteDetailView(list_id: item.list_id)) {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color(hex: item.mood_color ?? "#FFCC94"))
+                                        .frame(width: 163, height: 116)
+                                        .overlay {
+                                            HStack {
+                                                Spacer()
+
+                                                VStack {
+                                                    // 地点数量
+                                                    Text("地点×\(item.count)")
+                                                        .foregroundStyle(.white)
+                                                        .font(.system(size: 16))
+                                                        .padding(.top, 28)
+                                                        .padding(.trailing, 16)
+
+                                                    Spacer()
+
+                                                    // 时间
+                                                    Text("\(convertToDateOnly(from: item.create_at)!)")
+                                                        .foregroundStyle(.white)
+                                                        .font(.system(size: 14))
+                                                        .padding(.bottom, 10)
+                                                        .padding(.trailing, 16)
+                                                }
+                                            }
+                                        }
+                                }
+                            }
+                        }
+                    } else {
+                        Text("步行记录加载中")
+                    }
+                }
             }
         }
         .onAppear {
@@ -207,7 +251,7 @@ struct MainView: View {
         do {
             let res = try await Api.shared.getUserRouteList(params: ["user_id": self.user_id])
 
-//            print("获取用户步行记录列表", res)
+            print("获取用户步行记录列表", res)
 
             if res.code == 200 && res.data != nil {
                 self.routeList = res.data!
@@ -252,7 +296,7 @@ struct MainView: View {
         do {
             let res = try await Api.shared.getLocationUserHeatmap(params: ["user_id": self.user_id])
 
-            print("我的页面获取用户指定月份打卡热力图", res)
+//            print("我的页面获取用户指定月份打卡热力图", res)
 
             if res.code == 200 && res.data != nil {
                 self.heatmap = res.data!
