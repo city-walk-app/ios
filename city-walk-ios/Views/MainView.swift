@@ -18,6 +18,8 @@ struct MainView: View {
     @State private var routeList: [GetUserRouteListType.GetUserRouteListData] = []
     /// 用户的身份信息
     @State private var userInfo: UserInfoType?
+    /// 步行记录详情列表
+    @State private var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes] = []
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -163,19 +165,25 @@ struct MainView: View {
                         if !self.heatmap.isEmpty {
                             LazyVGrid(columns: columns, spacing: 13) {
                                 ForEach(self.heatmap, id: \.date) { item in
-                                    if
-                                        item.route_count != nil
+                                    let isHaveRoute: Bool = item.route_count != nil
                                         && item.route_count! > 0
                                         && item.background_color != nil
-                                    {
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .fill(Color(hex: "\(item.background_color!)"))
-                                            .frame(width: 26, height: 26)
 
-                                    } else {
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .fill(Color(hex: "#eeeeee"))
-                                            .frame(width: 26, height: 26)
+                                    Button {
+                                        if isHaveRoute {
+                                            self.routeDetailList = item.routes
+                                        }
+                                    } label: {
+                                        if isHaveRoute {
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .fill(Color(hex: "\(item.background_color!)"))
+                                                .frame(width: 26, height: 26)
+
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .fill(Color(hex: "#eeeeee"))
+                                                .frame(width: 26, height: 26)
+                                        }
                                     }
                                 }
                             }
@@ -184,11 +192,70 @@ struct MainView: View {
                         }
                     }
                 }
-//                    .frame(width: geometry.size.width) // 让热力图的宽度充满可用空间
 //                }
                 .padding(16)
 
                 // 步行记录详情
+                if !self.routeDetailList.isEmpty {
+                    VStack {
+                        ForEach(Array(self.routeDetailList.enumerated()), id: \.element.create_at) { index, item in
+                            HStack {
+                                // 左侧标识和头像
+                                if index == 0 {
+                                    if let userInfo = self.userInfo {
+                                        AsyncImage(url: URL(string: userInfo.avatar ?? defaultAvatar)) { image in
+                                            image
+                                                .resizable()
+                                                .frame(width: 46, height: 46)
+                                                .clipShape(Circle()) // 将图片裁剪为圆形
+                                        } placeholder: {}
+                                    }
+                                } else {
+                                    Circle()
+                                        .fill(Color.white) // 设置圆形的背景颜色为白色
+                                        .frame(width: 20, height: 20) // 设置圆形的大小
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color(hex: "#F7B535"), lineWidth: 1)
+                                                .overlay(content: {
+                                                    Circle()
+                                                        .fill(Color(hex: "#F7B535"))
+                                                        .frame(width: 12, height: 12) // 设置圆形的大小
+                                                })
+                                        )
+                                }
+
+                                // 右侧详情内容
+                                VStack {
+                                    // 头部内容
+                                    HStack {
+                                        Text("\(item.city ?? "")")
+                                    }
+
+                                    // 发布的文案
+                                    if item.content != nil {
+                                        Text("\(item.content!)")
+                                    }
+
+                                    // 发布的图片
+                                    if item.picture != nil && !item.picture!.isEmpty {
+                                        ScrollView(.horizontal) {
+                                            ForEach(item.picture!, id: \.self) { pictureItem in
+                                                AsyncImage(url: URL(string: pictureItem)) { image in
+                                                    image
+                                                        .resizable()
+                                                        .frame(width: 174, height: 175)
+                                                        .cornerRadius(8)
+                                                } placeholder: {}
+                                            }
+                                        }
+                                        .scrollIndicators(.hidden)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 // 步行记录
                 HStack {
