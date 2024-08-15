@@ -8,25 +8,20 @@
 import SwiftUI
 
 struct SettingView: View {
-//    let API = Api()
-    
     /// 用户信息编辑键
-    enum UserInfoKey {
-        case nick_name, gender, city, email, mobel, signature
+    enum SheetKey {
+        case avatar, nick_name, gender, mobile, preference_type, signature
     }
     
-    /// 创建用户信息设置项
-//    struct UserInfoDataModel {
-//        let title: String
-//        let key: UserInfoKey
-//        let icon: String
-//        let color: Color
-//    }
+    struct InfoItemBar {
+        var icon: String
+        var key: SheetKey
+        var title: String
+        var color: String
+    }
 
-    /// 新的名字
-    @State private var newNickName = ""
-    /// 编辑用户信息的弹窗内部的编辑状态
-    @State private var setUserInfoSheetState: UserInfoKey = .nick_name
+    /// 控制弹窗内容的 key
+    @State private var sheetKey: SheetKey?
     /// 是否显示编辑信息的弹窗
     @State private var isShowSetInfo = false
     /// token
@@ -40,6 +35,14 @@ struct SettingView: View {
     @State private var selectAvatarImage: UIImage?
     /// 是否显示选择头像的对话框
     @State private var visibleSheet = false
+    /// 信息设置的每一项
+    private let infoItems = [
+        InfoItemBar(icon: "person", key: .nick_name, title: "名字", color: "#EF7708"),
+        InfoItemBar(icon: "circlebadge.2", key: .gender, title: "性别", color: "#0043E6"),
+        InfoItemBar(icon: "smartphone", key: .mobile, title: "手机", color: "#FF323E"),
+        InfoItemBar(icon: "hand.thumbsup", key: .preference_type, title: "偏好", color: "#EF7606"),
+        InfoItemBar(icon: "lightbulb", key: .signature, title: "签名", color: "#0348F2"),
+    ]
 
     var body: some View {
         NavigationView {
@@ -50,10 +53,11 @@ struct SettingView: View {
                     Section {
                         // 头像设置
                         Button {
+                            self.sheetKey = .avatar
                             self.visibleSheet.toggle()
                         } label: {
                             HStack {
-//                                   // 头像
+                                // 头像
                                 AsyncImage(url: URL(string: self.userInfo?.avatar ?? defaultAvatar)) { image in
                                     image
                                         .resizable()
@@ -81,108 +85,27 @@ struct SettingView: View {
                     
                     // 信息
                     Section {
-                        Button {
-                            self.visibleSheet.toggle()
-                        } label: {
-                            HStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 36, height: 36)
-                                    .foregroundColor(.blue) // 修改为指定的颜色
-                                    .overlay {
-                                        Image(systemName: "swift")
-                                            .foregroundColor(.white)
-                                    }
-                             
-                                Text("名字")
-                                    .foregroundStyle(.black)
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                        
-                        Button {
-                            self.visibleSheet.toggle()
-                        } label: {
-                            HStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 36, height: 36)
-                                    .foregroundColor(.blue) // 修改为指定的颜色
-                                    .overlay {
-                                        Image(systemName: "swift")
-                                            .foregroundColor(.white)
-                                    }
-                             
-                                Text("名字")
-                                    .foregroundStyle(.black)
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                        
-                        Button {
-                            self.visibleSheet.toggle()
-                        } label: {
-                            HStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 36, height: 36)
-                                    .foregroundColor(.blue) // 修改为指定的颜色
-                                    .overlay {
-                                        Image(systemName: "swift")
-                                            .foregroundColor(.white)
-                                    }
-                             
-                                Text("名字")
-                                    .foregroundStyle(.black)
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                        
-                        Button {
-                            self.visibleSheet.toggle()
-                        } label: {
-                            HStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 36, height: 36)
-                                    .foregroundColor(.blue) // 修改为指定的颜色
-                                    .overlay {
-                                        Image(systemName: "swift")
-                                            .foregroundColor(.white)
-                                    }
-                             
-                                Text("名字")
-                                    .foregroundStyle(.black)
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                        
-                        Button {
-                            self.visibleSheet.toggle()
-                        } label: {
-                            HStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 36, height: 36)
-                                    .foregroundColor(.blue) // 修改为指定的颜色
-                                    .overlay {
-                                        Image(systemName: "swift")
-                                            .foregroundColor(.white)
-                                    }
-                             
-                                Text("名字")
-                                    .foregroundStyle(.black)
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.gray)
+                        ForEach(infoItems, id: \.key) { item in
+                            Button {
+                                self.sheetKey = item.key
+                                self.visibleSheet.toggle()
+                            } label: {
+                                HStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: 36, height: 36)
+                                        .foregroundColor(Color(hex: item.color)) // 修改为指定的颜色
+                                        .overlay {
+                                            Image(systemName: item.icon)
+                                                .foregroundColor(.white)
+                                        }
+                                 
+                                    Text(item.title)
+                                        .foregroundStyle(.black)
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.gray)
+                                }
                             }
                         }
                     }
@@ -292,49 +215,35 @@ struct SettingView: View {
         })
         // 选择头像的弹出层
         .sheet(isPresented: $visibleSheet) {
-            ImagePicker(selectedImage: $selectAvatarImage, visible: $visibleSheet) {
-                if let image = selectAvatarImage {
-                    self.uploadImageToBackend(image: image)
+            // 头像设置
+            if sheetKey == .avatar {
+                ImagePicker(selectedImage: $selectAvatarImage, visible: $visibleSheet) {
+                    if let image = selectAvatarImage {
+                        self.uploadImageToBackend(image: image)
+                    }
                 }
             }
+            // 名字
+            else if sheetKey == .nick_name {
+                Text("名字")
+            }
+            // 性别
+            else if sheetKey == .gender {
+                Text("性别")
+            }
+            // 手机
+            else if sheetKey == .mobile {
+                Text("手机")
+            }
+            // 偏好
+            else if sheetKey == .preference_type {
+                Text("偏好")
+            }
+            // 签名
+            else if sheetKey == .signature {
+                Text("签名")
+            }
         }
-        // 设置信息
-//        .sheet(isPresented: $isShowSetInfo) {
-//            NavigationStack {
-//                VStack {
-//                    // 名字
-//                    if self.setUserInfoSheetState == .nick_name {
-//                        HStack {
-//                            Text("名字")
-//                            TextField("请输入名字", text: $newNickName)
-//                        }
-//                    }
-//                    // 邮箱
-//                    else if self.setUserInfoSheetState == .email {
-//                        HStack {
-//                            Text("邮箱")
-//                            TextField("请输入邮箱", text: $newNickName)
-//                        }
-//                    }
-//
-//                    Spacer()
-//                }
-//                .toolbar {
-//                    ToolbarItem(placement: .navigationBarTrailing) {
-//                        Button {} label: {
-//                            Text("保存")
-//                        }
-//                    }
-//                    ToolbarItem(placement: .navigationBarLeading) {
-//                        Button {
-//                            self.isShowAvatarSelectSheet.toggle()
-//                        } label: {
-//                            Text("取消")
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
     
     /// 头像上传
@@ -370,7 +279,8 @@ struct SettingView: View {
             
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 {
                 print("成功", httpResponse)
-            } else {
+            }
+            else {
                 print("失败 to upload image")
             }
         }
