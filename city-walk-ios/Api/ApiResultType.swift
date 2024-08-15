@@ -325,3 +325,25 @@ struct LocationCreateRecordType: Decodable {
     var code: Int
     var data: LocationCreateRecordData?
 }
+
+/// 完善步行打卡记录详情
+struct UpdateRouteDetailType: Decodable {
+    var message: String
+    var code: Int
+    var data: String?
+}
+
+/// 获取周边热门地点
+struct GetLocationPopularRecommendType: Decodable {
+    struct GetLocationPopularRecommendData: Codable {
+        var longitude: Int?
+        var latitude: Int?
+        var name: String?
+        var province: String?
+        var city: String?
+    }
+
+    var message: String
+    var code: Int
+    var data: [GetLocationPopularRecommendData]?
+}

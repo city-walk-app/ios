@@ -110,4 +110,24 @@ class Api {
             type: LocationCreateRecordType.self
         )
     }
+    
+    /// 完善步行打卡记录详情
+    func updateRouteDetail(params: [String: Any]) async throws -> UpdateRouteDetailType {
+        return try await Request.shared.request(
+            url: "/location/update/user/route/detail",
+            params: params,
+            method: .post,
+            type: UpdateRouteDetailType.self
+        )
+    }
+    
+    /// 获取周边热门地点
+    func getLocationPopularRecommend(params: [String: Any]) async throws -> GetLocationPopularRecommendType {
+        return try await Request.shared.request(
+            url: "/location/get/popular/recommend",
+            params: params,
+            method: .post,
+            type: GetLocationPopularRecommendType.self
+        )
+    }
 }

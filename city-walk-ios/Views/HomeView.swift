@@ -9,19 +9,28 @@ import CoreLocation
 import MapKit
 import SwiftUI
 
+struct RouteDetailForm {
+    var route_id: String
+    var content: String
+    var travel_type: String
+    var mood_color: String
+    var address: String
+    var picture: [String]
+}
+
+struct MoodColor {
+    var color: String
+    var borderColor: String
+    var key: String
+    var type: String
+}
+
 /// 主视图，用于显示地图和操作选项
 struct HomeView: View {
-    struct MoodColor {
-        var color: String
-        var borderColor: String
-        var key: String
-        var type: String
-    }
-    
     /// 缓存信息
     let cacheInfo = UserCache.shared.getInfo()
     /// 打卡弹窗是否显示
-    @State private var visibleSheet = false
+    @State private var visibleSheet = true
     /// 定位服务管理对象
     @State private var locationManager = CLLocationManager()
     /// 位置权限状态
@@ -47,6 +56,19 @@ struct HomeView: View {
     ]
     /// 说点什么输入框
     @State private var content = ""
+    /// 用户的身份信息
+    @State private var userInfo: UserInfoType?
+    /// 打卡详情
+    @State private var routeDetailForm = RouteDetailForm(
+        route_id: "",
+        content: "",
+        travel_type: "",
+        mood_color: "",
+        address: "",
+        picture: []
+    )
+    /// 心情颜色选中的配置
+    @State private var moodColorActive: MoodColor?
     
     var body: some View {
         NavigationStack {
@@ -288,6 +310,8 @@ struct HomeView: View {
                     .padding(.top, 9)
                     .font(.system(size: 14))
                 
+                Text("表单内容：\(routeDetailForm)")
+                
                 VStack(spacing: 0) {
                     // 发布瞬间
                     VStack {
@@ -312,11 +336,34 @@ struct HomeView: View {
                     
                     // 选择心情颜色
                     HStack {
-                        ForEach(self.moodColors, id: \.key) { item in
-                            Button {} label: {
+                        if let moodColorActive = moodColorActive {
+                            Button {
+                                self.moodColorActive = nil
+                                self.routeDetailForm.mood_color = ""
+                            } label: {
                                 Circle()
-                                    .fill(Color(hex: item.color))
+                                    .fill(Color(hex: moodColorActive.color))
                                     .frame(width: 37, height: 37)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color(hex: moodColorActive.borderColor), lineWidth: 1) // 圆形边框
+                                    )
+                            }
+                          
+                        } else {
+                            ForEach(self.moodColors, id: \.key) { item in
+                                Button {
+                                    self.moodColorActive = item
+                                    self.routeDetailForm.mood_color = item.key
+                                } label: {
+                                    Circle()
+                                        .fill(Color(hex: item.color))
+                                        .frame(width: 37, height: 37)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color(hex: item.borderColor), lineWidth: 1) // 圆形边框
+                                        )
+                                }
                             }
                         }
                     }
@@ -331,7 +378,7 @@ struct HomeView: View {
                         .padding(.top, 25)
                     
                     // 选择当前位置
-                    TextEditor(text: $content)
+                    TextEditor(text: $routeDetailForm.content)
                         .padding(16)
                         .frame(maxWidth: .infinity)
                         .frame(height: 62)
@@ -351,11 +398,39 @@ struct HomeView: View {
                 Spacer()
                 
                 HStack {
-                    Text("就这样")
-                        .padding(.vertical, 9)
-                        .padding(.horizontal, 48)
-                        .foregroundStyle(.white)
-                        .background(Color(hex: "#F3943F"))
+                    Button {
+                        self.visibleSheet.toggle()
+                    } label: {
+                        Text("取消")
+                            .frame(width: 160, height: 48)
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color(hex: "#F3943F"))
+                            .background(Color(hex: "#ffffff"))
+                            .border(Color(hex: "#F3943F"))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                            )
+                    }
+                    
+                    Button {
+                        Task {
+                            await self.updateRouteDetail() // 完善步行打卡记录详情
+                        }
+                    } label: {
+                        Text("就这样")
+                            .frame(width: 160, height: 48)
+                            .font(.system(size: 16))
+                            .foregroundStyle(.white)
+                            .background(Color(hex: "#F3943F"))
+                            .border(Color(hex: "#F3943F"))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                            )
+                    }
                 }
             }
             .padding(.horizontal, 16)
@@ -363,50 +438,70 @@ struct HomeView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
-        .onAppear {}
+        .onAppear {
+            Task {
+                await self.getLocationPopularRecommend() // 获取周边热门地点
+            }
+        }
     }
     
     /// 获取周边热门地点
-    private func getPopularLocations() {
-//        let longitude = "\(region.center.longitude)"
-//        let latitude = "\(region.center.latitude)"
-//
-//        API.getPopularLocations(params: ["longitude": longitude, "latitude": latitude]) { result in
-//            switch result {
-//            case .success(let data):
-//                if data.code == 200 && data.data != nil {
-//                    let list = data.data!
-//                    let _landmarks = list.map { item in
-//                        Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
-//                    }
-//                    self.landmarks = _landmarks
+    private func getLocationPopularRecommend() async {
+        let longitude = "\(region.center.longitude)"
+        let latitude = "\(region.center.latitude)"
+
+        do {
+            let res = try await Api.shared.getLocationPopularRecommend(params: [
+                "longitude": longitude,
+                "latitude": latitude,
+            ])
+            
+            print("获取周边热门地点", res)
+            
+            if res.code == 200 && res.data != nil {
+                let list = res.data!
+//                let _landmarks = list.map { item in
+//                    Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
 //                }
-//            case .failure:
-//                print("接口错误")
-//            }
-//        }
+//                landmarks = _landmarks
+            }
+        } catch {
+            print("获取周边热门地点异常")
+        }
+    }
+    
+    /// 完善步行打卡记录详情
+    private func updateRouteDetail() async {
+        do {
+            let res = try await Api.shared.updateRouteDetail(params: [:])
+            
+            print("完善记录详情", res)
+            
+            if res.code == 200 {
+                visibleSheet.toggle()
+            }
+            
+        } catch {
+            print("完善步行打卡记录详情异常")
+        }
     }
     
     /// 获取用户信息
-    private func loadUserInfo() async {
-//        if let value = cacheInfo?.user_id {
-//            let user_id = String(describing: value)
-//            do {
-//                let params = ["user_id": user_id] // 根据您的实际参数
-//                let res = try await Api.shared.getUserInfo(params: params)
-//
-//                print("获取的用户信息", res)
-//
-//                if res.code == 200 && res.data != nil {
-        ////                    otherUserInfo = res.data!
-//                    userInfoDataModel.set(res.data!)
-//                }
-//            } catch {
-//                print("获取用户信息异常")
-//            }
-//        } else {
-//            print("身份信息不存在请登录")
-//        }
+    private func getUserInfo() async {
+        do {
+            guard cacheInfo != nil else {
+                return
+            }
+            let res = try await Api.shared.getUserInfo(params: ["user_id": cacheInfo!.user_id])
+
+            print("我的页面获取的用户信息", res)
+
+            if res.code == 200 && res.data != nil {
+                userInfo = res.data!
+            }
+        } catch {
+            print("获取用户信息异常")
+        }
     }
     
     /// 打卡当前地点

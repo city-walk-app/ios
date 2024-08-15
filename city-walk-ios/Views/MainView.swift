@@ -305,7 +305,7 @@ struct MainView: View {
         }
         .onAppear {
             Task {
-                await self.loadUserInfo() // 获取用户信息
+                await self.getUserInfo() // 获取用户信息
                 await self.getLocationUserHeatmap() // 获取用户指定月份打卡热力图
                 await self.getUserProvinceJigsaw() // 获取用户解锁的省份版图列表
                 await self.getUserRouteList() // 获取用户步行记录列表
@@ -344,7 +344,7 @@ struct MainView: View {
     }
 
     /// 获取用户信息
-    private func loadUserInfo() async {
+    private func getUserInfo() async {
         do {
             let res = try await Api.shared.getUserInfo(params: ["user_id": self.user_id])
 
