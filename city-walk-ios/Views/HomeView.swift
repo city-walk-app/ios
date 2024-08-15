@@ -30,7 +30,7 @@ struct HomeView: View {
     /// 缓存信息
     let cacheInfo = UserCache.shared.getInfo()
     /// 打卡弹窗是否显示
-    @State private var visibleSheet = true
+    @State private var visibleSheet = false
     /// 定位服务管理对象
     @State private var locationManager = CLLocationManager()
     /// 位置权限状态
@@ -69,6 +69,8 @@ struct HomeView: View {
     )
     /// 心情颜色选中的配置
     @State private var moodColorActive: MoodColor?
+    /// 打卡信息详情
+    @State private var recordDetail: LocationCreateRecordType.LocationCreateRecordData?
     
     var body: some View {
         NavigationStack {
@@ -440,7 +442,7 @@ struct HomeView: View {
         .toolbar(.hidden)
         .onAppear {
             Task {
-                await self.getLocationPopularRecommend() // 获取周边热门地点
+//                await self.getLocationPopularRecommend() // 获取周边热门地点
             }
         }
     }
@@ -459,7 +461,7 @@ struct HomeView: View {
             print("获取周边热门地点", res)
             
             if res.code == 200 && res.data != nil {
-                let list = res.data!
+//                let list = res.data!
 //                let _landmarks = list.map { item in
 //                    Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
 //                }
@@ -473,12 +475,28 @@ struct HomeView: View {
     /// 完善步行打卡记录详情
     private func updateRouteDetail() async {
         do {
-            let res = try await Api.shared.updateRouteDetail(params: [:])
+            let res = try await Api.shared.updateRouteDetail(params: [
+                "route_id": routeDetailForm.route_id,
+                "content": routeDetailForm.content,
+                "travel_type": routeDetailForm.travel_type,
+                "mood_color": routeDetailForm.mood_color,
+                "address": routeDetailForm.address,
+                "picture": routeDetailForm.picture,
+            ])
             
             print("完善记录详情", res)
             
             if res.code == 200 {
                 visibleSheet.toggle()
+                
+                moodColorActive = nil
+                routeDetailForm.route_id = ""
+                routeDetailForm.mood_color = ""
+                routeDetailForm.address = ""
+                routeDetailForm.address = ""
+                routeDetailForm.content = ""
+                routeDetailForm.travel_type = ""
+                routeDetailForm.picture = []
             }
             
         } catch {
@@ -496,8 +514,8 @@ struct HomeView: View {
 
             print("我的页面获取的用户信息", res)
 
-            if res.code == 200 && res.data != nil {
-                userInfo = res.data!
+            if let data = res.data, res.code == 200 {
+                userInfo = data
             }
         } catch {
             print("获取用户信息异常")
@@ -514,8 +532,10 @@ struct HomeView: View {
             
             print("打卡当前地点", res)
             
-            if res.code == 200 && res.data != nil {
+            if let data = res.data, res.code == 200 {
                 visibleSheet.toggle()
+                recordDetail = data
+                routeDetailForm.route_id = data.route_id
             }
         } catch {
             print("打卡当前地点异常")
