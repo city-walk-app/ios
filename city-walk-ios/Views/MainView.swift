@@ -264,10 +264,16 @@ struct MainView: View {
                                                             .resizable()
                                                             .frame(width: 174, height: 175)
                                                             .cornerRadius(8)
-                                                    } placeholder: {}
+                                                    } placeholder: {
+                                                        // 占位符，图片加载时显示的内容
+                                                        Rectangle()
+                                                            .fill(Color.gray.opacity(0.3))
+                                                            .frame(width: 174, height: 174)
+                                                    }
                                                 }
                                             }
                                             .padding(.horizontal, 24)
+                                            .padding(.bottom, 23)
                                         }
                                         .scrollIndicators(.hidden)
                                     }
