@@ -21,6 +21,9 @@ struct MainView: View {
     /// 步行记录详情列表
     @State private var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes] = []
 
+    @State private var selectedDate = Date()
+    @State private var showDatePicker = false
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
@@ -90,18 +93,22 @@ struct MainView: View {
                 HStack {
                     Spacer()
 
-                    HStack {
-                        Text("2024 年08月")
-                            .foregroundStyle(Color(hex: "#9A9A9A"))
-                            .font(.system(size: 12))
+                    Button {
+                        self.showDatePicker.toggle()
+                    } label: {
+                        HStack {
+                            Text("2024年08月")
+                                .foregroundStyle(Color(hex: "#9A9A9A"))
+                                .font(.system(size: 12))
 
-                        Image(systemName: "chevron.down")
-                            .foregroundStyle(Color(hex: "#9A9A9A"))
-                            .font(.system(size: 12))
+                            Image(systemName: "chevron.down")
+                                .foregroundStyle(Color(hex: "#9A9A9A"))
+                                .font(.system(size: 12))
+                        }
+                        .padding(.vertical, 5)
+                        .padding(.horizontal, 8)
+                        .background(Color(hex: "#F3F3F3"))
                     }
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 8)
-                    .background(Color(hex: "#F3F3F3"))
                 }
                 .padding(.horizontal, 16)
 
@@ -231,55 +238,72 @@ struct MainView: View {
                                 .frame(width: 76)
 
                                 // 右侧详情内容
-                                VStack(alignment: .leading) {
-                                    // 头部内容
-                                    HStack {
-                                        Text("\(item.city ?? "")")
-                                            .padding(.leading, 24)
+                                ZStack(alignment: .topTrailing) {
+                                    // 左上角的图表
+                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-position.png")) { image in
+                                        image
+                                            .resizable()
+                                            .frame(width: 61, height: 56)
+                                    } placeholder: {}
+                                        .zIndex(30)
 
-                                        Spacer()
-                                    }
-                                    .frame(height: 46)
-                                    .background(.red)
-
-                                    // 发布的文案
-                                    if item.content != nil && item.content != "" {
+                                    // 主要内容
+                                    VStack(alignment: .leading) {
+                                        // 头部内容
                                         HStack {
-                                            Text("\(item.content!)")
-                                                .font(.system(size: 14))
-                                                .foregroundStyle(Color(hex: "#666666"))
+                                            Text("\(item.city ?? "")")
                                                 .padding(.horizontal, 24)
-                                                .padding(.top, 14)
-                                                .padding(.bottom, 12)
-                                        }
-                                    }
+                                                .frame(maxHeight: .infinity)
+                                                .background(LinearGradient(gradient: Gradient(
+                                                        colors: [Color(hex: "#FFF8E8"), Color(hex: "#ffffff")]
+                                                    ),
+                                                    startPoint: .leading, endPoint: .trailing))
 
-                                    // 发布的图片
-                                    if item.picture != nil && !item.picture!.isEmpty {
-                                        ScrollView(.horizontal) {
+                                            Spacer()
+                                        }
+                                        .frame(height: 46)
+
+                                        // 发布的文案
+                                        if item.content != nil && item.content != "" {
                                             HStack {
-                                                ForEach(item.picture!, id: \.self) { pictureItem in
-                                                    AsyncImage(url: URL(string: pictureItem)) { image in
-                                                        image
-                                                            .resizable()
-                                                            .frame(width: 174, height: 175)
-                                                            .cornerRadius(8)
-                                                    } placeholder: {
-                                                        // 占位符，图片加载时显示的内容
-                                                        Rectangle()
-                                                            .fill(Color.gray.opacity(0.3))
-                                                            .frame(width: 174, height: 174)
+                                                Text("\(item.content!)")
+                                                    .font(.system(size: 14))
+                                                    .foregroundStyle(Color(hex: "#666666"))
+                                                    .padding(.horizontal, 24)
+                                                    .padding(.top, 14)
+                                                    .padding(.bottom, 12)
+                                            }
+                                        }
+
+                                        // 发布的图片
+                                        if item.picture != nil && !item.picture!.isEmpty {
+                                            ScrollView(.horizontal) {
+                                                HStack {
+                                                    ForEach(item.picture!, id: \.self) { pictureItem in
+                                                        AsyncImage(url: URL(string: pictureItem)) { image in
+                                                            image
+                                                                .resizable()
+                                                                .frame(width: 174, height: 175)
+                                                                .cornerRadius(8)
+                                                        } placeholder: {
+                                                            // 占位符，图片加载时显示的内容
+                                                            Rectangle()
+                                                                .fill(Color.gray.opacity(0.3))
+                                                                .frame(width: 174, height: 174)
+                                                        }
                                                     }
                                                 }
+                                                .padding(.horizontal, 24)
+                                                .padding(.bottom, 23)
                                             }
-                                            .padding(.horizontal, 24)
-                                            .padding(.bottom, 23)
+                                            .scrollIndicators(.hidden)
                                         }
-                                        .scrollIndicators(.hidden)
                                     }
+                                    .frame(maxWidth: .infinity)
+                                    .background(.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .shadow(color: Color(hex: "#656565").opacity(0.1), radius: 5.4, x: 0, y: 1)
                                 }
-                                .frame(maxWidth: .infinity)
-                                .border(Color.black)
                             }
                         }
                     }
@@ -333,6 +357,28 @@ struct MainView: View {
                     }
                 }
                 .padding(.horizontal, 16)
+            }
+            .background(Color(hex: "#FAF9FA"))
+        }
+        .sheet(isPresented: self.$showDatePicker) {
+            VStack {
+                DatePicker("选择日期", selection: self.$selectedDate, displayedComponents: [.date])
+                    .datePickerStyle(WheelDatePickerStyle())
+                    .labelsHidden()
+                    .environment(\.locale, Locale(identifier: "zh_CN"))
+                    .frame(maxHeight: 300)
+                    .clipped()
+                    .padding()
+
+                Button {
+                    self.showDatePicker = false
+                } label: {
+                    Text("确定")
+                        .padding()
+                        .background(Color(hex: "#F7B535"))
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
             }
         }
         .onAppear {
