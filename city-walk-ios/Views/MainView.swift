@@ -76,10 +76,10 @@ struct MainView: View {
                                 }
                             }
                         }
+                        .padding(.horizontal, 17)
                     }
                     .scrollIndicators(.hidden)
                     .padding(.vertical, 24)
-                    .padding(.horizontal, 17)
                 } else {
                     Text("暂无版图")
                 }
@@ -148,9 +148,9 @@ struct MainView: View {
                                 .font(.system(size: 14))
                         }
                     }
+                    .frame(width: 98)
 
                     // 热力图
-//                    GeometryReader { _ in
                     HStack {
                         let columns = [
                             GridItem(.flexible()),
@@ -191,8 +191,8 @@ struct MainView: View {
                             Text("热力图加载中")
                         }
                     }
+                    .frame(maxWidth: .infinity)
                 }
-//                }
                 .padding(16)
 
                 // 步行记录详情
@@ -261,8 +261,8 @@ struct MainView: View {
                 HStack {
                     if !self.routeList.isEmpty {
                         let columns = [
-                            GridItem(.fixed(163)),
-                            GridItem(.fixed(163)),
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
                         ]
 
                         LazyVGrid(columns: columns, alignment: .center) {
@@ -270,7 +270,8 @@ struct MainView: View {
                                 NavigationLink(destination: RouteDetailView(list_id: item.list_id, user_id: self.user_id)) {
                                     RoundedRectangle(cornerRadius: 8)
                                         .fill(Color(hex: item.mood_color ?? "#FFCC94"))
-                                        .frame(width: 163, height: 116)
+                                        .frame(height: 116)
+                                        .frame(maxWidth: .infinity)
                                         .overlay {
                                             HStack {
                                                 Spacer()
@@ -301,6 +302,7 @@ struct MainView: View {
                         Text("步行记录加载中")
                     }
                 }
+                .padding(.horizontal, 16)
             }
         }
         .onAppear {
