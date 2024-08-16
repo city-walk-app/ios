@@ -61,18 +61,20 @@ struct MainView: View {
                     ScrollView(.horizontal) {
                         HStack {
                             ForEach(self.provinceList, id: \.vis_id) { item in
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 107, height: 107) // 设置图片的大小
-                                        .clipShape(Circle()) // 将图片裁剪为圆形
-                                } placeholder: {
-                                    // 占位符，图片加载时显示的内容
-                                    Circle()
-                                        .fill(Color.gray.opacity(0.3))
-                                        .frame(width: 107, height: 107) // 占位符的大小与图片一致
-                                        .overlay(Text("加载失败").foregroundColor(.white))
+                                Button {} label: {
+                                    Color(hex: item.background_color)
+                                        .frame(width: 107, height: 107)
+                                        .mask(
+                                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png")) { image in
+                                                image
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .frame(width: 107, height: 107)
+                                            } placeholder: {
+                                                Rectangle()
+                                                    .frame(width: 107, height: 107)
+                                            }
+                                        )
                                 }
                             }
                         }
