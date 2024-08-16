@@ -19,6 +19,8 @@ struct LoginView: View {
     enum LoginState {
         case login, name, avatar
     }
+    
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     /// 当前登录页的状态
     @State var loginState: LoginState = .login
@@ -48,124 +50,129 @@ struct LoginView: View {
     @State private var isShowAvatarSelectSheet = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // 登录操作
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // 登录状态
-                        if loginState == .login {
-                            // 标题
-                            HStack {
-                                Image("logo")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 40, height: 40)
-                                    .mask(Circle())
+        NavigationView {
+            VStack {
+                ZStack {
+                    // 登录操作
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            // 登录状态
+                            if loginState == .login {
+                                // 标题
+                                HStack {
+                                    Image("logo")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 40, height: 40)
+                                        .mask(Circle())
                                     
-                                Text("Welcome")
-                                    .font(.title)
-                                    .bold()
-                                    .foregroundStyle(.black)
+                                    Text("Welcome")
+                                        .font(.title)
+                                        .bold()
+                                        .foregroundStyle(.black)
                                     
-                                Spacer()
-                            }
+                                    Spacer()
+                                }
                                 
-                            /// 邮箱
-                            HStack {
-                                TextField("请输入邮箱", text: $email)
-                                    .padding(.vertical, 20)
-                                    .keyboardType(.default)
-                                    .focused($focus, equals: .email)
-                                    .submitLabel(.next)
-                                    .onReceive(Just(code), perform: { _ in
-                                        limitMaxLength(content: &code, maxLength: 50)
-                                    })
-                                    .onSubmit { // 监听提交事件
-                                        self.validateEmail()
-                                    }
+                                /// 邮箱
+                                HStack {
+                                    TextField("请输入邮箱", text: $email)
+                                        .padding(.vertical, 20)
+                                        .keyboardType(.default)
+                                        .focused($focus, equals: .email)
+                                        .submitLabel(.next)
+                                        .onReceive(Just(code), perform: { _ in
+                                            limitMaxLength(content: &code, maxLength: 50)
+                                        })
+                                        .onSubmit { // 监听提交事件
+                                            self.validateEmail()
+                                        }
                                     
-                                // 获取验证码按钮
-                                if isCountingDown {
-                                    Text("\(countdownSeconds)s后再试")
-                                        .foregroundStyle(.gray)
-                                } else {
-                                    Button {
-                                        self.validateEmail()
-                                        print("获取验证码")
-                                    } label: {
-                                        Text("获取验证码")
+                                    // 获取验证码按钮
+                                    if isCountingDown {
+                                        Text("\(countdownSeconds)s后再试")
+                                            .foregroundStyle(.gray)
+                                    } else {
+                                        Button {
+                                            self.validateEmail()
+                                            print("获取验证码")
+                                        } label: {
+                                            Text("获取验证码")
+                                        }
                                     }
                                 }
-                            }
-                            .padding(.horizontal, 23)
-                            .background(.white, in: RoundedRectangle(cornerRadius: 35))
-                            .padding(.top, 20)
+                                .padding(.horizontal, 23)
+                                .background(.white, in: RoundedRectangle(cornerRadius: 35))
+                                .padding(.top, 20)
                                 
-                            /// 验证码
-                            HStack {
-                                TextField("邮箱验证码", text: $code)
-                                    .keyboardType(.numberPad) // 设置键盘类型为数字键盘
-                                    .textContentType(.oneTimeCode) // 设置内容类型为一次性代码，以便系统知道右下角按钮应该显示为“确认”
-                                    .padding(.vertical, 20)
-                                    .focused($focus, equals: .code)
-                                    .submitLabel(.return)
-                                    .onReceive(Just(code), perform: { _ in
-                                        limitMaxLength(content: &code, maxLength: 6)
-                                    }) // 最大长度为 6 位
-                            }
-                            .padding(.horizontal, 23)
-                            .background(.white, in: RoundedRectangle(cornerRadius: 35))
-                                
-                            /// 登录按钮
-                            Button {
-                                Task {
-                                    await self.userLoginEmail()
+                                /// 验证码
+                                HStack {
+                                    TextField("邮箱验证码", text: $code)
+                                        .keyboardType(.numberPad) // 设置键盘类型为数字键盘
+                                        .textContentType(.oneTimeCode) // 设置内容类型为一次性代码，以便系统知道右下角按钮应该显示为“确认”
+                                        .padding(.vertical, 20)
+                                        .focused($focus, equals: .code)
+                                        .submitLabel(.return)
+                                        .onReceive(Just(code), perform: { _ in
+                                            limitMaxLength(content: &code, maxLength: 6)
+                                        }) // 最大长度为 6 位
                                 }
-                                print("点击登录")
-                            } label: {
-                                Circle()
-                                    .frame(width: 80, height: 80)
-                                    .overlay {
-                                        Image(systemName: "chevron.right")
-                                            .foregroundStyle(.white)
-                                            .font(.system(size: 20))
+                                .padding(.horizontal, 23)
+                                .background(.white, in: RoundedRectangle(cornerRadius: 35))
+                                
+                                /// 登录按钮
+                                Button {
+                                    Task {
+                                        await self.userLoginEmail()
                                     }
+                                    print("点击登录")
+                                } label: {
+                                    Circle()
+                                        .frame(width: 80, height: 80)
+                                        .overlay {
+                                            Image(systemName: "chevron.right")
+                                                .foregroundStyle(.white)
+                                                .font(.system(size: 20))
+                                        }
+                                }
+                                .disabled(isLoginButtonDisabled)
                             }
-                            .disabled(isLoginButtonDisabled)
+                            
+                            Spacer()
                         }
-                    
-                        Spacer()
+                        .padding(20)
+                        .padding(.top, 80)
                     }
-                    .padding(20)
-                    .padding(.top, 80)
                 }
             }
-            .ignoresSafeArea(.keyboard, edges: .bottom)
+            .navigationBarItems(leading: BackButton(action: {
+                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+            })) // 自定义返回按钮
             .background(.gray.opacity(0.1))
-            // 点击空白处隐藏输入框
-            .onTapGesture {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+        .navigationBarBackButtonHidden(true)
+        // 点击空白处隐藏输入框
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+        .onAppear {
+            // 页面展示的时候将验证码输入框聚焦
+            // https://fatbobman.com/zh/posts/textfield-event-focus-keyboard/
+            // 在视图初始化阶段赋值是无效的。即使在 onAppear 中，也必须要有一定延时才能让 TextField 焦点
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.focus = .email
             }
-//            .navigationBarBackButtonHidden(true)
-            .onAppear {
-                // 页面展示的时候将验证码输入框聚焦
-                // https://fatbobman.com/zh/posts/textfield-event-focus-keyboard/
-                // 在视图初始化阶段赋值是无效的。即使在 onAppear 中，也必须要有一定延时才能让 TextField 焦点
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.focus = .email
-                }
-            }
-            .onReceive(timer) { _ in
-                if isCountingDown {
-                    if countdownSeconds > 0 {
-                        countdownSeconds -= 1 // 每秒减少一秒
-                    } else {
-                        isCountingDown = false // 倒计时结束后停止倒计时
-                    }
+        }
+        .onReceive(timer) { _ in
+            if isCountingDown {
+                if countdownSeconds > 0 {
+                    countdownSeconds -= 1 // 每秒减少一秒
+                } else {
+                    isCountingDown = false // 倒计时结束后停止倒计时
                 }
             }
         }
+      
         // 登录成功之后跳转到首页
         .navigationDestination(isPresented: $isToHomeView) {
             HomeView()

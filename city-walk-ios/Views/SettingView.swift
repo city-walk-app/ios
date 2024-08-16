@@ -30,6 +30,8 @@ struct SettingView: View {
         var signature: String
         var preference_type: [String]
     }
+    
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     /// 控制弹窗内容的 key
     @State private var sheetKey: SheetKey = .nick_name
@@ -236,8 +238,18 @@ struct SettingView: View {
                     }
                 }
             }
-            .navigationTitle("设置")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("设置")
+                        .font(.headline)
+                }
+            }
+            .navigationBarItems(leading: BackButton(action: {
+                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+            })) // 自定义返回按钮
+            .background(.gray.opacity(0.1))
         }
+        .navigationBarBackButtonHidden(true)
         // 跳转到登录页面
         .navigationDestination(isPresented: $isGoLoginView, destination: {
             LoginView()

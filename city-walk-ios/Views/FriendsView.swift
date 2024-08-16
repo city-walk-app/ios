@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-struct FriendsIView: View {
+struct FriendsView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
     /// 朋友列表
     @State private var friends: [FriendListType.FriendListData] = []
 
@@ -24,12 +26,11 @@ struct FriendsIView: View {
 
                         LazyVGrid(columns: columns, spacing: 20) {
                             ForEach(self.friends, id: \.user_id) { item in
-//                            ForEach(0 ..< 20) { _ in
+
                                 NavigationLink(destination: MainView(user_id: item.user_id)) {
                                     VStack(spacing: 12) {
                                         // 头像
                                         AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
-//                                    AsyncImage(url: URL(string: defaultAvatar)) { image in
                                             image
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
@@ -59,8 +60,18 @@ struct FriendsIView: View {
                     }
                 }
             }
-            .navigationTitle("我的朋友")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("我的朋友")
+                        .font(.headline)
+                }
+            }
+            .navigationBarItems(leading: BackButton(action: {
+                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+            })) // 自定义返回按钮
+            .background(.gray.opacity(0.1))
         }
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             Task {
                 await self.friendList() // 获取朋友列表
@@ -86,5 +97,5 @@ struct FriendsIView: View {
 }
 
 #Preview {
-    FriendsIView()
+    FriendsView()
 }

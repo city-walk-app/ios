@@ -166,7 +166,7 @@ struct HomeView: View {
                     HStack(spacing: 12) {
                         VStack(spacing: 16) {
                             // 我的朋友
-                            NavigationLink(destination: FriendsIView()) {
+                            NavigationLink(destination: FriendsView()) {
                                 ZStack(alignment: .topLeading) {
                                     // 背景图片
                                     AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-friends.png")) { image in
@@ -186,6 +186,7 @@ struct HomeView: View {
                                         Text("我的朋友")
                                             .font(.headline)
                                             .foregroundColor(.white)
+                                        
                                         Text("My Friends")
                                             .font(.subheadline)
                                             .foregroundColor(.white)

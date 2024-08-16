@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct RankingView: View {
-    /// tab 切换数据
-//    @EnvironmentObject var globalDataModel: GlobalData
-
     /// 排名列表
     @State private var rankingList: [FriendGetExperienceRankingType.FriendGetExperienceRankingData] = []
+    // 使用 @Environment 属性包装器从环境中获取 presentationMode，这里 presentationMode 是一个 Binding<PresentationMode>
+    // PresentationMode 表示视图的显示状态，可以通过它来控制视图的弹出或返回
+    // presentationMode.wrappedValue.dismiss() 可以用于关闭当前视图或返回到前一个视图
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     var body: some View {
         NavigationView {
@@ -68,18 +69,34 @@ struct RankingView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     } else {
-                        Text("暂无排行榜")
+                        ForEach(1 ..< 4) { _ in
+                            Rectangle()
+                                .fill(Color(hex: "#f4f4f4"))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 80)
+                        }
                     }
                 }
                 .padding(16)
                 .padding(.bottom, 200)
+                .frame(maxWidth: .infinity)
             }
-            .navigationTitle("经验排名")
-            .background(.gray.opacity(0.1))
-            .onAppear {
-                Task {
-                    await self.friendGetExperienceRanking() // 获取朋友经验排行榜
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("排行榜")
+                        .font(.headline)
                 }
+            }
+
+            .navigationBarItems(leading: BackButton(action: {
+                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+            })) // 自定义返回按钮
+            .background(.gray.opacity(0.1))
+        }
+        .navigationBarBackButtonHidden(true)
+        .onAppear {
+            Task {
+                await self.friendGetExperienceRanking() // 获取朋友经验排行榜
             }
         }
     }
