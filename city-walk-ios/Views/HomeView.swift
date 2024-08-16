@@ -28,7 +28,7 @@ struct MoodColor {
 /// 主视图，用于显示地图和操作选项
 struct HomeView: View {
     /// 缓存信息
-    let cacheInfo = UserCache.shared.getInfo()
+    private let cacheInfo = UserCache.shared.getInfo()
     /// 打卡弹窗是否显示
     @State private var visibleSheet = false
     /// 定位服务管理对象
@@ -45,7 +45,7 @@ struct HomeView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
     )
     /// 心情颜色
-    let moodColors: [MoodColor] = [
+    private let moodColors: [MoodColor] = [
         MoodColor(color: "#f16a59", borderColor: "#ef442f", key: "EXCITED", type: "兴奋的"),
         MoodColor(color: "#f6a552", borderColor: "#f39026", key: "ENTHUSIASTIC", type: "热情的"),
         MoodColor(color: "#fad35c", borderColor: "#fac736", key: "HAPPY", type: "快乐的"),

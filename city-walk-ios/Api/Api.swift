@@ -130,4 +130,14 @@ class Api {
             type: GetLocationPopularRecommendType.self
         )
     }
+    
+    /// 设置用户信息
+    func setUserInfo(params: [String: Any]) async throws -> SetUserInfoType {
+        return try await Request.shared.request(
+            url: "/user/set/user_info",
+            params: params,
+            method: .post,
+            type: SetUserInfoType.self
+        )
+    }
 }
