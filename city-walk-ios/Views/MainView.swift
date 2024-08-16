@@ -199,64 +199,86 @@ struct MainView: View {
 
                 // 步行记录详情
                 if !self.routeDetailList.isEmpty {
-                    VStack {
+                    VStack(spacing: 24) {
                         ForEach(Array(self.routeDetailList.enumerated()), id: \.element.create_at) { index, item in
                             HStack {
                                 // 左侧标识和头像
-                                if index == 0 {
-                                    if let userInfo = self.userInfo {
-                                        AsyncImage(url: URL(string: userInfo.avatar ?? defaultAvatar)) { image in
-                                            image
-                                                .resizable()
-                                                .frame(width: 46, height: 46)
-                                                .clipShape(Circle()) // 将图片裁剪为圆形
-                                        } placeholder: {}
+                                VStack {
+                                    if index == 0 {
+                                        if let userInfo = self.userInfo {
+                                            AsyncImage(url: URL(string: userInfo.avatar ?? defaultAvatar)) { image in
+                                                image
+                                                    .resizable()
+                                                    .frame(width: 46, height: 46)
+                                                    .clipShape(Circle()) // 将图片裁剪为圆形
+                                            } placeholder: {}
+                                        }
+                                    } else {
+                                        Circle()
+                                            .fill(Color.white) // 设置圆形的背景颜色为白色
+                                            .frame(width: 20, height: 20) // 设置圆形的大小
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color(hex: "#F7B535"), lineWidth: 1)
+                                                    .overlay(content: {
+                                                        Circle()
+                                                            .fill(Color(hex: "#F7B535"))
+                                                            .frame(width: 12, height: 12) // 设置圆形的大小
+                                                    })
+                                            )
                                     }
-                                } else {
-                                    Circle()
-                                        .fill(Color.white) // 设置圆形的背景颜色为白色
-                                        .frame(width: 20, height: 20) // 设置圆形的大小
-                                        .overlay(
-                                            Circle()
-                                                .stroke(Color(hex: "#F7B535"), lineWidth: 1)
-                                                .overlay(content: {
-                                                    Circle()
-                                                        .fill(Color(hex: "#F7B535"))
-                                                        .frame(width: 12, height: 12) // 设置圆形的大小
-                                                })
-                                        )
                                 }
+                                .frame(width: 76)
 
                                 // 右侧详情内容
-                                VStack {
+                                VStack(alignment: .leading) {
                                     // 头部内容
                                     HStack {
                                         Text("\(item.city ?? "")")
+                                            .padding(.leading, 24)
+
+                                        Spacer()
                                     }
+                                    .frame(height: 46)
+                                    .background(.red)
 
                                     // 发布的文案
-                                    if item.content != nil {
-                                        Text("\(item.content!)")
+                                    if item.content != nil && item.content != "" {
+                                        HStack {
+                                            Text("\(item.content!)")
+                                                .font(.system(size: 14))
+                                                .foregroundStyle(Color(hex: "#666666"))
+                                                .padding(.horizontal, 24)
+                                                .padding(.top, 14)
+                                                .padding(.bottom, 12)
+                                        }
                                     }
 
                                     // 发布的图片
                                     if item.picture != nil && !item.picture!.isEmpty {
                                         ScrollView(.horizontal) {
-                                            ForEach(item.picture!, id: \.self) { pictureItem in
-                                                AsyncImage(url: URL(string: pictureItem)) { image in
-                                                    image
-                                                        .resizable()
-                                                        .frame(width: 174, height: 175)
-                                                        .cornerRadius(8)
-                                                } placeholder: {}
+                                            HStack {
+                                                ForEach(item.picture!, id: \.self) { pictureItem in
+                                                    AsyncImage(url: URL(string: pictureItem)) { image in
+                                                        image
+                                                            .resizable()
+                                                            .frame(width: 174, height: 175)
+                                                            .cornerRadius(8)
+                                                    } placeholder: {}
+                                                }
                                             }
+                                            .padding(.horizontal, 24)
                                         }
                                         .scrollIndicators(.hidden)
                                     }
                                 }
+                                .frame(maxWidth: .infinity)
+                                .border(Color.black)
                             }
                         }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 24)
                 }
 
                 // 步行记录
