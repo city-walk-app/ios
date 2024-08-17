@@ -119,33 +119,27 @@ struct HomeView: View {
                                             .foregroundColor(.black)
                                     }
                             }
-                            .buttonStyle(PlainButtonStyle()) // 移除默认的按钮样式
                             
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(.ultraThinMaterial) // 将毛玻璃效果作为填充色
-                                .frame(width: 42, height: 42 * 2)
-                                .overlay {
-                                    VStack(spacing: 0) {
-                                        // 切换主题按钮
-                                        Button {} label: {
-                                            Image(systemName: "map")
-                                                .resizable()
-                                                .frame(width: 23, height: 23)
-                                                .foregroundColor(.black)
-                                        }
-                                        .frame(width: 42, height: 42)
-                                        
-                                        // 回到当前位置按钮
-                                        Button {} label: {
-                                            Image(systemName: "paperplane")
-                                                .resizable()
-                                                .frame(width: 23, height: 23)
-                                                .foregroundColor(.black)
-                                        }
-                                        .frame(width: 42, height: 42)
-                                    }
-                                    .clipShape(RoundedRectangle(cornerRadius: 8)) // 裁剪超出部分
+                            VStack(spacing: 0) {
+                                // 切换主题按钮
+                                Button {} label: {
+                                    Image(systemName: "map")
+                                        .resizable()
+                                        .frame(width: 23, height: 23)
+                                        .foregroundColor(.black)
                                 }
+                                .frame(width: 42, height: 42)
+                                
+                                // 回到当前位置按钮
+                                Button {} label: {
+                                    Image(systemName: "paperplane")
+                                        .resizable()
+                                        .frame(width: 23, height: 23)
+                                        .foregroundColor(.black)
+                                }
+                                .frame(width: 42, height: 42)
+                            }
+                            .background(.ultraThinMaterial)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -166,7 +160,7 @@ struct HomeView: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 10))
                                         .overlay {
                                             HStack {
-                                                VStack(spacing: 2) {
+                                                VStack(alignment: .leading, spacing: 2) {
                                                     Text("我的朋友")
                                                         .font(.headline)
                                                         .bold()
@@ -202,7 +196,7 @@ struct HomeView: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
                                         .overlay {
                                             HStack {
-                                                VStack(spacing: 2) {
+                                                VStack(alignment: .leading, spacing: 2) {
                                                     Text("邀请朋友")
                                                         .font(.headline)
                                                         .bold()
@@ -233,71 +227,79 @@ struct HomeView: View {
                             Button {
                                 self.onRecord()
                             } label: {
-                                ZStack(alignment: .topLeading) {
-                                    // 背景图片
-                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-record.png")) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 166, height: 120) // 设置按钮的大小
-                                            .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
-                                    } placeholder: {
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .fill(skeletonBackground)
-                                            .frame(width: 166, height: 120)
-                                    }
-                                    
-                                    // 左上角的文字
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("打卡")
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                        Text("Record location")
-                                            .font(.subheadline)
-                                            .foregroundColor(.white)
-                                    }
-                                    .padding(.top, 14)
-                                    .padding(.leading, 16)
+                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-record.png")) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 166, height: 120)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .overlay {
+                                            HStack {
+                                                VStack(alignment: .leading, spacing: 2) {
+                                                    Text("打卡")
+                                                        .font(.headline)
+                                                        .bold()
+                                                        .foregroundColor(.white)
+                                                                    
+                                                    Text("Record location")
+                                                        .font(.subheadline)
+                                                        .foregroundColor(.white)
+                                                            
+                                                    Spacer()
+                                                }
+                                                        
+                                                Spacer()
+                                            }
+                                            .padding(.top, 14)
+                                            .padding(.leading, 16)
+                                        }
+                                } placeholder: {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(skeletonBackground)
+                                        .frame(width: 166, height: 120)
                                 }
-                                .buttonStyle(PlainButtonStyle()) // 移除默认的按钮样式
                             }
                             
                             // 排行榜
                             NavigationLink(destination: RankingView()) {
-                                ZStack(alignment: .topLeading) {
-                                    // 背景图片
-                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-ranking.png")) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 166, height: 76) // 设置按钮的大小
-                                            .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
-                                    } placeholder: {
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .fill(skeletonBackground)
-                                            .frame(width: 166, height: 76)
-                                    }
-                                    
-                                    // 左上角的文字
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("排行榜")
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                        Text("Ranking")
-                                            .font(.subheadline)
-                                            .foregroundColor(.white)
-                                    }
-                                    .padding(.top, 14)
-                                    .padding(.leading, 16)
+                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-ranking.png")) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 166, height: 76)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .overlay {
+                                            HStack {
+                                                VStack(alignment: .leading, spacing: 2) {
+                                                    Text("排行榜")
+                                                        .font(.headline)
+                                                        .bold()
+                                                        .foregroundColor(.white)
+                                                                        
+                                                    Text("Ranking")
+                                                        .font(.subheadline)
+                                                        .foregroundColor(.white)
+                                                                
+                                                    Spacer()
+                                                }
+                                                            
+                                                Spacer()
+                                            }
+                                            .padding(.top, 14)
+                                            .padding(.leading, 16)
+                                        }
+                                } placeholder: {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(skeletonBackground)
+                                        .frame(width: 166, height: 76)
                                 }
-                                .buttonStyle(PlainButtonStyle()) // 移除默认的按钮样式
                             }
                         }
                     }
                 }
             }
         }
-        .background(.black)
+        // 打卡的对话框
         .sheet(isPresented: $visibleSheet) {
             VStack {
                 // 省份图
@@ -305,14 +307,16 @@ struct HomeView: View {
                     image
                         .resizable()
                         .frame(width: 154, height: 154)
-                } placeholder: {}
+                } placeholder: {
+                    Circle()
+                        .fill(skeletonBackground)
+                        .frame(width: 154, height: 154)
+                }
                 
                 Text("再获得100经验版图将会升温版图")
                     .foregroundStyle(Color(hex: "#333333"))
                     .padding(.top, 9)
                     .font(.system(size: 14))
-                
-                Text("表单内容：\(routeDetailForm)")
                 
                 VStack(spacing: 0) {
                     // 发布瞬间
@@ -321,7 +325,11 @@ struct HomeView: View {
                             image
                                 .resizable()
                                 .frame(width: 69, height: 64)
-                        } placeholder: {}
+                        } placeholder: {
+                            Circle()
+                                .fill(skeletonBackground)
+                                .frame(width: 69, height: 64)
+                        }
                         
                         Button {} label: {
                             Text("发布瞬间")

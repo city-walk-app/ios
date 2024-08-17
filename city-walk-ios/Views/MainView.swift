@@ -469,19 +469,30 @@ struct MainView: View {
                     .padding(.horizontal, 16)
                 }
             }
-            .toolbar {
-                if let nickName = userInfo?.nick_name, userInfo != nil {
-                    ToolbarItem(placement: .principal) {
-                        Text("\(nickName)")
-                            .font(.headline)
-                    }
-                }
-            }
-            .navigationBarItems(leading: BackButton(action: {
-                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
-            })) // 自定义返回按钮
+//            .toolbar {
+//                if let nickName = userInfo?.nick_name, userInfo != nil {
+//                    ToolbarItem(placement: .principal) {
+//                        Text("\(nickName)")
+//                            .font(.headline)
+//                    }
+//                }
+//            }
+//            .navigationBarItems(leading: BackButton {
+//                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+//            }) // 自定义返回按钮
             .background(Color(hex: "#FAF9FA"))
         }
+        .toolbar {
+            if let nickName = userInfo?.nick_name, userInfo != nil {
+                ToolbarItem(placement: .principal) {
+                    Text("\(nickName)")
+                        .font(.headline)
+                }
+            }
+        }
+        .navigationBarItems(leading: BackButton {
+            self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+        }) // 自定义返回按钮
         .navigationBarBackButtonHidden(true)
         .sheet(isPresented: self.$showDatePicker) {
             VStack {
@@ -514,14 +525,6 @@ struct MainView: View {
         }
     }
     
-    struct NoHighlightButtonStyle: ButtonStyle {
-        func makeBody(configuration: Configuration) -> some View {
-            configuration.label
-                .scaleEffect(configuration.isPressed ? 1 : 1) // 保持不变
-                .background(Color.clear) // 保持背景颜色不变
-        }
-    }
-
     /// 获取用户步行记录列表
     private func getUserRouteList() async {
         do {
@@ -529,8 +532,8 @@ struct MainView: View {
 
             print("获取用户步行记录列表", res)
 
-            if res.code == 200 && res.data != nil {
-                self.routeList = res.data!
+            if let data = res.data, res.code == 200 {
+                self.routeList = data
             }
         } catch {
             print("获取用户步行记录列表异常")
@@ -544,8 +547,8 @@ struct MainView: View {
 
 //            print("获取用户解锁的省份版图列表", res)
 
-            if res.code == 200 && res.data != nil {
-                self.provinceList = res.data!
+            if let data = res.data, res.code == 200 {
+                self.provinceList = data
             }
         } catch {
             print("获取用户解锁的省份版图列表异常")
@@ -559,8 +562,8 @@ struct MainView: View {
 
 //            print("我的页面获取的用户信息", res)
 
-            if res.code == 200 && res.data != nil {
-                self.userInfo = res.data!
+            if let data = res.data, res.code == 200 {
+                self.userInfo = data
             }
         } catch {
             print("获取用户信息异常")
@@ -574,10 +577,9 @@ struct MainView: View {
 
 //            print("我的页面获取用户指定月份打卡热力图", res)
 
-            if res.code == 200 && res.data != nil {
-                self.heatmap = res.data!
+            if let data = res.data, res.code == 200 {
+                self.heatmap = data
             }
-
         } catch {
             print("取用户指定月份打卡热力图异常")
         }
