@@ -21,7 +21,7 @@ struct MainView: View {
     /// 用户的身份信息
     @State private var userInfo: UserInfoType?
     /// 步行记录详情列表
-    @State private var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes] = []
+    @State private var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes]?
     /// 当前日期
     @State private var selectedDate = Date()
     /// 是否显示选择日期的对话框
@@ -167,17 +167,17 @@ struct MainView: View {
                         
                         // 热力图
                         HStack {
-                            let columns = [
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                            ]
-                            
                             if !self.heatmap.isEmpty {
+                                let columns = [
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible()),
+                                ]
+                                
                                 ZStack {
                                     LazyVGrid(columns: columns, spacing: 13) {
                                         ForEach(Array(self.heatmap.enumerated()), id: \.element.date) { index, item in
@@ -190,7 +190,7 @@ struct MainView: View {
                                                     withAnimation {
                                                         if self.routeDetailActiveIndex == index {
                                                             self.routeDetailActiveIndex = nil
-                                                            self.routeDetailList = []
+                                                            self.routeDetailList = nil
                                                         } else {
                                                             self.routeDetailActiveIndex = index
                                                             self.routeDetailList = item.routes
@@ -199,40 +199,46 @@ struct MainView: View {
                                                 }
                                                 print("点击的索引", index)
                                             } label: {
-                                                ZStack {
-                                                    if isHaveRoute {
-                                                        RoundedRectangle(cornerRadius: 4)
-                                                            .fill(Color(hex: "\(item.background_color!)"))
-                                                    } else {
-                                                        RoundedRectangle(cornerRadius: 4)
-                                                            .fill(Color(hex: "#eeeeee"))
-                                                    }
-                                                }
-                                                .frame(width: 26, height: 26)
-                                                .scaleEffect(self.routeDetailActiveIndex == index ? 22 : 1)
-                                                .zIndex(self.routeDetailActiveIndex == index ? 1 : 0)
-                                                .animation(.easeInOut(duration: 0.3), value: self.routeDetailActiveIndex)
+                                                RoundedRectangle(cornerRadius: 4)
+                                                    .fill(Color(hex: isHaveRoute
+                                                            ? "\(item.background_color!)"
+                                                            : "#eeeeee"
+                                                    ))
+                                                    .frame(width: 26, height: 26)
                                             }
+                                            .scaleEffect(self.routeDetailActiveIndex == index ? 40 : 1)
+                                            .zIndex(self.routeDetailActiveIndex == index ? 30 : 1)
+                                            .offset(x: self.routeDetailActiveIndex == index ? -13 : 0, y: self.routeDetailActiveIndex == index ? -13 : 0) // 根据放大倍数进行偏移
                                         }
                                     }
                                   
-//                                    if let activeIndex = self.routeDetailActiveIndex {
-//                                        let item = self.heatmap[activeIndex]
-//
-//                                        Button {
-//                                            withAnimation {
-//                                                self.routeDetailActiveIndex = nil
-//                                                self.routeDetailList = []
-//                                            }
-//                                        } label: {
-//                                            RoundedRectangle(cornerRadius: 4)
-//                                                .fill(Color(hex: "\(item.background_color!)"))
-//                                                .scaleEffect(1)
-//                                                .zIndex(3)
-//                                                .animation(.easeInOut(duration: 0.3), value: self.routeDetailActiveIndex)
-//                                                .transition(.identity)
-//                                        }
-//                                    }
+                                    if let activeIndex = self.routeDetailActiveIndex {
+                                        let item = self.heatmap[activeIndex]
+
+                                        Button {
+                                            withAnimation {
+                                                self.routeDetailActiveIndex = nil
+                                                self.routeDetailList = nil
+                                            }
+                                        } label: {
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .fill(Color(hex: "\(item.background_color!)"))
+                                                .scaleEffect(1)
+                                                .zIndex(3)
+                                                .animation(.easeInOut(duration: 0.3), value: self.routeDetailActiveIndex)
+                                                .transition(.identity)
+                                                .buttonStyle(PlainButtonStyle())
+                                                .overlay {
+                                                    VStack(spacing: 4) {
+                                                        Text("\(item.date)")
+                                                        Text("打卡\(item.routes.count)个地方")
+                                                    }
+                                                    .font(.system(size: 22))
+                                                    .foregroundStyle(.white)
+                                                    .bold()
+                                                }
+                                        }
+                                    }
                                 }
                                 .clipped()
                                 .cornerRadius(10)
@@ -245,9 +251,12 @@ struct MainView: View {
                     .padding(16)
                     
                     // 步行记录详情
-                    if !self.routeDetailList.isEmpty {
+                    if let routeDetailList = self.routeDetailList,
+                       self.routeDetailList != nil,
+                       !self.routeDetailList!.isEmpty
+                    {
                         VStack(spacing: 24) {
-                            ForEach(Array(self.routeDetailList.enumerated()), id: \.element.create_at) { index, item in
+                            ForEach(Array(routeDetailList.enumerated()), id: \.element.create_at) { index, item in
                                 HStack {
                                     // 左侧标识和头像
                                     VStack {
@@ -441,6 +450,14 @@ struct MainView: View {
                 await self.getUserProvinceJigsaw() // 获取用户解锁的省份版图列表
                 await self.getUserRouteList() // 获取用户步行记录列表
             }
+        }
+    }
+    
+    struct NoHighlightButtonStyle: ButtonStyle {
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .scaleEffect(configuration.isPressed ? 1 : 1) // 保持不变
+                .background(Color.clear) // 保持背景颜色不变
         }
     }
 
