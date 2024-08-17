@@ -469,26 +469,7 @@ struct MainView: View {
                     .padding(.horizontal, 16)
                 }
             }
-//            .toolbar {
-//                if let nickName = userInfo?.nick_name, userInfo != nil {
-//                    ToolbarItem(placement: .principal) {
-//                        Text("\(nickName)")
-//                            .font(.headline)
-//                    }
-//                }
-//            }
-//            .navigationBarItems(leading: BackButton {
-//                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
-//            }) // 自定义返回按钮
             .background(Color(hex: "#FAF9FA"))
-        }
-        .toolbar {
-            if let nickName = userInfo?.nick_name, userInfo != nil {
-                ToolbarItem(placement: .principal) {
-                    Text("\(nickName)")
-                        .font(.headline)
-                }
-            }
         }
         .navigationBarItems(leading: BackButton {
             self.presentationMode.wrappedValue.dismiss() // 返回上一个视图

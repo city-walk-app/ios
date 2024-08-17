@@ -123,21 +123,29 @@ struct HomeView: View {
                             VStack(spacing: 0) {
                                 // 切换主题按钮
                                 Button {} label: {
-                                    Image(systemName: "map")
-                                        .resizable()
-                                        .frame(width: 23, height: 23)
-                                        .foregroundColor(.black)
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(.ultraThinMaterial)
+                                        .frame(width: 42, height: 42)
+                                        .overlay {
+                                            Image(systemName: "map")
+                                                .resizable()
+                                                .frame(width: 23, height: 23)
+                                                .foregroundColor(.black)
+                                        }
                                 }
-                                .frame(width: 42, height: 42)
-                                
+                               
                                 // 回到当前位置按钮
                                 Button {} label: {
-                                    Image(systemName: "paperplane")
-                                        .resizable()
-                                        .frame(width: 23, height: 23)
-                                        .foregroundColor(.black)
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(.ultraThinMaterial)
+                                        .frame(width: 42, height: 42)
+                                        .overlay {
+                                            Image(systemName: "paperplane")
+                                                .resizable()
+                                                .frame(width: 23, height: 23)
+                                                .foregroundColor(.black)
+                                        }
                                 }
-                                .frame(width: 42, height: 42)
                             }
                             .background(.ultraThinMaterial)
                         }

@@ -18,18 +18,18 @@ struct InviteView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("邀请朋友")
-                        .font(.headline)
-                }
-            }
-            .navigationBarItems(leading: BackButton(action: {
-                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
-            })) // 自定义返回按钮
-            .background(.gray.opacity(0.1))
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("邀请朋友")
+                    .font(.headline)
+            }
+        }
+        .navigationBarItems(leading: BackButton(action: {
+            self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+        })) // 自定义返回按钮
+        .background(.gray.opacity(0.1))
     }
 }
 

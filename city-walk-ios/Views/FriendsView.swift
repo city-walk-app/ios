@@ -56,18 +56,18 @@ struct FriendsView: View {
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("我的朋友")
-                        .font(.headline)
-                }
-            }
-            .navigationBarItems(leading: BackButton(action: {
-                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
-            })) // 自定义返回按钮
-            .background(.gray.opacity(0.1))
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("我的朋友")
+                    .font(.headline)
+            }
+        }
+        .navigationBarItems(leading: BackButton {
+            self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+        }) // 自定义返回按钮
+        .background(.gray.opacity(0.1))
         .onAppear {
             Task {
                 await self.friendList() // 获取朋友列表

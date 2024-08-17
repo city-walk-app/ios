@@ -79,19 +79,18 @@ struct RankingView: View {
                 .padding(.bottom, 200)
                 .frame(maxWidth: .infinity)
             }
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("排行榜")
-                        .font(.headline)
-                }
-            }
-
-            .navigationBarItems(leading: BackButton(action: {
-                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
-            })) // 自定义返回按钮
-            .background(.gray.opacity(0.1))
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("排行榜")
+                    .font(.headline)
+            }
+        }
+        .navigationBarItems(leading: BackButton(action: {
+            self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+        })) // 自定义返回按钮
+        .background(.gray.opacity(0.1))
         .onAppear {
             Task {
                 await self.friendGetExperienceRanking() // 获取朋友经验排行榜
