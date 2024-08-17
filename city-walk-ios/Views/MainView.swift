@@ -26,6 +26,8 @@ struct MainView: View {
     @State private var selectedDate = Date()
     /// 是否显示选择日期的对话框
     @State private var showDatePicker = false
+    /// 选中的热力图元素索引
+    @State private var routeDetailActiveIndex: Int?
 
     var body: some View {
         NavigationView {
@@ -176,30 +178,64 @@ struct MainView: View {
                             ]
                             
                             if !self.heatmap.isEmpty {
-                                LazyVGrid(columns: columns, spacing: 13) {
-                                    ForEach(self.heatmap, id: \.date) { item in
-                                        let isHaveRoute: Bool = item.route_count != nil
-                                            && item.route_count! > 0
-                                            && item.background_color != nil
-                                        
-                                        Button {
-                                            if isHaveRoute {
-                                                self.routeDetailList = item.routes
-                                            }
-                                        } label: {
-                                            if isHaveRoute {
-                                                RoundedRectangle(cornerRadius: 4)
-                                                    .fill(Color(hex: "\(item.background_color!)"))
-                                                    .frame(width: 26, height: 26)
-                                                
-                                            } else {
-                                                RoundedRectangle(cornerRadius: 4)
-                                                    .fill(Color(hex: "#eeeeee"))
-                                                    .frame(width: 26, height: 26)
+                                ZStack {
+                                    LazyVGrid(columns: columns, spacing: 13) {
+                                        ForEach(Array(self.heatmap.enumerated()), id: \.element.date) { index, item in
+                                            let isHaveRoute: Bool = item.route_count != nil
+                                                && item.route_count! > 0
+                                                && item.background_color != nil
+                                            
+                                            Button {
+                                                if isHaveRoute {
+                                                    withAnimation {
+                                                        if self.routeDetailActiveIndex == index {
+                                                            self.routeDetailActiveIndex = nil
+                                                            self.routeDetailList = []
+                                                        } else {
+                                                            self.routeDetailActiveIndex = index
+                                                            self.routeDetailList = item.routes
+                                                        }
+                                                    }
+                                                }
+                                                print("点击的索引", index)
+                                            } label: {
+                                                ZStack {
+                                                    if isHaveRoute {
+                                                        RoundedRectangle(cornerRadius: 4)
+                                                            .fill(Color(hex: "\(item.background_color!)"))
+                                                    } else {
+                                                        RoundedRectangle(cornerRadius: 4)
+                                                            .fill(Color(hex: "#eeeeee"))
+                                                    }
+                                                }
+                                                .frame(width: 26, height: 26)
+                                                .scaleEffect(self.routeDetailActiveIndex == index ? 22 : 1)
+                                                .zIndex(self.routeDetailActiveIndex == index ? 1 : 0)
+                                                .animation(.easeInOut(duration: 0.3), value: self.routeDetailActiveIndex)
                                             }
                                         }
                                     }
+                                  
+//                                    if let activeIndex = self.routeDetailActiveIndex {
+//                                        let item = self.heatmap[activeIndex]
+//
+//                                        Button {
+//                                            withAnimation {
+//                                                self.routeDetailActiveIndex = nil
+//                                                self.routeDetailList = []
+//                                            }
+//                                        } label: {
+//                                            RoundedRectangle(cornerRadius: 4)
+//                                                .fill(Color(hex: "\(item.background_color!)"))
+//                                                .scaleEffect(1)
+//                                                .zIndex(3)
+//                                                .animation(.easeInOut(duration: 0.3), value: self.routeDetailActiveIndex)
+//                                                .transition(.identity)
+//                                        }
+//                                    }
                                 }
+                                .clipped()
+                                .cornerRadius(10)
                             } else {
                                 Text("热力图加载中")
                             }
