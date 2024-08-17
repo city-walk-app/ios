@@ -43,11 +43,9 @@ struct MainView: View {
                                 .frame(width: 74, height: 74) // 设置图片的大小
                                 .clipShape(Circle()) // 将图片裁剪为圆形
                         } placeholder: {
-                            // 占位符，图片加载时显示的内容
                             Circle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 74, height: 74) // 占位符的大小与图片一致
-                                .overlay(Text("加载失败").foregroundColor(.white))
+                                .fill(skeletonBackground)
+                                .frame(width: 74, height: 74)
                         }
                         
                         // 昵称
@@ -62,7 +60,21 @@ struct MainView: View {
                             .foregroundStyle(Color(hex: "#666666"))
                             .font(.system(size: 14))
                     } else {
-                        Text("用户信息加载中")
+                        Circle()
+                            .fill(skeletonBackground)
+                            .frame(width: 74, height: 74)
+                        
+                        // 昵称
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(skeletonBackground)
+                            .padding(.top, 16)
+                            .frame(width: 54, height: 34)
+                           
+                        // 签名
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(skeletonBackground)
+                            .padding(.top, 16)
+                            .frame(width: 280, height: 34)
                     }
                     
                     // 省份版图
@@ -81,6 +93,7 @@ struct MainView: View {
                                                         .frame(width: 107, height: 107)
                                                 } placeholder: {
                                                     Rectangle()
+                                                        .fill(skeletonBackground)
                                                         .frame(width: 107, height: 107)
                                                 }
                                             )
@@ -92,82 +105,88 @@ struct MainView: View {
                         .scrollIndicators(.hidden)
                         .padding(.vertical, 24)
                     } else {
-                        Text("暂无版图")
-                    }
-                    
-                    // 日期选择
-                    HStack {
-                        Spacer()
-                        
-                        Button {
-                            self.showDatePicker.toggle()
-                        } label: {
-                            HStack {
-                                Text("2024年08月")
-                                    .foregroundStyle(Color(hex: "#9A9A9A"))
-                                    .font(.system(size: 12))
-                                
-                                Image(systemName: "chevron.down")
-                                    .foregroundStyle(Color(hex: "#9A9A9A"))
-                                    .font(.system(size: 12))
+                        HStack {
+                            ForEach(0 ..< 3) { _ in
+                                Circle()
+                                    .fill(skeletonBackground)
+                                    .frame(width: 107, height: 107)
                             }
-                            .padding(.vertical, 5)
-                            .padding(.horizontal, 8)
-                            .background(Color(hex: "#F3F3F3"))
                         }
+                        .padding(.vertical, 24)
                     }
-                    .padding(.horizontal, 16)
-                    
-                    Spacer()
-                    
+                  
                     // 热力图
-                    HStack {
-                        // 图例
-                        VStack(spacing: 30) {
-                            HStack(spacing: 7) {
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-1.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 15, height: 17) // 设置图片的大小
-                                } placeholder: {}
-                                
-                                Text("打卡多")
-                                    .foregroundStyle(Color(hex: "#666666"))
-                                    .font(.system(size: 14))
-                            }
+                    if !self.heatmap.isEmpty {
+                        // 日期选择
+                        HStack {
+                            Spacer()
                             
-                            HStack(spacing: 7) {
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 15, height: 17) // 设置图片的大小
-                                } placeholder: {}
-                                
-                                Text("打卡少")
-                                    .foregroundStyle(Color(hex: "#666666"))
-                                    .font(.system(size: 14))
-                            }
-                            
-                            HStack(spacing: 7) {
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 15, height: 17) // 设置图片的大小
-                                } placeholder: {}
-                                
-                                Text("未打卡")
-                                    .foregroundStyle(Color(hex: "#666666"))
-                                    .font(.system(size: 14))
+                            Button {
+                                self.showDatePicker.toggle()
+                            } label: {
+                                HStack {
+                                    Text("2024年08月")
+                                        .foregroundStyle(Color(hex: "#9A9A9A"))
+                                        .font(.system(size: 12))
+                                    
+                                    Image(systemName: "chevron.down")
+                                        .foregroundStyle(Color(hex: "#9A9A9A"))
+                                        .font(.system(size: 12))
+                                }
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 8)
+                                .background(Color(hex: "#F3F3F3"))
                             }
                         }
-                        .frame(width: 98)
+                        .padding(.horizontal, 16)
                         
                         // 热力图
                         HStack {
-                            if !self.heatmap.isEmpty {
+                            // 图例
+                            VStack(spacing: 30) {
+                                HStack(spacing: 7) {
+                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-1.png")) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 15, height: 17) // 设置图片的大小
+                                    } placeholder: {}
+                                    
+                                    Text("打卡多")
+                                        .foregroundStyle(Color(hex: "#666666"))
+                                        .font(.system(size: 14))
+                                }
+                                
+                                HStack(spacing: 7) {
+                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 15, height: 17) // 设置图片的大小
+                                    } placeholder: {}
+                                    
+                                    Text("打卡少")
+                                        .foregroundStyle(Color(hex: "#666666"))
+                                        .font(.system(size: 14))
+                                }
+                                
+                                HStack(spacing: 7) {
+                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 15, height: 17) // 设置图片的大小
+                                    } placeholder: {}
+                                    
+                                    Text("未打卡")
+                                        .foregroundStyle(Color(hex: "#666666"))
+                                        .font(.system(size: 14))
+                                }
+                            }
+                            .frame(width: 98)
+                            
+                            // 热力图
+                            HStack {
                                 let columns = [
                                     GridItem(.flexible()),
                                     GridItem(.flexible()),
@@ -211,10 +230,10 @@ struct MainView: View {
                                             .offset(x: self.routeDetailActiveIndex == index ? -13 : 0, y: self.routeDetailActiveIndex == index ? -13 : 0) // 根据放大倍数进行偏移
                                         }
                                     }
-                                  
+                                    
                                     if let activeIndex = self.routeDetailActiveIndex {
                                         let item = self.heatmap[activeIndex]
-
+                                        
                                         Button {
                                             withAnimation {
                                                 self.routeDetailActiveIndex = nil
@@ -242,13 +261,43 @@ struct MainView: View {
                                 }
                                 .clipped()
                                 .cornerRadius(10)
-                            } else {
-                                Text("热力图加载中")
                             }
+                            .frame(maxWidth: .infinity)
                         }
-                        .frame(maxWidth: .infinity)
+                        .padding(16)
+                    } else {
+                        // 日期选择
+                        HStack {
+                            Spacer()
+                            
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(skeletonBackground)
+                                .frame(width: 106, height: 26)
+                        }
+                        .padding(.horizontal, 16)
+                        
+                        // 热力图
+                        HStack {
+                            // 图例
+                            VStack(spacing: 30) {
+                                ForEach(0 ..< 3) { _ in
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(skeletonBackground)
+                                        .frame(width: 66, height: 20)
+                                }
+                            }
+                            .frame(width: 98)
+                            
+                            // 热力图
+                            HStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(skeletonBackground)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .padding(16)
                     }
-                    .padding(16)
                     
                     // 步行记录详情
                     if let routeDetailList = self.routeDetailList,
@@ -361,7 +410,7 @@ struct MainView: View {
                     }
                     
                     // 步行记录
-                    HStack {
+                    HStack(spacing: 17) {
                         if !self.routeList.isEmpty {
                             let columns = [
                                 GridItem(.flexible()),
@@ -402,7 +451,19 @@ struct MainView: View {
                                 }
                             }
                         } else {
-                            Text("步行记录加载中")
+                            let columns = [
+                                GridItem(.flexible(), spacing: 17),
+                                GridItem(.flexible(), spacing: 0),
+                            ]
+                            
+                            LazyVGrid(columns: columns, alignment: .center, spacing: 17) {
+                                ForEach(0 ..< 3) { _ in
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(skeletonBackground)
+                                        .frame(height: 116)
+                                        .frame(maxWidth: .infinity)
+                                }
+                            }
                         }
                     }
                     .padding(.horizontal, 16)

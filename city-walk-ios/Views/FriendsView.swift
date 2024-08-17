@@ -39,13 +39,9 @@ struct FriendsView: View {
                                         } placeholder: {
                                             // 占位符，图片加载时显示的内容
                                             Rectangle()
-                                                .fill(.gray.opacity(0.3))
-                                                .frame(width: 106, height: 106) // 占位符的大小与图片一致
+                                                .fill(skeletonBackground)
+                                                .frame(width: 106, height: 106)
                                                 .clipShape(RoundedRectangle(cornerRadius: 20))
-                                                .overlay(
-                                                    Text("加载失败")
-                                                        .foregroundColor(.white)
-                                                )
                                         }
 
                                         // 昵称

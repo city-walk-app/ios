@@ -31,11 +31,9 @@ struct RankingView: View {
                                             .frame(width: 46, height: 46) // 设置图片的大小
                                             .clipShape(Circle()) // 将图片裁剪为圆形
                                     } placeholder: {
-                                        // 占位符，图片加载时显示的内容
                                         Circle()
-                                            .fill(Color.gray.opacity(0.3))
-                                            .frame(width: 46, height: 46) // 占位符的大小与图片一致
-                                            .overlay(Text("加载失败").foregroundColor(.white))
+                                            .fill(skeletonBackground)
+                                            .frame(width: 46, height: 46)
                                     }
                                 }
 

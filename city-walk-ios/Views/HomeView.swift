@@ -37,8 +37,6 @@ struct HomeView: View {
     @State private var authorizationStatus: CLAuthorizationStatus = .notDetermined
     /// 定位数据管理对象
     @StateObject private var locationDataManager = LocationDataManager()
-    /// 用户信息数据模型
-//    @EnvironmentObject var userInfoDataModel: UserInfoData
     /// 地图区域
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
@@ -94,24 +92,16 @@ struct HomeView: View {
                                             .frame(width: 48, height: 48) // 设置图片的大小
                                             .clipShape(Circle()) // 将图片裁剪为圆形
                                     } placeholder: {
-                                        // 占位符，图片加载时显示的内容
                                         Circle()
-                                            .fill(Color.gray.opacity(0.3))
-                                            .frame(width: 48, height: 48) // 占位符的大小与图片一致
-                                            .overlay(Text("加载失败").foregroundColor(.white))
+                                            .fill(skeletonBackground)
+                                            .frame(width: 48, height: 48)
                                     }
                                 } else {
                                     Circle()
-                                        .fill(Color.gray.opacity(0.3))
+                                        .fill(skeletonBackground)
                                         .frame(width: 48, height: 48)
-                                        .overlay(Text("无头像").foregroundColor(.white))
                                 }
                             }
-                        } else {
-                            Circle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 48, height: 48)
-                                .overlay(Text("没有登录信息").foregroundColor(.white))
                         }
                             
                         Spacer()
@@ -167,65 +157,74 @@ struct HomeView: View {
                         VStack(spacing: 16) {
                             // 我的朋友
                             NavigationLink(destination: FriendsView()) {
-                                ZStack(alignment: .topLeading) {
-                                    // 背景图片
-                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-friends.png")) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 166, height: 98) // 设置按钮的大小
-                                            .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
-                                    } placeholder: {
-                                        Color.gray // 占位符颜色
-                                            .frame(width: 166, height: 98) // 设置占位符的大小与背景图一致
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    }
-                                    
-                                    // 左上角的文字
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("我的朋友")
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                        
-                                        Text("My Friends")
-                                            .font(.subheadline)
-                                            .foregroundColor(.white)
-                                    }
-                                    .padding(.top, 14)
-                                    .padding(.leading, 16)
+                                // 背景图片
+                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-friends.png")) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 166, height: 98)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .overlay {
+                                            HStack {
+                                                VStack(spacing: 2) {
+                                                    Text("我的朋友")
+                                                        .font(.headline)
+                                                        .bold()
+                                                        .foregroundColor(.white)
+                                                            
+                                                    Text("My Friends")
+                                                        .font(.subheadline)
+                                                        .foregroundColor(.white)
+                                                    
+                                                    Spacer()
+                                                }
+                                                
+                                                Spacer()
+                                            }
+                                            .padding(.top, 14)
+                                            .padding(.leading, 16)
+                                        }
+                                } placeholder: {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(skeletonBackground)
+                                        .frame(width: 166, height: 98)
                                 }
-                                .buttonStyle(PlainButtonStyle()) // 移除默认的按钮样式
                             }
                             
                             // 邀请朋友
                             NavigationLink(destination: InviteView()) {
-                                ZStack(alignment: .topLeading) {
-                                    // 背景图片
-                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-invite.png")) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 166, height: 98) // 设置按钮的大小
-                                            .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
-                                    } placeholder: {
-                                        Color.gray // 占位符颜色
-                                            .frame(width: 166, height: 98) // 设置占位符的大小与背景图一致
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    }
-                                    
-                                    // 左上角的文字
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("邀请朋友")
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                        Text("City Walk Together")
-                                            .font(.subheadline)
-                                            .foregroundColor(.white)
-                                    }
-                                    .padding(.top, 14)
-                                    .padding(.leading, 16)
+                                // 背景图片
+                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-invite.png")) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 166, height: 98) // 设置按钮的大小
+                                        .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
+                                        .overlay {
+                                            HStack {
+                                                VStack(spacing: 2) {
+                                                    Text("邀请朋友")
+                                                        .font(.headline)
+                                                        .bold()
+                                                        .foregroundColor(.white)
+                                                                
+                                                    Text("City Walk Together")
+                                                        .font(.subheadline)
+                                                        .foregroundColor(.white)
+                                                        
+                                                    Spacer()
+                                                }
+                                                    
+                                                Spacer()
+                                            }
+                                            .padding(.top, 14)
+                                            .padding(.leading, 16)
+                                        }
+                                } placeholder: {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(skeletonBackground)
+                                        .frame(width: 166, height: 98)
                                 }
-                                .buttonStyle(PlainButtonStyle()) // 移除默认的按钮样式
                             }
                         }
                         
@@ -243,9 +242,9 @@ struct HomeView: View {
                                             .frame(width: 166, height: 120) // 设置按钮的大小
                                             .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
                                     } placeholder: {
-                                        Color.gray // 占位符颜色
-                                            .frame(width: 166, height: 120) // 设置占位符的大小与背景图一致
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(skeletonBackground)
+                                            .frame(width: 166, height: 120)
                                     }
                                     
                                     // 左上角的文字
@@ -274,9 +273,9 @@ struct HomeView: View {
                                             .frame(width: 166, height: 76) // 设置按钮的大小
                                             .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
                                     } placeholder: {
-                                        Color.gray // 占位符颜色
-                                            .frame(width: 166, height: 76) // 设置占位符的大小与背景图一致
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(skeletonBackground)
+                                            .frame(width: 166, height: 76)
                                     }
                                     
                                     // 左上角的文字
