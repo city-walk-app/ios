@@ -8,6 +8,7 @@
 import Combine
 import CoreLocation
 import MapKit
+import PhotosUI
 import SwiftUI
 
 struct AutoSizingTextEditor: UIViewRepresentable {
@@ -64,7 +65,7 @@ struct HomeView: View {
     /// 缓存信息
     private let cacheInfo = UserCache.shared.getInfo()
     /// 打卡弹窗是否显示
-    @State private var visibleSheet = true
+    @State private var visibleSheet = false
     /// 定位服务管理对象
     @State private var locationManager = CLLocationManager()
     /// 位置权限状态
@@ -99,7 +100,10 @@ struct HomeView: View {
     @State private var textEditorHeight: CGFloat = UIFont.systemFont(ofSize: 17).lineHeight + 10 // Default height
 
     /// 是否显示全屏对话框
-    @State private var visibleFullScreenCover = true
+    @State private var visibleFullScreenCover = false
+    
+//    @State private var selectedImage: UIImage? = nil
+    @State private var selectedImages: [UIImage] = []
     
     var body: some View {
         NavigationStack {
@@ -419,6 +423,22 @@ struct HomeView: View {
                 }
                 
                 VStack(spacing: 0) {
+                    if !selectedImages.isEmpty {
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach(selectedImages, id: \.self) { image in
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 150, height: 150)
+                                        .cornerRadius(10)
+                                        .shadow(radius: 5)
+                                        .padding()
+                                }
+                            }
+                        }
+                    }
+                    
                     // 发布瞬间
                     Button {
                         self.visibleFullScreenCover.toggle()
@@ -457,9 +477,11 @@ struct HomeView: View {
                     .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
                     // 选择照片的全屏弹出对话框
                     .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
-                        Text("123")
+//                        ImagePicker(selectedImagess: $selectedImages)
+                        ImagePicker(selectedImages: $selectedImages)
+                        // , visible: $visibleFullScreenCover, onImagePicked: {}
                     })
-                  
+                    
                     // 选择心情颜色
                     HStack {
                         if let moodColorActive = moodColorActive {
@@ -630,7 +652,6 @@ struct HomeView: View {
             .padding(.horizontal, 16)
             .padding(.top, 61)
         }
-    
         // 点击空白处隐藏输入框
         .onTapGesture {
             self.hideKeyboard()

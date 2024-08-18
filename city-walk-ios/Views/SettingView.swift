@@ -258,11 +258,11 @@ struct SettingView: View {
                 VStack(alignment: .center) {
                     // 头像设置
                     if sheetKey == .avatar {
-                        ImagePicker(selectedImage: $selectAvatarImage, visible: $visibleSheet) {
-                            if let image = selectAvatarImage {
-                                self.uploadImageToBackend(image: image)
-                            }
-                        }
+//                        ImagePicker(selectedImage: $selectAvatarImage, visible: $visibleSheet) {
+//                            if let image = selectAvatarImage {
+//                                self.uploadImageToBackend(image: image)
+//                            }
+//                        }
                     }
                     // 名字
                     else if sheetKey == .nick_name {
