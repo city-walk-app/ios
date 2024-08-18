@@ -79,6 +79,7 @@ struct LoginView: View {
                                     TextField("请输入邮箱", text: $email)
                                         .padding(.vertical, 20)
                                         .keyboardType(.default)
+                                        .textContentType(.emailAddress)
                                         .focused($focus, equals: .email)
                                         .submitLabel(.next)
                                         .onReceive(Just(code), perform: { _ in

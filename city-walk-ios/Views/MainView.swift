@@ -364,8 +364,10 @@ struct MainView: View {
                                                             gradient: Gradient(
                                                                 colors: [Color(hex: "#FFF8E8"), Color(hex: "#ffffff")]
                                                             ),
-                                                            startPoint: .leading, endPoint: .trailing
-                                                        ))
+                                                            startPoint: .leading,
+                                                            endPoint: .trailing
+                                                        )
+                                                    )
                                                 
                                                 Spacer()
                                             }
