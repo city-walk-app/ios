@@ -30,7 +30,7 @@ struct HomeView: View {
     /// 缓存信息
     private let cacheInfo = UserCache.shared.getInfo()
     /// 打卡弹窗是否显示
-    @State private var visibleSheet = false
+    @State private var visibleSheet = true
     /// 定位服务管理对象
     @State private var locationManager = CLLocationManager()
     /// 位置权限状态
@@ -339,40 +339,77 @@ struct HomeView: View {
                         .foregroundStyle(Color(hex: "#333333"))
                         .padding(.top, 9)
                         .font(.system(size: 14))
+                } else {
+                    // 省份图
+                    Color.clear
+                        .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
+                        .background(
+                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/330000.png")) { phase in
+                                if let image = phase.image {
+                                    Color(hex: "#F3943F")
+                                        .frame(width: .infinity, height: .infinity)
+                                        .mask {
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 154, height: 154)
+                                        }
+                                  
+                                } else {
+                                    // 在加载过程中显示其它占位符
+                                    Circle()
+                                        .fill(skeletonBackground)
+                                        .frame(width: .infinity, height: .infinity)
+                                }
+                            }
+                        )
+                    
+                    // 文案
+                    Text("当前地点打卡成功")
+                        .foregroundStyle(Color(hex: "#333333"))
+                        .padding(.top, 9)
+                        .font(.system(size: 14))
                 }
                 
                 VStack(spacing: 0) {
                     // 发布瞬间
-                    VStack {
-                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")) { image in
-                            image
-                                .resizable()
-                                .frame(width: 69, height: 64)
-                        } placeholder: {
-                            Circle()
-                                .fill(skeletonBackground)
-                                .frame(width: 69, height: 64)
-                        }
+                    Button {} label: {
+                        VStack {
+                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")) { image in
+                                image
+                                    .resizable()
+                                    .frame(width: 69, height: 64)
+                            } placeholder: {
+                                Circle()
+                                    .fill(skeletonBackground)
+                                    .frame(width: 69, height: 64)
+                            }
                         
-                        Button {} label: {
                             Text("发布瞬间")
                                 .padding(.vertical, 9)
                                 .padding(.horizontal, 48)
                                 .foregroundStyle(.white)
                                 .background(Color(hex: "#F3943F"))
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     }
                     .padding(12)
                     .frame(maxWidth: .infinity)
-                    .background(.blue)
+                    .background(LinearGradient(gradient: Gradient(
+                            colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                        ),
+                        startPoint: .leading, endPoint: .trailing))
                     .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
                     
                     // 选择心情颜色
                     HStack {
                         if let moodColorActive = moodColorActive {
                             Button {
-                                self.moodColorActive = nil
-                                self.routeDetailForm.mood_color = ""
+                                withAnimation {
+                                    self.moodColorActive = nil
+                                    self.routeDetailForm.mood_color = ""
+                                }
                             } label: {
                                 Circle()
                                     .fill(Color(hex: moodColorActive.color))
@@ -381,13 +418,20 @@ struct HomeView: View {
                                         Circle()
                                             .stroke(Color(hex: moodColorActive.borderColor), lineWidth: 1) // 圆形边框
                                     )
+                                
+                                Text(moodColorActive.type)
+                                    .foregroundStyle(Color(hex: moodColorActive.color))
+                                    .font(.system(size: 18))
+                                    .bold()
                             }
                           
                         } else {
                             ForEach(self.moodColors, id: \.key) { item in
                                 Button {
-                                    self.moodColorActive = item
-                                    self.routeDetailForm.mood_color = item.key
+                                    withAnimation {
+                                        self.moodColorActive = item
+                                        self.routeDetailForm.mood_color = item.key
+                                    }
                                 } label: {
                                     Circle()
                                         .fill(Color(hex: item.color))
@@ -403,30 +447,51 @@ struct HomeView: View {
                     .padding(.top, 16)
                     
                     // 选择当前位置
-                    Text("选择当前位置")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 13)
-                        .background(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .padding(.top, 25)
+                    Button {} label: {
+                        Text("选择当前位置")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 13)
+                            .background(LinearGradient(gradient: Gradient(
+                                    colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                                ),
+                                startPoint: .leading, endPoint: .trailing))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .padding(.top, 25)
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color(hex: "#666666"))
+                            .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
+                    }
                     
-                    // 选择当前位置
+                    // 说点什么
                     TextEditor(text: $routeDetailForm.content)
                         .padding(16)
                         .frame(maxWidth: .infinity)
                         .frame(height: 62)
-                        .background(.blue)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .submitLabel(.done)
+                        .background(
+                            LinearGradient(
+                                gradient: Gradient(
+                                    colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                                ),
+                                startPoint: .leading, endPoint: .trailing
+                            )
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                         .padding(.top, 25)
+                        .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
                         .onAppear {
                             UITextView.appearance().backgroundColor = .clear
+                        }
+                        .onSubmit {
+                            print("提交表单")
                         }
                 }
                 .padding(16)
                 .frame(maxWidth: .infinity)
-                .background(.gray)
+                .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 22))
-                .padding(.top, 16)
+                .shadow(color: Color(hex: "#9F9F9F").opacity(0.6), radius: 8.4, x: 0, y: 1)
+                .padding(.top, 6)
                 
                 Spacer()
                 
@@ -469,11 +534,15 @@ struct HomeView: View {
             .padding(.horizontal, 16)
             .padding(.top, 61)
         }
+        // 点击空白处隐藏输入框
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
         .onAppear {
             Task {
-//                await self.getLocationPopularRecommend() // 获取周边热门地点
+                // await self.getLocationPopularRecommend() // 获取周边热门地点
             }
         }
     }

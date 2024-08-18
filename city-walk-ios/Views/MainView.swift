@@ -83,20 +83,27 @@ struct MainView: View {
                             HStack {
                                 ForEach(self.provinceList, id: \.vis_id) { item in
                                     Button {} label: {
-                                        Color(hex: item.background_color)
+                                        Color.clear
                                             .frame(width: 107, height: 107)
-                                            .mask(
-                                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png")) { image in
-                                                    image
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fill)
-                                                        .frame(width: 107, height: 107)
-                                                } placeholder: {
-                                                    Rectangle()
-                                                        .fill(skeletonBackground)
-                                                        .frame(width: 107, height: 107)
+                                            .background {
+                                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png")) { phase in
+                                                    if let image = phase.image {
+                                                        Color(hex: item.background_color)
+                                                            .frame(width: .infinity, height: .infinity)
+                                                            .mask {
+                                                                image
+                                                                    .resizable()
+                                                                    .aspectRatio(contentMode: .fill)
+                                                                    .frame(width: .infinity, height: .infinity)
+                                                            }
+                                                    } else {
+                                                        Circle()
+                                                            .fill(skeletonBackground)
+                                                            .frame(width: 107, height: 107)
+                                                    }
                                                 }
-                                            )
+                                            }
+//
                                     }
                                 }
                             }
@@ -352,10 +359,13 @@ struct MainView: View {
                                                 Text("\(item.city ?? "")")
                                                     .padding(.horizontal, 24)
                                                     .frame(maxHeight: .infinity)
-                                                    .background(LinearGradient(gradient: Gradient(
-                                                            colors: [Color(hex: "#FFF8E8"), Color(hex: "#ffffff")]
-                                                        ),
-                                                        startPoint: .leading, endPoint: .trailing))
+                                                    .background(
+                                                        LinearGradient(
+                                                            gradient: Gradient(
+                                                                colors: [Color(hex: "#FFF8E8"), Color(hex: "#ffffff")]
+                                                            ),
+                                                            startPoint: .leading, endPoint: .trailing
+                                                        ))
                                                 
                                                 Spacer()
                                             }
