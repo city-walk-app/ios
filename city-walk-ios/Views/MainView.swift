@@ -28,7 +28,7 @@ struct MainView: View {
     @State private var showDatePicker = false
     /// 选中的热力图元素索引
     @State private var routeDetailActiveIndex: Int?
-
+  
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
@@ -162,7 +162,7 @@ struct MainView: View {
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                            .frame(width: 15, height: 17) // 设置图片的大小
+                                            .frame(width: 15, height: 17)
                                     } placeholder: {}
                                     
                                     Text("打卡少")
@@ -384,9 +384,8 @@ struct MainView: View {
                                                                     .frame(width: 174, height: 175)
                                                                     .cornerRadius(8)
                                                             } placeholder: {
-                                                                // 占位符，图片加载时显示的内容
                                                                 Rectangle()
-                                                                    .fill(Color.gray.opacity(0.3))
+                                                                    .fill(skeletonBackground)
                                                                     .frame(width: 174, height: 174)
                                                             }
                                                         }
@@ -469,8 +468,8 @@ struct MainView: View {
                     .padding(.horizontal, 16)
                 }
             }
-            .background(Color(hex: "#FAF9FA"))
         }
+        .background(Color(hex: "#FAF9FA"))
         .navigationBarItems(leading: BackButton {
             self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
         }) // 自定义返回按钮

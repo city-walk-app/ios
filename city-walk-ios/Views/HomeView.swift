@@ -9,24 +9,24 @@ import CoreLocation
 import MapKit
 import SwiftUI
 
-struct RouteDetailForm {
-    var route_id: String
-    var content: String
-    var travel_type: String
-    var mood_color: String
-    var address: String
-    var picture: [String]
-}
-
-struct MoodColor {
-    var color: String
-    var borderColor: String
-    var key: String
-    var type: String
-}
-
 /// 主视图，用于显示地图和操作选项
 struct HomeView: View {
+    struct RouteDetailForm {
+        var route_id: String
+        var content: String
+        var travel_type: String
+        var mood_color: String
+        var address: String
+        var picture: [String]
+    }
+
+    struct MoodColor {
+        var color: String
+        var borderColor: String
+        var key: String
+        var type: String
+    }
+    
     /// 缓存信息
     private let cacheInfo = UserCache.shared.getInfo()
     /// 打卡弹窗是否显示
@@ -68,8 +68,8 @@ struct HomeView: View {
     /// 心情颜色选中的配置
     @State private var moodColorActive: MoodColor?
     /// 打卡信息详情
-    @State private var recordDetail: LocationCreateRecordType.LocationCreateRecordData?
-    
+    @State private var recordDetail: LocationCreateRecordType.LocationCreateRecordData? = nil
+  
     var body: some View {
         NavigationStack {
             ZStack {
@@ -103,6 +103,11 @@ struct HomeView: View {
                                 }
                             }
                         }
+                        
+                        /// https://stackoverflow.com/questions/64551580/swiftui-sheet-doesnt-access-the-latest-value-of-state-variables-on-first-appear
+                        Text("\(String(describing: recordDetail))")
+                            .font(.system(size: 0))
+                            .foregroundStyle(Color.clear)
                             
                         Spacer()
                         
@@ -233,7 +238,9 @@ struct HomeView: View {
                         VStack(spacing: 12) {
                             // 地点打卡
                             Button {
-                                self.onRecord()
+                                Task {
+                                    await self.onRecord()
+                                }
                             } label: {
                                 AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-record.png")) { image in
                                     image
@@ -308,23 +315,31 @@ struct HomeView: View {
             }
         }
         // 打卡的对话框
-        .sheet(isPresented: $visibleSheet) {
+        .sheet(isPresented: $visibleSheet, onDismiss: {
+            recordDetail = nil
+            print("关闭执行")
+        }) {
             VStack {
-                // 省份图
-                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/330000.png")) { image in
-                    image
-                        .resizable()
-                        .frame(width: 154, height: 154)
-                } placeholder: {
-                    Circle()
-                        .fill(skeletonBackground)
-                        .frame(width: 154, height: 154)
+                if let recordDetail = self.recordDetail {
+                    // 省份图
+                    if let province_url = recordDetail.province_url {
+                        AsyncImage(url: URL(string: province_url)) { image in
+                            image
+                                .resizable()
+                                .frame(width: 154, height: 154)
+                        } placeholder: {
+                            Circle()
+                                .fill(skeletonBackground)
+                                .frame(width: 154, height: 154)
+                        }
+                    }
+
+                    // 文案
+                    Text("\(recordDetail.content ?? "当前地点打卡成功")")
+                        .foregroundStyle(Color(hex: "#333333"))
+                        .padding(.top, 9)
+                        .font(.system(size: 14))
                 }
-                
-                Text("再获得100经验版图将会升温版图")
-                    .foregroundStyle(Color(hex: "#333333"))
-                    .padding(.top, 9)
-                    .font(.system(size: 14))
                 
                 VStack(spacing: 0) {
                     // 发布瞬间
@@ -545,13 +560,23 @@ struct HomeView: View {
                 "longitude": longitude,
                 "latitude": latitude,
             ])
-            
-            print("打卡当前地点", res)
-            
+
             if let data = res.data, res.code == 200 {
-                visibleSheet.toggle()
+//                var results = data
+//
+//                results.province_url = data.province_code != nil
+//                    ? "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(data.province_code!).png"
+//                    : nil
+//
                 recordDetail = data
+                
+                recordDetail!.province_url = data.province_code != nil
+                    ? "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(data.province_code!).png"
+                    : nil
+                
                 routeDetailForm.route_id = data.route_id
+                
+                visibleSheet.toggle() // 打开对话框
             }
         } catch {
             print("打卡当前地点异常")
@@ -564,17 +589,20 @@ struct HomeView: View {
     }
     
     /// 获取当前位置并打卡
-    private func onRecord() {
+    private func onRecord() async {
         requestLocationAuthorization() // 请求获取位置权限
-        
+
         switch locationDataManager.locationManager.authorizationStatus {
         case .authorizedWhenInUse:
             let longitude = "\(locationDataManager.locationManager.location?.coordinate.longitude.description ?? "")"
             let latitude = "\(locationDataManager.locationManager.location?.coordinate.latitude.description ?? "")"
 
-            Task {
-                await locationCreateRecord(longitude: longitude, latitude: latitude)
-            }
+            print("当前经纬度", longitude, latitude)
+
+            //            Task {
+            // await locationCreateRecord(longitude: longitude, latitude: latitude)
+            await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
+        //            }
         case .restricted, .denied:
             print("当前位置数据被限制或拒绝")
         case .notDetermined:
