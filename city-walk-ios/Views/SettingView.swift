@@ -7,12 +7,22 @@
 
 import SwiftUI
 
+/// 用户信息编辑键
+enum SheetKey {
+    case avatar, nick_name, gender, mobile, preference_type, signature
+}
+
+/// 用户信息
+struct UserInfo {
+    var avatar: String
+    var nick_name: String
+    var gender: String
+    var mobile: String
+    var signature: String
+    var preference_type: [String]
+}
+
 struct SettingView: View {
-    /// 用户信息编辑键
-    enum SheetKey {
-        case avatar, nick_name, gender, mobile, preference_type, signature
-    }
-    
     /// 信息每一项度菜单
     struct InfoItemBar {
         var icon: String
@@ -20,17 +30,7 @@ struct SettingView: View {
         var title: String
         var color: String
     }
-    
-    /// 用户信息
-    struct UserInfo {
-        var avatar: String
-        var nick_name: String
-        var gender: String
-        var mobile: String
-        var signature: String
-        var preference_type: [String]
-    }
-    
+
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     /// 控制弹窗内容的 key
@@ -66,19 +66,31 @@ struct SettingView: View {
     )
     /// 偏好列表
     @State private var preferenceList = preferences
-
+  
     var body: some View {
         NavigationView {
             // 选项列表
             VStack {
+                Button {
+                    self.visibleSheet.toggle()
+                } label: {
+                    Text("open")
+                }
+              
                 List {
+                    Button {
+                        self.visibleSheet.toggle()
+                    } label: {
+                        Text("open")
+                    }
+                    
                     // 基本信息
                     Section {
                         // 头像设置
+                     
                         Button {
                             self.visibleSheet.toggle()
                             self.sheetKey = .avatar
-                          
                         } label: {
                             HStack {
                                 // 头像
@@ -104,7 +116,7 @@ struct SettingView: View {
                             }
                         }
                     }
-                    
+            
                     // 信息
                     Section {
                         ForEach(infoItems, id: \.key) { item in
@@ -252,109 +264,17 @@ struct SettingView: View {
         .navigationDestination(isPresented: $isGoLoginView, destination: {
             LoginView()
         })
-        // 选择头像的弹出层
-        .sheet(isPresented: $visibleSheet) {
-            NavigationStack {
-                VStack(alignment: .center) {
-                    // 头像设置
-                    if sheetKey == .avatar {
-//                        ImagePicker(selectedImage: $selectAvatarImage, visible: $visibleSheet) {
-//                            if let image = selectAvatarImage {
-//                                self.uploadImageToBackend(image: image)
-//                            }
-//                        }
-                    }
-                    // 名字
-                    else if sheetKey == .nick_name {
-                        TextField("请输入名字", text: $userInfo.nick_name)
-                            .padding(12)
-                            .frame(height: 50)
-                            .background(Color(hex: "#F0F0F0"))
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
-                            )
-                            .padding(.horizontal, 16)
-                            .font(.system(size: 16))
-                    }
-                    // 性别
-                    else if sheetKey == .gender {
-                        Text("性别")
-                    }
-                    // 手机
-                    else if sheetKey == .mobile {
-                        TextField("请输入手机", text: $userInfo.mobile)
-                            .padding(12)
-                            .frame(height: 50)
-                            .background(Color(hex: "#F0F0F0"))
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
-                            )
-                            .padding(.horizontal, 16)
-                            .font(.system(size: 16))
-                    }
-                    // 偏好
-                    else if sheetKey == .preference_type {
-                        Text("偏好")
-                        let columns = [
-                            GridItem(.flexible()),
-                            GridItem(.flexible()),
-                            GridItem(.flexible()),
-                        ]
-                        
-                        LazyVGrid(columns: columns) {
-                            ForEach($preferenceList, id: \.key) { $item in
-                                Button {
-                                    item.active.toggle()
-                                } label: {
-                                    Text(item.title)
-                                        .frame(height: 80)
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color(hex: item.active ? "#F3943F" : "#ECECEC"))
-                                }
-                            }
-                        }
-                    }
-                    // 签名
-                    else if sheetKey == .signature {
-                        TextField("请输入签名", text: $userInfo.signature)
-                            .padding(12)
-                            .frame(height: 50)
-                            .background(Color(hex: "#F0F0F0"))
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
-                            )
-                            .padding(.horizontal, 16)
-                            .font(.system(size: 16))
-                    }
-                    
-                    Spacer()
-                    
-                    Button {} label: {
-                        Text("就这样")
-                            .frame(width: 160, height: 48)
-                            .font(.system(size: 16))
-                            .foregroundStyle(.white)
-                            .background(Color(hex: "#F3943F"))
-                            .border(Color(hex: "#F3943F"))
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
-                            )
-                    }
-                }
-                .padding(.top, 30)
-                .padding(.horizontal, 12)
-            }
-        }
         .onAppear {
             self.loadCacheInfo() // 获取缓存的用户信息
+        }
+        // 修改信息的弹出层
+        .sheet(isPresented: $visibleSheet) {
+            SettingSheetView(
+                sheetKey: $sheetKey,
+                userInfo: $userInfo,
+                preferenceList: $preferenceList,
+                visibleSheet: $visibleSheet
+            )
         }
     }
     
@@ -394,71 +314,202 @@ struct SettingView: View {
             print("设置用户信息异常")
         }
     }
-    
-    /// 头像上传
-    /// - Parameter image: 图片对象
-    private func uploadImageToBackend(image: UIImage) {
-        print("avatar", image)
-        
-        guard let url = URL(string: BASE_URL + "/user/info/up_avatar") else {
-            print("Invalid URL")
-            return
-        }
-        
-        print("url", url)
-            
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-            
-        let boundary = UUID().uuidString
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue(token, forHTTPHeaderField: "token") // 添加 token
-        
-        let imageData = image.jpegData(compressionQuality: 1.0)
-        let body = createBody(with: imageData, boundary: boundary, fieldName: "image", fileName: "image")
-            
-        request.httpBody = body
-            
-        let session = URLSession.shared
-        let task = session.dataTask(with: request) { _, response, error in
-            if let error = error {
-                print("Error uploading image: \(error)")
-                return
-            }
-            
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 {
-                print("成功", httpResponse)
-            }
-            else {
-                print("失败 to upload image")
-            }
-        }
-            
-        task.resume()
-    }
-    
-    /// 创建请求体
-    private func createBody(with imageData: Data?, boundary: String, fieldName: String, fileName: String) -> Data {
-        var body = Data()
-            
-        if let imageData = imageData {
-            body.appendString("--\(boundary)\r\n")
-            body.appendString("Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(fileName)\"\r\n")
-            body.appendString("Content-Type: image/jpeg\r\n\r\n")
-            body.append(imageData)
-            body.appendString("\r\n")
-        }
-            
-        body.appendString("--\(boundary)--\r\n")
-            
-        return body
-    }
 }
 
-extension Data {
-    mutating func appendString(_ string: String) {
-        if let data = string.data(using: .utf8) {
-            append(data)
+/// 设置 sheet 弹窗内容
+struct SettingSheetView: View {
+    /// 显示的内容 key
+    @Binding var sheetKey: SheetKey
+    /// 用户信息
+    @Binding var userInfo: UserInfo
+    /// 偏好列表
+    @Binding var preferenceList: [Preference]
+    /// 是否显示
+    @Binding var visibleSheet: Bool
+    
+    /// 是否显示全屏对话框
+    @State private var visibleFullScreenCover = false
+    /// 选择的图片文件列表
+    @State private var selectedImages: [UIImage] = []
+    /// 最多选择的照片数量
+    private let pictureMaxCount = 1
+    
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .center) {
+                // 头像设置
+                if sheetKey == .avatar {
+                    Button {
+                        self.visibleFullScreenCover.toggle()
+                    } label: {
+                        VStack {
+                            if self.selectedImages.isEmpty {
+                                AsyncImage(url: URL(string: userInfo.avatar)) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 160, height: 160) // 设置图片的大小
+                                        .clipShape(Circle()) // 将图片裁剪为圆形
+                                } placeholder: {
+                                    Circle()
+                                        .fill(skeletonBackground)
+                                        .frame(width: 160, height: 160)
+                                }
+                            }
+                            else {
+                                Image(uiImage: self.selectedImages[self.selectedImages.count - 1])
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 160, height: 160)
+                                    .clipShape(Circle())
+                            }
+                                
+                            Text("上传头像")
+                                .font(.system(size: 17))
+                                .foregroundStyle(Color(hex: "#333333"))
+                        }
+                    }
+                    // 选择照片的全屏弹出对话框
+                    .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
+                        ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount)
+                    })
+                }
+                // 名字
+                else if sheetKey == .nick_name {
+                    TextField("请输入名字", text: $userInfo.nick_name)
+                        .padding(12)
+                        .frame(height: 50)
+                        .background(Color(hex: "#F0F0F0"))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
+                        )
+                        .padding(.horizontal, 16)
+                        .font(.system(size: 16))
+                }
+                // 性别
+                else if sheetKey == .gender {
+                    Text("性别")
+                }
+                // 手机
+                else if sheetKey == .mobile {
+                    TextField("请输入手机", text: $userInfo.mobile)
+                        .padding(12)
+                        .frame(height: 50)
+                        .background(Color(hex: "#F0F0F0"))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
+                        )
+                        .padding(.horizontal, 16)
+                        .font(.system(size: 16))
+                }
+                // 偏好
+                else if sheetKey == .preference_type {
+                    Text("偏好")
+                    let columns = [
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                    ]
+                    
+                    LazyVGrid(columns: columns) {
+                        ForEach($preferenceList, id: \.key) { $item in
+                            Button {
+                                item.active.toggle()
+                            } label: {
+                                Text(item.title)
+                                    .frame(height: 80)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color(hex: item.active ? "#F3943F" : "#ECECEC"))
+                            }
+                        }
+                    }
+                }
+                // 签名
+                else if sheetKey == .signature {
+                    TextField("请输入签名", text: $userInfo.signature)
+                        .padding(12)
+                        .frame(height: 50)
+                        .background(Color(hex: "#F0F0F0"))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
+                        )
+                        .padding(.horizontal, 16)
+                        .font(.system(size: 16))
+                }
+                
+                Spacer()
+                
+                Button {
+                    Task {
+                        await self.submitUserInfo()
+                    }
+                } label: {
+                    Text("就这样")
+                        .frame(width: 160, height: 48)
+                        .font(.system(size: 16))
+                        .foregroundStyle(.white)
+                        .background(Color(hex: "#F3943F"))
+                        .border(Color(hex: "#F3943F"))
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                        )
+                }
+            }
+            .padding(.top, 30)
+            .padding(.horizontal, 12)
+        }
+    }
+    
+    /// 提交用户信息
+    private func submitUserInfo() async {
+//        var params = [:]
+        
+        if sheetKey == .avatar {
+            // 有选择照片
+            if !selectedImages.isEmpty {
+                let uploadedImageURLs = await uploadImages(images: selectedImages)
+                
+                userInfo.avatar = uploadedImageURLs[0]
+                
+                print("上传图片的结果", uploadedImageURLs)
+            }
+        }
+        
+        do {
+            let res = try await Api.shared.setUserInfo(params: [
+                "nick_name": userInfo.nick_name,
+                "avatar": userInfo.avatar,
+                "gender": userInfo.gender,
+                "mobile": userInfo.mobile,
+                "preference_type": userInfo.preference_type,
+                "signature": userInfo.signature,
+              
+            ])
+            
+            print("设置结果", res)
+            
+            if let data = res.data, res.code == 200 {
+                print(data)
+                
+                UserCache.shared.saveInfo(info: data)
+                
+                visibleSheet.toggle()
+                
+                if let avatar = data.avatar {
+                    userInfo.avatar = avatar
+                }
+            }
+        }
+        catch {
+            print("设置用户信息异常")
         }
     }
 }

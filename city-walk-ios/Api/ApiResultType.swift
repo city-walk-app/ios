@@ -17,8 +17,8 @@ struct UserInfoType: Codable {
     var signature: String?
     var birthday: String?
     var gender: String?
-//    var preference_type: PreferenceType?
     var preference_type: [String]?
+//    var preference_type: PreferenceType?
 
 //    enum PreferenceType: Codable {
 //        case string(String)
