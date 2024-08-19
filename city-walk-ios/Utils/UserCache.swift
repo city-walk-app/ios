@@ -9,7 +9,8 @@ import Foundation
 
 /// 用户身份信息缓存
 class UserCache {
-    static let shared = UserCache() // 创建单例模式
+    /// 创建单例模式
+    static let shared = UserCache()
 
     private let USER_INFO = "USER_INFO"
     private let USER_TOKEN = "USER_TOKEN"
@@ -17,6 +18,7 @@ class UserCache {
     private let userDefaults = UserDefaults.standard
 
     /// 存储信息
+    /// - Parameter info: 用户信息
     func saveInfo(info: UserInfoType) {
         do {
             let codeData = try JSONEncoder().encode(info)
@@ -44,10 +46,12 @@ class UserCache {
     }
 
     /// 设置 token
+    /// - Parameter token: token
     func saveToken(token: String) {
         userDefaults.set(token, forKey: USER_TOKEN)
     }
 
+    /// 获取 token
     func getToken() -> String {
         if let token = userDefaults.string(forKey: USER_TOKEN) {
             return token

@@ -8,7 +8,6 @@
 import Combine
 import CoreLocation
 import MapKit
-import PhotosUI
 import SwiftUI
 
 struct AutoSizingTextEditor: UIViewRepresentable {
@@ -96,13 +95,11 @@ struct HomeView: View {
     @State private var recordDetail: LocationCreateRecordType.LocationCreateRecordData? = nil
     /// 键盘高度
     @State private var keyboardHeight: CGFloat = 0
-    
-    @State private var textEditorHeight: CGFloat = UIFont.systemFont(ofSize: 17).lineHeight + 10 // Default height
-
+    /// 输入框改读
+    @State private var textEditorHeight: CGFloat = UIFont.systemFont(ofSize: 17).lineHeight + 10
     /// 是否显示全屏对话框
     @State private var visibleFullScreenCover = false
-    
-//    @State private var selectedImage: UIImage? = nil
+    /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
     
     var body: some View {
@@ -696,114 +693,6 @@ struct HomeView: View {
         }
     }
   
-    func uploadSingleImage(image: UIImage) async -> String? {
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else { return nil }
-            
-        do {
-            let uploadResponse = try await Api.shared.universalContentUpload(params: ["suffix": ".jpg"])
-                
-            guard uploadResponse.code == 200,
-                  let data = uploadResponse.data
-            else {
-                print("Failed to get upload credentials")
-                return nil
-            }
-                
-            let url = URL(string: data.host)!
-            let boundary = UUID().uuidString
-                
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-                
-            let body = createMultipartBody(with: imageData, fileName: data.key, credentials: data, boundary: boundary)
-                
-            // 使用 `upload(for:from:)` 来上传数据
-//            let (response, _) = try await URLSession.shared.upload(for: request, from: body)
-                
-            do {
-                let (response, _) = try await URLSession.shared.upload(for: request, from: body)
-                // 处理 response 和 data
-                print("上传的结果", response)
-                
-//                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                let uploadedURL = "\(data.host)/\(data.key)"
-                return uploadedURL
-//                } else {
-//                    print("上传失败")
-//                    return nil
-//                }
-            } catch {
-                print("上传错误: \(error.localizedDescription)")
-                return nil
-            }
-            
-        } catch {
-            print("上传异常: \(error)")
-            return nil
-        }
-    }
-
-    func createMultipartBody(
-        with imageData: Data,
-        fileName: String,
-        credentials: UniversalContentUploadType.UniversalContentUploadData,
-        boundary: String
-    ) -> Data {
-        var body = Data()
-        let boundaryPrefix = "--\(boundary)\r\n"
-        
-        body.append(Data(boundaryPrefix.utf8))
-        body.append(Data("Content-Disposition: form-data; name=\"key\"\r\n\r\n".utf8))
-        body.append(Data("\(credentials.key)\r\n".utf8))
-        
-        body.append(Data(boundaryPrefix.utf8))
-        body.append(Data("Content-Disposition: form-data; name=\"policy\"\r\n\r\n".utf8))
-        body.append(Data("\(credentials.policy)\r\n".utf8))
-        
-        body.append(Data(boundaryPrefix.utf8))
-        body.append(Data("Content-Disposition: form-data; name=\"OSSAccessKeyId\"\r\n\r\n".utf8))
-        body.append(Data("\(credentials.OSSAccessKeyId)\r\n".utf8))
-        
-        body.append(Data(boundaryPrefix.utf8))
-        body.append(Data("Content-Disposition: form-data; name=\"signature\"\r\n\r\n".utf8))
-        body.append(Data("\(credentials.signature)\r\n".utf8))
-        
-        body.append(Data(boundaryPrefix.utf8))
-        body.append(Data("Content-Disposition: form-data; name=\"file\"; filename=\"\(fileName)\"\r\n".utf8))
-        body.append(Data("Content-Type: image/jpeg\r\n\r\n".utf8))
-        body.append(imageData)
-        body.append(Data("\r\n".utf8))
-        
-        body.append(Data("--\(boundary)--\r\n".utf8))
-        
-        return body
-    }
-    
-    func uploadImages(images: [UIImage]) async -> [String] {
-        if images.isEmpty {
-            return []
-        }
-          
-        var uploadedURLs: [String] = []
-    
-        await withTaskGroup(of: String?.self) { taskGroup in
-            for image in images {
-                taskGroup.addTask {
-                    await uploadSingleImage(image: image)
-                }
-            }
-              
-            for await url in taskGroup {
-                if let url = url {
-                    uploadedURLs.append(url)
-                }
-            }
-        }
-          
-        return uploadedURLs
-    }
-    
     /// 完善步行打卡记录详情
     private func updateRouteDetail() async {
         do {
@@ -872,12 +761,6 @@ struct HomeView: View {
             ])
 
             if let data = res.data, res.code == 200 {
-//                var results = data
-//
-//                results.province_url = data.province_code != nil
-//                    ? "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(data.province_code!).png"
-//                    : nil
-//
                 recordDetail = data
                 
                 recordDetail!.province_url = data.province_code != nil
@@ -909,10 +792,9 @@ struct HomeView: View {
 
             print("当前经纬度", longitude, latitude)
 
-            //            Task {
             // await locationCreateRecord(longitude: longitude, latitude: latitude)
             await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
-        //            }
+      
         case .restricted, .denied:
             print("当前位置数据被限制或拒绝")
         case .notDetermined:

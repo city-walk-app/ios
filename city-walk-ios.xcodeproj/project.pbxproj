@@ -12,6 +12,7 @@
 		262368542BC3715400264BD9 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262368532BC3715400264BD9 /* LocationDataManager.swift */; };
 		2628877A2C72044E006BBE1E /* KeyboardHeightPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262887792C72044E006BBE1E /* KeyboardHeightPublisher.swift */; };
 		2628877C2C720A1E006BBE1E /* MoodColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628877B2C720A1E006BBE1E /* MoodColors.swift */; };
+		2628877E2C732369006BBE1E /* UploadImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628877D2C732369006BBE1E /* UploadImages.swift */; };
 		264B8F132BEC57D100AA2E79 /* LaunchScreenData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264B8F122BEC57D100AA2E79 /* LaunchScreenData.swift */; };
 		265201702C6C976700222C9A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2652016F2C6C976700222C9A /* Utils.swift */; };
 		265201752C6E297D00222C9A /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265201742C6E297D00222C9A /* Preferences.swift */; };
@@ -49,6 +50,7 @@
 		262368532BC3715400264BD9 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		262887792C72044E006BBE1E /* KeyboardHeightPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHeightPublisher.swift; sourceTree = "<group>"; };
 		2628877B2C720A1E006BBE1E /* MoodColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodColors.swift; sourceTree = "<group>"; };
+		2628877D2C732369006BBE1E /* UploadImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadImages.swift; sourceTree = "<group>"; };
 		264B8F122BEC57D100AA2E79 /* LaunchScreenData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenData.swift; sourceTree = "<group>"; };
 		2652016F2C6C976700222C9A /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		265201742C6E297D00222C9A /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 				26B998782BBD9874000D1E88 /* URLImage.swift */,
 				262368532BC3715400264BD9 /* LocationDataManager.swift */,
 				2652016F2C6C976700222C9A /* Utils.swift */,
+				2628877D2C732369006BBE1E /* UploadImages.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -306,6 +309,7 @@
 				26A3CD612C70E1EB00635D6D /* UINavigationController.swift in Sources */,
 				265201702C6C976700222C9A /* Utils.swift in Sources */,
 				2685D0262C6B9E1600892F5B /* Color.swift in Sources */,
+				2628877E2C732369006BBE1E /* UploadImages.swift in Sources */,
 				2670A68F2BD403290004E3A1 /* SettingView.swift in Sources */,
 				265ED69B2C45018A009142A7 /* InviteView.swift in Sources */,
 				26B998582BBD92EF000D1E88 /* ContentView.swift in Sources */,
