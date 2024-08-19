@@ -651,12 +651,13 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 61)
+                // 点击空白处隐藏输入框
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
             }
         }
-        // 点击空白处隐藏输入框
-        .onTapGesture {
-            self.hideKeyboard()
-        }
+
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
         .onAppear {
