@@ -354,25 +354,58 @@ struct HomeView: View {
             recordDetail = nil
             print("关闭执行")
         }) {
-            VStack {
-                if let recordDetail = self.recordDetail {
-                    // 省份图
-                    if let province_url = recordDetail.province_url {
+            ScrollView {
+                VStack {
+                    if let recordDetail = self.recordDetail {
+                        // 省份图
+                        if let province_url = recordDetail.province_url {
+                            // 省份图
+                            Color.clear
+                                .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
+                                .background(
+                                    AsyncImage(url: URL(string: province_url)) { phase in
+                                        if let image = phase.image {
+                                            Color(hex: recordDetail.background_color ?? "#F3943F")
+                                                .frame(width: .infinity, height: .infinity)
+                                                .mask {
+                                                    image
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fill)
+                                                        .frame(width: .infinity, height: .infinity)
+                                                }
+                                            
+                                        } else {
+                                            // 在加载过程中显示其它占位符
+                                            Circle()
+                                                .fill(skeletonBackground)
+                                                .frame(width: .infinity, height: .infinity)
+                                        }
+                                    }
+                                )
+                        }
+                        
+                        // 文案
+                        Text("\(recordDetail.content ?? "当前地点打卡成功")")
+                            .foregroundStyle(Color(hex: recordDetail.background_color ?? "#F3943F"))
+                            .padding(.top, 9)
+                            .font(.system(size: 16))
+                            .bold()
+                    } else {
                         // 省份图
                         Color.clear
                             .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
                             .background(
-                                AsyncImage(url: URL(string: province_url)) { phase in
+                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/330000.png")) { phase in
                                     if let image = phase.image {
-                                        Color(hex: recordDetail.background_color ?? "#F3943F")
+                                        Color(hex: "#F3943F")
                                             .frame(width: .infinity, height: .infinity)
                                             .mask {
                                                 image
                                                     .resizable()
                                                     .aspectRatio(contentMode: .fill)
-                                                    .frame(width: .infinity, height: .infinity)
+                                                    .frame(width: 154, height: 154)
                                             }
-                                      
+                                        
                                     } else {
                                         // 在加载过程中显示其它占位符
                                         Circle()
@@ -381,276 +414,245 @@ struct HomeView: View {
                                     }
                                 }
                             )
+                        
+                        // 文案
+                        Text("当前地点打卡成功")
+                            .foregroundStyle(Color(hex: "#F3943F"))
+                            .padding(.top, 9)
+                            .font(.system(size: 16))
+                            .bold()
                     }
-
-                    // 文案
-                    Text("\(recordDetail.content ?? "当前地点打卡成功")")
-                        .foregroundStyle(Color(hex: recordDetail.background_color ?? "#F3943F"))
-                        .padding(.top, 9)
-                        .font(.system(size: 16))
-                        .bold()
-                } else {
-                    // 省份图
-                    Color.clear
-                        .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
-                        .background(
-                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/330000.png")) { phase in
-                                if let image = phase.image {
-                                    Color(hex: "#F3943F")
-                                        .frame(width: .infinity, height: .infinity)
-                                        .mask {
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 154, height: 154)
-                                        }
-                                  
-                                } else {
-                                    // 在加载过程中显示其它占位符
+                    
+                    VStack(spacing: 0) {
+                        if !selectedImages.isEmpty {
+                            ScrollView(.horizontal) {
+                                HStack {
+                                    ForEach(selectedImages, id: \.self) { image in
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 150, height: 150)
+                                            .cornerRadius(10)
+                                            .shadow(radius: 5)
+                                            .padding()
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // 发布瞬间
+                        Button {
+                            self.visibleFullScreenCover.toggle()
+                        } label: {
+                            VStack {
+                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")) { image in
+                                    image
+                                        .resizable()
+                                        .frame(width: 69, height: 64)
+                                } placeholder: {
                                     Circle()
                                         .fill(skeletonBackground)
-                                        .frame(width: .infinity, height: .infinity)
+                                        .frame(width: 69, height: 64)
                                 }
-                            }
-                        )
-                    
-                    // 文案
-                    Text("当前地点打卡成功")
-                        .foregroundStyle(Color(hex: "#F3943F"))
-                        .padding(.top, 9)
-                        .font(.system(size: 16))
-                        .bold()
-                }
-                
-                VStack(spacing: 0) {
-                    if !selectedImages.isEmpty {
-                        ScrollView(.horizontal) {
-                            HStack {
-                                ForEach(selectedImages, id: \.self) { image in
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 150, height: 150)
-                                        .cornerRadius(10)
-                                        .shadow(radius: 5)
-                                        .padding()
-                                }
-                            }
-                        }
-                    }
-                    
-                    // 发布瞬间
-                    Button {
-                        self.visibleFullScreenCover.toggle()
-                    } label: {
-                        VStack {
-                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")) { image in
-                                image
-                                    .resizable()
-                                    .frame(width: 69, height: 64)
-                            } placeholder: {
-                                Circle()
-                                    .fill(skeletonBackground)
-                                    .frame(width: 69, height: 64)
-                            }
-                        
-                            Text("发布瞬间")
-                                .padding(.vertical, 9)
-                                .padding(.horizontal, 48)
-                                .foregroundStyle(.white)
-                                .background(Color(hex: "#F3943F"))
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                        }
-                    }
-                    .padding(12)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        LinearGradient(
-                            gradient: Gradient(
-                                colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
-                            ),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                    .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
-                    // 选择照片的全屏弹出对话框
-                    .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
-//                        ImagePicker(selectedImagess: $selectedImages)
-                        ImagePicker(selectedImages: $selectedImages)
-                        // , visible: $visibleFullScreenCover, onImagePicked: {}
-                    })
-                    
-                    // 选择心情颜色
-                    HStack {
-                        if let moodColorActive = moodColorActive {
-                            Button {
-                                withAnimation {
-                                    self.moodColorActive = nil
-                                    self.routeDetailForm.mood_color = ""
-                                }
-                            } label: {
-                                Circle()
-                                    .fill(Color(hex: moodColorActive.color))
-                                    .frame(width: 37, height: 37)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(Color(hex: moodColorActive.borderColor), lineWidth: 1) // 圆形边框
-                                    )
                                 
-                                Text(moodColorActive.type)
-                                    .foregroundStyle(Color(hex: moodColorActive.color))
-                                    .font(.system(size: 18))
-                                    .bold()
+                                Text("发布瞬间")
+                                    .padding(.vertical, 9)
+                                    .padding(.horizontal, 48)
+                                    .foregroundStyle(.white)
+                                    .background(Color(hex: "#F3943F"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
-                          
-                        } else {
-                            ForEach(self.moodColorList, id: \.key) { item in
+                        }
+                        .padding(12)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            LinearGradient(
+                                gradient: Gradient(
+                                    colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                                ),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
+                        // 选择照片的全屏弹出对话框
+                        .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
+                            ImagePicker(selectedImages: $selectedImages)
+                        })
+                        
+                        Text("\(selectedImages)")
+                        
+                        // 选择心情颜色
+                        HStack {
+                            if let moodColorActive = moodColorActive {
                                 Button {
                                     withAnimation {
-                                        self.moodColorActive = item
-                                        self.routeDetailForm.mood_color = item.key
+                                        self.moodColorActive = nil
+                                        self.routeDetailForm.mood_color = ""
                                     }
                                 } label: {
                                     Circle()
-                                        .fill(Color(hex: item.color))
+                                        .fill(Color(hex: moodColorActive.color))
                                         .frame(width: 37, height: 37)
                                         .overlay(
                                             Circle()
-                                                .stroke(Color(hex: item.borderColor), lineWidth: 1) // 圆形边框
+                                                .stroke(Color(hex: moodColorActive.borderColor), lineWidth: 1) // 圆形边框
                                         )
+                                    
+                                    Text(moodColorActive.type)
+                                        .foregroundStyle(Color(hex: moodColorActive.color))
+                                        .font(.system(size: 18))
+                                        .bold()
+                                }
+                                
+                            } else {
+                                ForEach(self.moodColorList, id: \.key) { item in
+                                    Button {
+                                        withAnimation {
+                                            self.moodColorActive = item
+                                            self.routeDetailForm.mood_color = item.key
+                                        }
+                                    } label: {
+                                        Circle()
+                                            .fill(Color(hex: item.color))
+                                            .frame(width: 37, height: 37)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color(hex: item.borderColor), lineWidth: 1) // 圆形边框
+                                            )
+                                    }
                                 }
                             }
                         }
-                    }
-                    .padding(.top, 16)
-                    
-                    // 选择当前位置
-                    Button {} label: {
-                        Text("选择当前位置")
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 13)
-                            .background(LinearGradient(gradient: Gradient(
+                        .padding(.top, 16)
+                        
+                        // 选择当前位置
+                        Button {} label: {
+                            Text("选择当前位置")
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 13)
+                                .background(LinearGradient(gradient: Gradient(
+                                        colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                                    ),
+                                    startPoint: .leading, endPoint: .trailing))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .padding(.top, 25)
+                                .font(.system(size: 16))
+                                .foregroundStyle(Color(hex: "#666666"))
+                                .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
+                        }
+                        
+                        // 说点什么
+                        //                    VStack {
+                        //                        AutoSizingTextEditor(text: $routeDetailForm.content, height: $textEditorHeight)
+                        //                            .frame(height: textEditorHeight)
+                        //                            .background(Color.clear) // Ensure background is clear
+                        //                            .submitLabel(.done)
+                        //                            .onReceive(Publishers.keyboardHeight) { self.keyboardHeight = $0 }
+                        //                            .onSubmit {
+                        //                                self.hideKeyboard()
+                        //                            }
+                        ////                        TextEditor(text: $routeDetailForm.content)
+                        ////                            .submitLabel(.done)
+                        ////                            .onReceive(Publishers.keyboardHeight) {
+                        ////                                self.keyboardHeight = $0
+                        ////                            }
+                        ////                            .onSubmit {
+                        ////                                self.hideKeyboard()
+                        ////                            }
+                        //                    }
+                        //                    .padding(16)
+                        //                    .frame(maxWidth: .infinity)
+                        //                    .frame(minHeight: 62)
+                        //                    .background(
+                        //                        LinearGradient(
+                        //                            gradient: Gradient(
+                        //                                colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                        //                            ),
+                        //                            startPoint: .leading,
+                        //                            endPoint: .trailing
+                        //                        )
+                        //                    )
+                        //                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                        //                    .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
+                        //                    .padding(.top, 25)
+                        VStack {
+                            AutoSizingTextEditor(text: $routeDetailForm.content, height: $textEditorHeight)
+                                .frame(height: textEditorHeight)
+                                .background(Color.clear) // Ensure background is clear
+                                .submitLabel(.done)
+                                .onReceive(Publishers.keyboardHeight) { self.keyboardHeight = $0 }
+                                .onSubmit {
+                                    self.hideKeyboard()
+                                }
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            LinearGradient(
+                                gradient: Gradient(
                                     colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
                                 ),
-                                startPoint: .leading, endPoint: .trailing))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .padding(.top, 25)
-                            .font(.system(size: 16))
-                            .foregroundStyle(Color(hex: "#666666"))
-                            .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
-                    }
-                    
-                    // 说点什么
-//                    VStack {
-//                        AutoSizingTextEditor(text: $routeDetailForm.content, height: $textEditorHeight)
-//                            .frame(height: textEditorHeight)
-//                            .background(Color.clear) // Ensure background is clear
-//                            .submitLabel(.done)
-//                            .onReceive(Publishers.keyboardHeight) { self.keyboardHeight = $0 }
-//                            .onSubmit {
-//                                self.hideKeyboard()
-//                            }
-                    ////                        TextEditor(text: $routeDetailForm.content)
-                    ////                            .submitLabel(.done)
-                    ////                            .onReceive(Publishers.keyboardHeight) {
-                    ////                                self.keyboardHeight = $0
-                    ////                            }
-                    ////                            .onSubmit {
-                    ////                                self.hideKeyboard()
-                    ////                            }
-//                    }
-//                    .padding(16)
-//                    .frame(maxWidth: .infinity)
-//                    .frame(minHeight: 62)
-//                    .background(
-//                        LinearGradient(
-//                            gradient: Gradient(
-//                                colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
-//                            ),
-//                            startPoint: .leading,
-//                            endPoint: .trailing
-//                        )
-//                    )
-//                    .clipShape(RoundedRectangle(cornerRadius: 10))
-//                    .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
-//                    .padding(.top, 25)
-                    VStack {
-                        AutoSizingTextEditor(text: $routeDetailForm.content, height: $textEditorHeight)
-                            .frame(height: textEditorHeight)
-                            .background(Color.clear) // Ensure background is clear
-                            .submitLabel(.done)
-                            .onReceive(Publishers.keyboardHeight) { self.keyboardHeight = $0 }
-                            .onSubmit {
-                                self.hideKeyboard()
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
+                        .padding(.top, 25)
+                        .padding(.bottom, keyboardHeight) // Adjust padding for keyboard
+                        .onTapGesture {
+                            self.hideKeyboard()
+                        }
+                        
+                        // 按钮操作组
+                        HStack(spacing: 23) {
+                            Button {
+                                self.visibleSheet.toggle()
+                            } label: {
+                                Text("取消")
+                                    .frame(width: 160, height: 48)
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(Color(hex: "#F3943F"))
+                                    .background(Color(hex: "#ffffff"))
+                                    .border(Color(hex: "#F3943F"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                    )
                             }
+                            
+                            Button {
+                                Task {
+                                    await self.updateRouteDetail() // 完善步行打卡记录详情
+                                }
+                            } label: {
+                                Text("就这样")
+                                    .frame(width: 160, height: 48)
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(.white)
+                                    .background(Color(hex: "#F3943F"))
+                                    .border(Color(hex: "#F3943F"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                    )
+                            }
+                        }
+                        .padding(.top, 34)
                     }
                     .padding(16)
                     .frame(maxWidth: .infinity)
-                    .background(
-                        LinearGradient(
-                            gradient: Gradient(
-                                colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
-                            ),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
-                    .padding(.top, 25)
-                    .padding(.bottom, keyboardHeight) // Adjust padding for keyboard
-                    .onTapGesture {
-                        self.hideKeyboard()
-                    }
-                    
-                    // 按钮操作组
-                    HStack(spacing: 23) {
-                        Button {
-                            self.visibleSheet.toggle()
-                        } label: {
-                            Text("取消")
-                                .frame(width: 160, height: 48)
-                                .font(.system(size: 16))
-                                .foregroundStyle(Color(hex: "#F3943F"))
-                                .background(Color(hex: "#ffffff"))
-                                .border(Color(hex: "#F3943F"))
-                                .clipShape(RoundedRectangle(cornerRadius: 14))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
-                                )
-                        }
-                        
-                        Button {
-                            Task {
-                                await self.updateRouteDetail() // 完善步行打卡记录详情
-                            }
-                        } label: {
-                            Text("就这样")
-                                .frame(width: 160, height: 48)
-                                .font(.system(size: 16))
-                                .foregroundStyle(.white)
-                                .background(Color(hex: "#F3943F"))
-                                .border(Color(hex: "#F3943F"))
-                                .clipShape(RoundedRectangle(cornerRadius: 14))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
-                                )
-                        }
-                    }
-                    .padding(.top, 34)
+                    .background(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 22))
+                    .padding(.bottom, keyboardHeight) // 防止键盘挡住输入框
                 }
-                .padding(16)
-                .frame(maxWidth: .infinity)
-                .background(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 22))
-                .padding(.bottom, keyboardHeight) // 防止键盘挡住输入框
+                .padding(.horizontal, 16)
+                .padding(.top, 61)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 61)
         }
         // 点击空白处隐藏输入框
         .onTapGesture {
@@ -693,10 +695,127 @@ struct HomeView: View {
             print("获取周边热门地点异常")
         }
     }
+  
+    func uploadSingleImage(image: UIImage) async -> String? {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else { return nil }
+            
+        do {
+            let uploadResponse = try await Api.shared.universalContentUpload(params: ["suffix": ".jpg"])
+                
+            guard uploadResponse.code == 200,
+                  let data = uploadResponse.data
+            else {
+                print("Failed to get upload credentials")
+                return nil
+            }
+                
+            let url = URL(string: data.host)!
+            let boundary = UUID().uuidString
+                
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+                
+            let body = createMultipartBody(with: imageData, fileName: data.key, credentials: data, boundary: boundary)
+                
+            // 使用 `upload(for:from:)` 来上传数据
+//            let (response, _) = try await URLSession.shared.upload(for: request, from: body)
+                
+            do {
+                let (response, _) = try await URLSession.shared.upload(for: request, from: body)
+                // 处理 response 和 data
+                print("上传的结果", response)
+                
+//                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                let uploadedURL = "\(data.host)/\(data.key)"
+                return uploadedURL
+//                } else {
+//                    print("上传失败")
+//                    return nil
+//                }
+            } catch {
+                print("上传错误: \(error.localizedDescription)")
+                return nil
+            }
+            
+        } catch {
+            print("上传异常: \(error)")
+            return nil
+        }
+    }
+
+    func createMultipartBody(
+        with imageData: Data,
+        fileName: String,
+        credentials: UniversalContentUploadType.UniversalContentUploadData,
+        boundary: String
+    ) -> Data {
+        var body = Data()
+        let boundaryPrefix = "--\(boundary)\r\n"
+        
+        body.append(Data(boundaryPrefix.utf8))
+        body.append(Data("Content-Disposition: form-data; name=\"key\"\r\n\r\n".utf8))
+        body.append(Data("\(credentials.key)\r\n".utf8))
+        
+        body.append(Data(boundaryPrefix.utf8))
+        body.append(Data("Content-Disposition: form-data; name=\"policy\"\r\n\r\n".utf8))
+        body.append(Data("\(credentials.policy)\r\n".utf8))
+        
+        body.append(Data(boundaryPrefix.utf8))
+        body.append(Data("Content-Disposition: form-data; name=\"OSSAccessKeyId\"\r\n\r\n".utf8))
+        body.append(Data("\(credentials.OSSAccessKeyId)\r\n".utf8))
+        
+        body.append(Data(boundaryPrefix.utf8))
+        body.append(Data("Content-Disposition: form-data; name=\"signature\"\r\n\r\n".utf8))
+        body.append(Data("\(credentials.signature)\r\n".utf8))
+        
+        body.append(Data(boundaryPrefix.utf8))
+        body.append(Data("Content-Disposition: form-data; name=\"file\"; filename=\"\(fileName)\"\r\n".utf8))
+        body.append(Data("Content-Type: image/jpeg\r\n\r\n".utf8))
+        body.append(imageData)
+        body.append(Data("\r\n".utf8))
+        
+        body.append(Data("--\(boundary)--\r\n".utf8))
+        
+        return body
+    }
+    
+    func uploadImages(images: [UIImage]) async -> [String] {
+        if images.isEmpty {
+            return []
+        }
+          
+        var uploadedURLs: [String] = []
+    
+        await withTaskGroup(of: String?.self) { taskGroup in
+            for image in images {
+                taskGroup.addTask {
+                    await uploadSingleImage(image: image)
+                }
+            }
+              
+            for await url in taskGroup {
+                if let url = url {
+                    uploadedURLs.append(url)
+                }
+            }
+        }
+          
+        return uploadedURLs
+    }
     
     /// 完善步行打卡记录详情
     private func updateRouteDetail() async {
         do {
+            // 有选择照片
+            if !selectedImages.isEmpty {
+                let uploadedImageURLs = await uploadImages(images: selectedImages)
+                
+                print("上传图片的结果", uploadedImageURLs)
+                
+                routeDetailForm.picture = uploadedImageURLs
+            }
+            
             let res = try await Api.shared.updateRouteDetail(params: [
                 "route_id": routeDetailForm.route_id,
                 "content": routeDetailForm.content,

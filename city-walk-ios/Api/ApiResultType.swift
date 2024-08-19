@@ -114,13 +114,13 @@ struct GetUserInfoType: Decodable {
 }
 
 /// 获取邮箱验证码
-struct EmailSend: Decodable {
+struct EmailSendType: Decodable {
     var message: String
     var code: Int
 }
 
 /// 邮箱验证码登录
-struct UserLoginEmail: Decodable {
+struct UserLoginEmailType: Decodable {
     struct UserLoginEmailData: Codable {
         var token: String
         var is_new_user: Bool
@@ -355,4 +355,19 @@ struct SetUserInfoType: Decodable {
     var message: String
     var code: Int
     var data: UserInfoType?
+}
+
+/// 上传公开文件
+struct UniversalContentUploadType: Decodable {
+    struct UniversalContentUploadData: Codable {
+        var host: String
+        var policy: String
+        var OSSAccessKeyId: String
+        var signature: String
+        var key: String
+    }
+
+    var message: String
+    var code: Int
+    var data: UniversalContentUploadData?
 }

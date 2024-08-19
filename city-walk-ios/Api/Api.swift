@@ -22,12 +22,12 @@ class Api {
     }
     
     /// 邮箱验证码登录
-    func userLoginEmail(params: [String: Any]) async throws -> UserLoginEmail {
+    func userLoginEmail(params: [String: Any]) async throws -> UserLoginEmailType {
         return try await Request.shared.request(
             url: "/user/login/email",
             params: params,
             method: .post,
-            type: UserLoginEmail.self
+            type: UserLoginEmailType.self
         )
     }
     
@@ -42,12 +42,12 @@ class Api {
     }
     
     /// 获取邮箱验证码
-    func emailSend(params: [String: Any]) async throws -> EmailSend {
+    func emailSend(params: [String: Any]) async throws -> EmailSendType {
         return try await Request.shared.request(
             url: "/email/send",
             params: params,
             method: .post,
-            type: EmailSend.self
+            type: EmailSendType.self
         )
     }
     
@@ -138,6 +138,16 @@ class Api {
             params: params,
             method: .post,
             type: SetUserInfoType.self
+        )
+    }
+    
+    /// 上传公开文件
+    func universalContentUpload(params: [String: Any]) async throws -> UniversalContentUploadType {
+        return try await Request.shared.request(
+            url: "/universal/content/upload",
+            params: params,
+            method: .post,
+            type: UniversalContentUploadType.self
         )
     }
 }
