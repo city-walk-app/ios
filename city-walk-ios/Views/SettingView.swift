@@ -71,23 +71,10 @@ struct SettingView: View {
         NavigationView {
             // 选项列表
             VStack {
-                Button {
-                    self.visibleSheet.toggle()
-                } label: {
-                    Text("open")
-                }
-              
                 List {
-                    Button {
-                        self.visibleSheet.toggle()
-                    } label: {
-                        Text("open")
-                    }
-                    
                     // 基本信息
                     Section {
                         // 头像设置
-                     
                         Button {
                             self.visibleSheet.toggle()
                             self.sheetKey = .avatar
