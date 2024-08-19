@@ -101,6 +101,8 @@ struct HomeView: View {
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
+    /// 最多选择的照片数量
+    private let pictureMaxCount = 2
     
     var body: some View {
         NavigationStack {
@@ -475,7 +477,7 @@ struct HomeView: View {
                         .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
                         // 选择照片的全屏弹出对话框
                         .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
-                            ImagePicker(selectedImages: $selectedImages)
+                            ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount)
                         })
                         
                         Text("\(selectedImages)")
