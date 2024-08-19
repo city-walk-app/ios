@@ -105,247 +105,11 @@ struct HomeView: View {
     private let pictureMaxCount = 2
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // 地图
-                Map(initialPosition: .region(region))
-             
-                // 头部和底部操作视图
-                VStack {
-                    // 头部操作栏
-                    HStack(alignment: .top) {
-                        if let userInfo = cacheInfo {
-                            NavigationLink(destination: MainView(user_id: userInfo.user_id)) {
-                                if let avatar = userInfo.avatar,
-                                   let url = URL(string: avatar)
-                                {
-                                    AsyncImage(url: url) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 48, height: 48) // 设置图片的大小
-                                            .clipShape(Circle()) // 将图片裁剪为圆形
-                                    } placeholder: {
-                                        Circle()
-                                            .fill(skeletonBackground)
-                                            .frame(width: 48, height: 48)
-                                    }
-                                } else {
-                                    Circle()
-                                        .fill(skeletonBackground)
-                                        .frame(width: 48, height: 48)
-                                }
-                            }
-                        }
-                        
-                        /// https://stackoverflow.com/questions/64551580/swiftui-sheet-doesnt-access-the-latest-value-of-state-variables-on-first-appear
-                        Text("\(String(describing: recordDetail))")
-                            .font(.system(size: 0))
-                            .foregroundStyle(Color.clear)
-                            
-                        Spacer()
-                        
-                        VStack {
-                            // 设置按钮
-                            NavigationLink(destination: SettingView()) {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(.ultraThinMaterial) // 将毛玻璃效果作为填充色
-                                    .frame(width: 42, height: 42)
-                                    .overlay {
-                                        Image(systemName: "gearshape")
-                                            .resizable()
-                                            .frame(width: 23, height: 23)
-                                            .foregroundColor(.black)
-                                    }
-                            }
-                            
-                            VStack(spacing: 0) {
-                                // 切换主题按钮
-                                Button {} label: {
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(.ultraThinMaterial)
-                                        .frame(width: 42, height: 42)
-                                        .overlay {
-                                            Image(systemName: "map")
-                                                .resizable()
-                                                .frame(width: 23, height: 23)
-                                                .foregroundColor(.black)
-                                        }
-                                }
-                               
-                                // 回到当前位置按钮
-                                Button {} label: {
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(.ultraThinMaterial)
-                                        .frame(width: 42, height: 42)
-                                        .overlay {
-                                            Image(systemName: "paperplane")
-                                                .resizable()
-                                                .frame(width: 23, height: 23)
-                                                .foregroundColor(.black)
-                                        }
-                                }
-                            }
-                            .background(.ultraThinMaterial)
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    
-                    Spacer()
-                    
-                    // 底部功能
-                    HStack(spacing: 12) {
-                        VStack(spacing: 16) {
-                            // 我的朋友
-                            NavigationLink(destination: FriendsView()) {
-                                // 背景图片
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-friends.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 166, height: 98)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        .overlay {
-                                            HStack {
-                                                VStack(alignment: .leading, spacing: 2) {
-                                                    Text("我的朋友")
-                                                        .font(.headline)
-                                                        .bold()
-                                                        .foregroundColor(.white)
-                                                            
-                                                    Text("My Friends")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(.white)
-                                                    
-                                                    Spacer()
-                                                }
-                                                
-                                                Spacer()
-                                            }
-                                            .padding(.top, 14)
-                                            .padding(.leading, 16)
-                                        }
-                                } placeholder: {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
-                                        .frame(width: 166, height: 98)
-                                }
-                            }
-                            
-                            // 邀请朋友
-                            NavigationLink(destination: InviteView()) {
-                                // 背景图片
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-invite.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 166, height: 98) // 设置按钮的大小
-                                        .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
-                                        .overlay {
-                                            HStack {
-                                                VStack(alignment: .leading, spacing: 2) {
-                                                    Text("邀请朋友")
-                                                        .font(.headline)
-                                                        .bold()
-                                                        .foregroundColor(.white)
-                                                                
-                                                    Text("City Walk Together")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(.white)
-                                                        
-                                                    Spacer()
-                                                }
-                                                    
-                                                Spacer()
-                                            }
-                                            .padding(.top, 14)
-                                            .padding(.leading, 16)
-                                        }
-                                } placeholder: {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
-                                        .frame(width: 166, height: 98)
-                                }
-                            }
-                        }
-                        
-                        VStack(spacing: 12) {
-                            // 地点打卡
-                            Button {
-                                Task {
-                                    await self.onRecord()
-                                }
-                            } label: {
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-record.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 166, height: 120)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        .overlay {
-                                            HStack {
-                                                VStack(alignment: .leading, spacing: 2) {
-                                                    Text("打卡")
-                                                        .font(.headline)
-                                                        .bold()
-                                                        .foregroundColor(.white)
-                                                                    
-                                                    Text("Record location")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(.white)
-                                                            
-                                                    Spacer()
-                                                }
-                                                        
-                                                Spacer()
-                                            }
-                                            .padding(.top, 14)
-                                            .padding(.leading, 16)
-                                        }
-                                } placeholder: {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
-                                        .frame(width: 166, height: 120)
-                                }
-                            }
-                            
-                            // 排行榜
-                            NavigationLink(destination: RankingView()) {
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-ranking.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 166, height: 76)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        .overlay {
-                                            HStack {
-                                                VStack(alignment: .leading, spacing: 2) {
-                                                    Text("排行榜")
-                                                        .font(.headline)
-                                                        .bold()
-                                                        .foregroundColor(.white)
-                                                                        
-                                                    Text("Ranking")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(.white)
-                                                                
-                                                    Spacer()
-                                                }
-                                                            
-                                                Spacer()
-                                            }
-                                            .padding(.top, 14)
-                                            .padding(.leading, 16)
-                                        }
-                                } placeholder: {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
-                                        .frame(width: 166, height: 76)
-                                }
-                            }
-                        }
-                    }
-                }
+        NavigationView {
+//            ZStack {
+            NavigationLink(destination: SettingView()) {
+                Text("set")
+//                }
             }
         }
         // 打卡的对话框
@@ -577,14 +341,14 @@ struct HomeView: View {
                         //                    .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
                         //                    .padding(.top, 25)
                         VStack {
-                            AutoSizingTextEditor(text: $routeDetailForm.content, height: $textEditorHeight)
-                                .frame(height: textEditorHeight)
-                                .background(Color.clear) // Ensure background is clear
-                                .submitLabel(.done)
-                                .onReceive(Publishers.keyboardHeight) { self.keyboardHeight = $0 }
-                                .onSubmit {
-                                    self.hideKeyboard()
-                                }
+//                            AutoSizingTextEditor(text: $routeDetailForm.content, height: $textEditorHeight)
+//                                .frame(height: textEditorHeight)
+//                                .background(Color.clear) // Ensure background is clear
+//                                .submitLabel(.done)
+//                                .onReceive(Publishers.keyboardHeight) { self.keyboardHeight = $0 }
+//                                .onSubmit {
+//                                    self.hideKeyboard()
+//                                }
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity)
@@ -602,7 +366,7 @@ struct HomeView: View {
                         .padding(.top, 25)
                         .padding(.bottom, keyboardHeight) // Adjust padding for keyboard
                         .onTapGesture {
-                            self.hideKeyboard()
+//                            self.hideKeyboard()
                         }
                         
                         // 按钮操作组
@@ -625,7 +389,7 @@ struct HomeView: View {
                             
                             Button {
                                 Task {
-                                    await self.updateRouteDetail() // 完善步行打卡记录详情
+//                                    await self.updateRouteDetail() // 完善步行打卡记录详情
                                 }
                             } label: {
                                 Text("就这样")
@@ -655,10 +419,10 @@ struct HomeView: View {
         }
         // 点击空白处隐藏输入框
         .onTapGesture {
-            self.hideKeyboard()
+//            self.hideKeyboard()
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden)
+//        .navigationBarBackButtonHidden(true)
+//        .toolbar(.hidden)
         .onAppear {
             Task {
                 // await self.getLocationPopularRecommend() // 获取周边热门地点
@@ -666,145 +430,145 @@ struct HomeView: View {
         }
     }
     
-    private func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
-    
-    /// 获取周边热门地点
-    private func getLocationPopularRecommend() async {
-        let longitude = "\(region.center.longitude)"
-        let latitude = "\(region.center.latitude)"
-
-        do {
-            let res = try await Api.shared.getLocationPopularRecommend(params: [
-                "longitude": longitude,
-                "latitude": latitude,
-            ])
-            
-            print("获取周边热门地点", res)
-            
-            if res.code == 200 && res.data != nil {
-//                let list = res.data!
-//                let _landmarks = list.map { item in
-//                    Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
-//                }
-//                landmarks = _landmarks
-            }
-        } catch {
-            print("获取周边热门地点异常")
-        }
-    }
-  
-    /// 完善步行打卡记录详情
-    private func updateRouteDetail() async {
-        do {
-            // 有选择照片
-            if !selectedImages.isEmpty {
-                let uploadedImageURLs = await uploadImages(images: selectedImages)
-                
-                print("上传图片的结果", uploadedImageURLs)
-                
-                routeDetailForm.picture = uploadedImageURLs
-            }
-            
-            let res = try await Api.shared.updateRouteDetail(params: [
-                "route_id": routeDetailForm.route_id,
-                "content": routeDetailForm.content,
-                "travel_type": routeDetailForm.travel_type,
-                "mood_color": routeDetailForm.mood_color,
-                "address": routeDetailForm.address,
-                "picture": routeDetailForm.picture,
-            ])
-            
-            print("完善记录详情", res)
-            
-            if res.code == 200 {
-                visibleSheet.toggle()
-                
-                moodColorActive = nil
-                routeDetailForm.route_id = ""
-                routeDetailForm.mood_color = ""
-                routeDetailForm.address = ""
-                routeDetailForm.address = ""
-                routeDetailForm.content = ""
-                routeDetailForm.travel_type = ""
-                routeDetailForm.picture = []
-            }
-            
-        } catch {
-            print("完善步行打卡记录详情异常")
-        }
-    }
-    
-    /// 获取用户信息
-    private func getUserInfo() async {
-        do {
-            guard cacheInfo != nil else {
-                return
-            }
-            let res = try await Api.shared.getUserInfo(params: ["user_id": cacheInfo!.user_id])
-
-            print("我的页面获取的用户信息", res)
-
-            if let data = res.data, res.code == 200 {
-                userInfo = data
-            }
-        } catch {
-            print("获取用户信息异常")
-        }
-    }
-    
-    /// 打卡当前地点
-    private func locationCreateRecord(longitude: String, latitude: String) async {
-        do {
-            let res = try await Api.shared.locationCreateRecord(params: [
-                "longitude": longitude,
-                "latitude": latitude,
-            ])
-
-            if let data = res.data, res.code == 200 {
-                recordDetail = data
-                
-                recordDetail!.province_url = data.province_code != nil
-                    ? "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(data.province_code!).png"
-                    : nil
-                
-                routeDetailForm.route_id = data.route_id
-                
-                visibleSheet.toggle() // 打开对话框
-            }
-        } catch {
-            print("打卡当前地点异常")
-        }
-    }
-    
-    /// 请求获取位置权限
-    private func requestLocationAuthorization() {
-        locationManager.requestWhenInUseAuthorization()
-    }
-    
-    /// 获取当前位置并打卡
-    private func onRecord() async {
-        requestLocationAuthorization() // 请求获取位置权限
-
-        switch locationDataManager.locationManager.authorizationStatus {
-        case .authorizedWhenInUse:
-            let longitude = "\(locationDataManager.locationManager.location?.coordinate.longitude.description ?? "")"
-            let latitude = "\(locationDataManager.locationManager.location?.coordinate.latitude.description ?? "")"
-
-            print("当前经纬度", longitude, latitude)
-
-            // await locationCreateRecord(longitude: longitude, latitude: latitude)
-            await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
-      
-        case .restricted, .denied:
-            print("当前位置数据被限制或拒绝")
-        case .notDetermined:
-            print("正在获取位置信息...")
-        default:
-            print("未知错误")
-        }
-    }
+//    private func hideKeyboard() {
+//        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+//    }
+//
+//    /// 获取周边热门地点
+//    private func getLocationPopularRecommend() async {
+//        let longitude = "\(region.center.longitude)"
+//        let latitude = "\(region.center.latitude)"
+//
+//        do {
+//            let res = try await Api.shared.getLocationPopularRecommend(params: [
+//                "longitude": longitude,
+//                "latitude": latitude,
+//            ])
+//
+//            print("获取周边热门地点", res)
+//
+//            if res.code == 200 && res.data != nil {
+    ////                let list = res.data!
+    ////                let _landmarks = list.map { item in
+    ////                    Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
+    ////                }
+    ////                landmarks = _landmarks
+//            }
+//        } catch {
+//            print("获取周边热门地点异常")
+//        }
+//    }
+//
+//    /// 完善步行打卡记录详情
+//    private func updateRouteDetail() async {
+//        do {
+//            // 有选择照片
+//            if !selectedImages.isEmpty {
+//                let uploadedImageURLs = await uploadImages(images: selectedImages)
+//
+//                print("上传图片的结果", uploadedImageURLs)
+//
+//                routeDetailForm.picture = uploadedImageURLs
+//            }
+//
+//            let res = try await Api.shared.updateRouteDetail(params: [
+//                "route_id": routeDetailForm.route_id,
+//                "content": routeDetailForm.content,
+//                "travel_type": routeDetailForm.travel_type,
+//                "mood_color": routeDetailForm.mood_color,
+//                "address": routeDetailForm.address,
+//                "picture": routeDetailForm.picture,
+//            ])
+//
+//            print("完善记录详情", res)
+//
+//            if res.code == 200 {
+//                visibleSheet.toggle()
+//
+//                moodColorActive = nil
+//                routeDetailForm.route_id = ""
+//                routeDetailForm.mood_color = ""
+//                routeDetailForm.address = ""
+//                routeDetailForm.address = ""
+//                routeDetailForm.content = ""
+//                routeDetailForm.travel_type = ""
+//                routeDetailForm.picture = []
+//            }
+//
+//        } catch {
+//            print("完善步行打卡记录详情异常")
+//        }
+//    }
+//
+//    /// 获取用户信息
+//    private func getUserInfo() async {
+//        do {
+//            guard cacheInfo != nil else {
+//                return
+//            }
+//            let res = try await Api.shared.getUserInfo(params: ["user_id": cacheInfo!.user_id])
+//
+//            print("我的页面获取的用户信息", res)
+//
+//            if let data = res.data, res.code == 200 {
+//                userInfo = data
+//            }
+//        } catch {
+//            print("获取用户信息异常")
+//        }
+//    }
+//
+//    /// 打卡当前地点
+//    private func locationCreateRecord(longitude: String, latitude: String) async {
+//        do {
+//            let res = try await Api.shared.locationCreateRecord(params: [
+//                "longitude": longitude,
+//                "latitude": latitude,
+//            ])
+//
+//            if let data = res.data, res.code == 200 {
+//                recordDetail = data
+//
+//                recordDetail!.province_url = data.province_code != nil
+//                    ? "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(data.province_code!).png"
+//                    : nil
+//
+//                routeDetailForm.route_id = data.route_id
+//
+//                visibleSheet.toggle() // 打开对话框
+//            }
+//        } catch {
+//            print("打卡当前地点异常")
+//        }
+//    }
+//
+//    /// 请求获取位置权限
+//    private func requestLocationAuthorization() {
+//        locationManager.requestWhenInUseAuthorization()
+//    }
+//
+//    /// 获取当前位置并打卡
+//    private func onRecord() async {
+//        requestLocationAuthorization() // 请求获取位置权限
+//
+//        switch locationDataManager.locationManager.authorizationStatus {
+//        case .authorizedWhenInUse:
+//            let longitude = "\(locationDataManager.locationManager.location?.coordinate.longitude.description ?? "")"
+//            let latitude = "\(locationDataManager.locationManager.location?.coordinate.latitude.description ?? "")"
+//
+//            print("当前经纬度", longitude, latitude)
+//
+//            // await locationCreateRecord(longitude: longitude, latitude: latitude)
+//            await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
+//
+//        case .restricted, .denied:
+//            print("当前位置数据被限制或拒绝")
+//        case .notDetermined:
+//            print("正在获取位置信息...")
+//        default:
+//            print("未知错误")
+//        }
+//    }
 }
 
 #Preview {

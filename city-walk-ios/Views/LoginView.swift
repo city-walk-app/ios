@@ -146,12 +146,12 @@ struct LoginView: View {
                     }
                 }
             }
-            .navigationBarItems(leading: BackButton(action: {
-                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
-            })) // 自定义返回按钮
-            .background(.gray.opacity(0.1))
+//            .navigationBarItems(leading: BackButton(action: {
+//                self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+//            })) // 自定义返回按钮
+//            .background(.gray.opacity(0.1))
         }
-        .navigationBarBackButtonHidden(true)
+//        .navigationBarBackButtonHidden(true)
         // 点击空白处隐藏输入框
         .onTapGesture {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)

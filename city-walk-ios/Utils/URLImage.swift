@@ -5,7 +5,7 @@
 //  Created by Tyh2001 on 2024/4/3.
 //
 
-import SwiftUI
+//import SwiftUI
 
 // 一个简单的异步图像加载视图
 //struct URLImage: View {
