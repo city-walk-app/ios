@@ -64,7 +64,9 @@ struct HomeView: View {
     /// 缓存信息
     private let cacheInfo = UserCache.shared.getInfo()
     /// 打卡弹窗是否显示
-    @State private var visibleSheet = false
+    @State private var visibleSheet = true
+    /// 是否显示选择的菜单
+    @State private var visibleActionSheet = false
     /// 定位服务管理对象
     @State private var locationManager = CLLocationManager()
     /// 位置权限状态
@@ -446,43 +448,84 @@ struct HomeView: View {
                     }
                     
                     VStack(spacing: 0) {
-                        if !selectedImages.isEmpty {
-                            ScrollView(.horizontal) {
-                                HStack {
-                                    ForEach(selectedImages, id: \.self) { image in
-                                        Image(uiImage: image)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 150, height: 150)
-                                            .cornerRadius(10)
-                                            .shadow(radius: 5)
-                                            .padding()
+                        HStack {
+                            // 一张照片都没选择
+                            if selectedImages.count == 0 || selectedImages.isEmpty {
+                                // 发布瞬间
+                                Button {
+                                    self.visibleFullScreenCover.toggle()
+                                } label: {
+                                    VStack {
+                                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")) { image in
+                                            image
+                                                .resizable()
+                                                .frame(width: 69, height: 64)
+                                        } placeholder: {
+                                            Circle()
+                                                .fill(skeletonBackground)
+                                                .frame(width: 69, height: 64)
+                                        }
+                                    
+                                        Text("发布瞬间")
+                                            .padding(.vertical, 9)
+                                            .padding(.horizontal, 48)
+                                            .foregroundStyle(.white)
+                                            .background(Color(hex: "#F3943F"))
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
                                     }
                                 }
                             }
-                        }
-                        
-                        // 发布瞬间
-                        Button {
-                            self.visibleFullScreenCover.toggle()
-                        } label: {
-                            VStack {
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")) { image in
-                                    image
+                            // 选择了一张照片
+                            else if selectedImages.count == 1 {
+                                let columns = [
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible()),
+                                ]
+                            
+                                LazyVGrid(columns: columns) {
+                                    Image(uiImage: selectedImages[0])
                                         .resizable()
-                                        .frame(width: 69, height: 64)
-                                } placeholder: {
-                                    Circle()
-                                        .fill(skeletonBackground)
-                                        .frame(width: 69, height: 64)
+                                        .frame(height: 134)
+                                        .frame(maxWidth: .infinity)
+                                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                                        .onLongPressGesture {
+                                            visibleActionSheet.toggle()
+                                        }
+                                    
+                                    Button {
+                                        self.visibleFullScreenCover.toggle()
+                                    } label: {
+                                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")) { image in
+                                            image
+                                                .resizable()
+                                                .frame(width: 69, height: 64)
+                                        } placeholder: {
+                                            Circle()
+                                                .fill(skeletonBackground)
+                                                .frame(width: 69, height: 64)
+                                        }
+                                    }
                                 }
-                                
-                                Text("发布瞬间")
-                                    .padding(.vertical, 9)
-                                    .padding(.horizontal, 48)
-                                    .foregroundStyle(.white)
-                                    .background(Color(hex: "#F3943F"))
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+                            // 选择了两张照片
+                            else if selectedImages.count == 2 {
+                                let columns = [
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible()),
+                                ]
+                            
+                                LazyVGrid(columns: columns) {
+                                    ForEach(selectedImages, id: \.self) { item in
+                                        Image(uiImage: item)
+                                            .resizable()
+                                            .frame(height: 134)
+                                            .frame(maxWidth: .infinity)
+                                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                                            .onLongPressGesture {
+                                                visibleActionSheet.toggle()
+                                            }
+                                    }
+                                }
                             }
                         }
                         .padding(12)
@@ -500,10 +543,19 @@ struct HomeView: View {
                         .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
                         // 选择照片的全屏弹出对话框
                         .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
-                            ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount)
+                            ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount - selectedImages.count)
                         })
-                        
-                        Text("\(selectedImages)")
+                        .actionSheet(isPresented: $visibleActionSheet) {
+                            ActionSheet(
+                                title: Text("选择操作"),
+                                message: Text("请选择你要执行的操作"),
+                                buttons: [
+                                    .default(Text("重新选择")) {},
+                                    .default(Text("删除")) {},
+                                    .cancel(),
+                                ]
+                            )
+                        }
                         
                         // 选择心情颜色
                         HStack {

@@ -234,6 +234,11 @@ struct SettingView: View {
                         }
                     }
                 }
+                
+                // 跳转到首页
+                NavigationLink(destination: LoginView(), isActive: $isGoLoginView) {
+                    EmptyView()
+                }
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -248,9 +253,9 @@ struct SettingView: View {
         })) // 自定义返回按钮
         .background(.gray.opacity(0.1))
         // 登录成功之后跳转到首页
-        .navigationDestination(isPresented: $isGoLoginView) {
-            LoginView()
-        }
+//        .navigationDestination(isPresented: $isGoLoginView) {
+//            LoginView()
+//        }
         .onAppear {
             self.loadCacheInfo() // 获取缓存的用户信息
         }

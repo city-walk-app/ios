@@ -69,7 +69,7 @@ struct LoginView: View {
                         VStack {
                             VStack(spacing: 44) {
                                 LoginHeaderView(title: "欢迎，请登录")
-                            
+                                
                                 VStack(alignment: .center, spacing: 51) {
                                     TextField("请输入邮箱", text: $email)
                                         .frame(height: 58)
@@ -88,7 +88,7 @@ struct LoginView: View {
                                                 await self.sendEmail()
                                             }
                                         }
-                                
+                                    
                                     Button {
                                         Task {
                                             await self.sendEmail()
@@ -104,7 +104,7 @@ struct LoginView: View {
                                             }
                                     }
                                 }
-                              
+                                
                                 Spacer()
                             }
                             .padding(.horizontal, 26)
@@ -112,12 +112,12 @@ struct LoginView: View {
                         .frame(width: geometry.size.width)
                         .frame(maxHeight: .infinity)
                         .padding(.top, 79)
-                       
+                        
                         // 验证码
                         VStack {
                             VStack(spacing: 44) {
                                 LoginHeaderView(title: "请输入验证码")
-                            
+                                
                                 VStack(alignment: .center, spacing: 51) {
                                     TextField("请输入验证码", text: $code)
                                         .frame(height: 58)
@@ -138,7 +138,7 @@ struct LoginView: View {
                                                 await self.userLoginEmail()
                                             }
                                         }
-                                
+                                    
                                     Button {
                                         Task {
                                             await self.userLoginEmail()
@@ -154,7 +154,7 @@ struct LoginView: View {
                                             }
                                     }
                                 }
-                              
+                                
                                 Spacer()
                             }
                             .padding(.horizontal, 26)
@@ -162,7 +162,7 @@ struct LoginView: View {
                         .frame(width: geometry.size.width)
                         .frame(maxHeight: .infinity)
                         .padding(.top, 79)
-                      
+                        
                         HStack {
                             Text("偏好")
                         }
@@ -173,6 +173,10 @@ struct LoginView: View {
                     .frame(width: geometry.size.width * 3, alignment: .leading)
                     .offset(x: -CGFloat(step) * geometry.size.width)
                     .animation(.easeInOut, value: step)
+                }
+                
+                NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
+                    EmptyView()
                 }
             }
             // 点击空白处隐藏输入框
@@ -199,9 +203,9 @@ struct LoginView: View {
 //            }
 //        }
         // 登录成功之后跳转到首页
-        .navigationDestination(isPresented: $isToHomeView) {
-            HomeView()
-        }
+//        .navigationDestination(isPresented: $isToHomeView) {
+//            HomeView()
+//        }
     }
     
     /// 检测是否为邮箱格式

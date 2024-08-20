@@ -40,7 +40,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
             picker.dismiss(animated: true)
             
-            parent.selectedImages.removeAll()
+//            parent.selectedImages.removeAll()
             
             for result in results {
                 if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
@@ -48,6 +48,8 @@ struct ImagePicker: UIViewControllerRepresentable {
                         if let image = image as? UIImage {
                             DispatchQueue.main.async {
                                 self.parent.selectedImages.append(image)
+                                
+                                print("选择的图片列表", self.parent.selectedImages)
                             }
                         }
                     }
