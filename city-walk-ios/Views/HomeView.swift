@@ -63,23 +63,27 @@ struct HomeView: View {
 
     /// 缓存信息
     private let cacheInfo = UserCache.shared.getInfo()
+    /// 心情颜色
+    private let moodColorList = moodColors
+    /// 最多选择的照片数量
+    private let pictureMaxCount = 2
+    
+    /// 定位数据管理对象
+    @StateObject private var locationDataManager = LocationDataManager()
+    
     /// 打卡弹窗是否显示
-    @State private var visibleSheet = true
+    @State private var visibleSheet = false
     /// 是否显示选择的菜单
     @State private var visibleActionSheet = false
     /// 定位服务管理对象
     @State private var locationManager = CLLocationManager()
     /// 位置权限状态
     @State private var authorizationStatus: CLAuthorizationStatus = .notDetermined
-    /// 定位数据管理对象
-    @StateObject private var locationDataManager = LocationDataManager()
     /// 地图区域
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
         span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
     )
-    /// 心情颜色
-    private let moodColorList = moodColors
     /// 用户的身份信息
     @State private var userInfo: UserInfoType?
     /// 打卡详情
@@ -103,9 +107,7 @@ struct HomeView: View {
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
-    /// 最多选择的照片数量
-    private let pictureMaxCount = 2
-    
+
     var body: some View {
         NavigationView {
             ZStack {
