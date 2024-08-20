@@ -338,11 +338,11 @@ struct UpdateRouteDetailType: Decodable {
 /// 获取周边热门地点
 struct GetLocationPopularRecommendType: Decodable {
     struct GetLocationPopularRecommendData: Codable {
-        var longitude: Int?
-        var latitude: Int?
+        var city: String?
+        var latitude: Double?
+        var longitude: Double?
         var name: String?
         var province: String?
-        var city: String?
     }
 
     var message: String

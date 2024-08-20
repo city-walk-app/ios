@@ -76,14 +76,14 @@ class Request {
             throw URLError(.zeroByteResource)
         }
 
-//        print("请求响应", data)
+        print("请求响应", data)
 
         do {
             let decodedData = try self.decoder.decode(type, from: data)
-//            print("json 解析", decodedData)
+
             return decodedData
         } catch {
-            print("响应解析错误", error)
+            print("JSON 解析错误", error)
             throw error
         }
     }

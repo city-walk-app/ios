@@ -107,12 +107,31 @@ struct HomeView: View {
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
+    // 标注列表
+    @State private var landmarks: [Landmark] = []
 
     var body: some View {
         NavigationView {
             ZStack {
                 // 地图
-                Map(initialPosition: .region(region))
+//                Map(initialPosition: .region(region))
+                // 地图
+                Map(coordinateRegion: self.$region, annotationItems: self.landmarks) { landmark in
+                    MapAnnotation(coordinate: landmark.coordinate) {
+                        VStack {
+                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-markers.png")) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 50, height: 64)
+                            } placeholder: {}
+
+                            Text("地点")
+                                .font(.system(size: 20))
+                        }
+                    }
+                }
+                .ignoresSafeArea(.all) // 忽略安全区域边缘
              
                 // 头部和底部操作视图
                 VStack {
@@ -786,7 +805,7 @@ struct HomeView: View {
         .toolbar(.hidden)
         .onAppear {
             Task {
-                // await self.getLocationPopularRecommend() // 获取周边热门地点
+                await self.getLocationPopularRecommend() // 获取周边热门地点
             }
         }
     }
@@ -810,16 +829,26 @@ struct HomeView: View {
     private func getLocationPopularRecommend() async {
         let longitude = "\(region.center.longitude)"
         let latitude = "\(region.center.latitude)"
-
+        
         do {
             let res = try await Api.shared.getLocationPopularRecommend(params: [
-                "longitude": longitude,
-                "latitude": latitude,
+                //                "longitude": longitude,
+//                "latitude": latitude,
+                "longitude": "120.298501",
+                "latitude": "30.41875",
             ])
             
             print("获取周边热门地点", res)
             
-            if res.code == 200 && res.data != nil {
+            if let data = res.data, res.code == 200 {
+                region = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: data[0].latitude ?? 0, longitude: data[0].longitude ?? 0),
+                    span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+                )
+                landmarks = data.map { item in
+                    Landmark(coordinate: CLLocationCoordinate2D(latitude: item.latitude ?? 0, longitude: item.longitude ?? 0), name: item.name ?? "")
+                }
+                
 //                let list = res.data!
 //                let _landmarks = list.map { item in
 //                    Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
