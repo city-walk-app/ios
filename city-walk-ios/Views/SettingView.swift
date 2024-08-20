@@ -247,10 +247,10 @@ struct SettingView: View {
             self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
         })) // 自定义返回按钮
         .background(.gray.opacity(0.1))
-        // 跳转到登录页面
-        .navigationDestination(isPresented: $isGoLoginView, destination: {
+        // 登录成功之后跳转到首页
+        .navigationDestination(isPresented: $isGoLoginView) {
             LoginView()
-        })
+        }
         .onAppear {
             self.loadCacheInfo() // 获取缓存的用户信息
         }
@@ -274,7 +274,7 @@ struct SettingView: View {
             userInfo.gender = info.gender ?? ""
             userInfo.nick_name = info.nick_name
             userInfo.signature = info.signature ?? ""
-            userInfo.preference_type = info.preference_type ?? []
+//            userInfo.preference_type = info.preference_type ?? []
             userInfo.mobile = info.mobile ?? ""
         }
     }

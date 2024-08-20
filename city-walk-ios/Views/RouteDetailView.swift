@@ -9,8 +9,12 @@ import MapKit
 import SwiftUI
 
 struct RouteDetailView: View {
+    /// 列表 id
     var list_id: String
+    /// 用户 id
     var user_id: String
+
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     /// 地图配置
     @State private var region: MKCoordinateRegion = .init(
@@ -25,25 +29,31 @@ struct RouteDetailView: View {
     @State private var routeDetail: [GpsGetRouteHistory.GpsGetRouteHistoryData] = []
 
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .bottom) {
-                // 地图
-                Map(coordinateRegion: self.$region, annotationItems: self.landmarks) { landmark in
-                    // 为每个地标创建标注视图
-                    MapAnnotation(coordinate: landmark.coordinate) {
-                        VStack {
-                            Image(systemName: "mappin.circle.fill")
-                                .foregroundColor(.red)
-                                .font(.title)
-//                            Text(landmark.name)
-                            Text("地点")
-                                .font(.system(size: 20))
-                        }
+        NavigationView {
+            // 地图
+            Map(coordinateRegion: self.$region, annotationItems: self.landmarks) { landmark in
+                MapAnnotation(coordinate: landmark.coordinate) {
+                    VStack {
+                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-markers.png")) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 50, height: 64)
+                        } placeholder: {}
+
+                        Text("地点")
+                            .font(.system(size: 20))
                     }
                 }
             }
+            .ignoresSafeArea(.all) // 忽略安全区域边缘
         }
-        .ignoresSafeArea(.all) // 忽略安全区域边缘
+//        .ignoresSafeArea(.all) // 忽略安全区域边缘
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden)
+        .navigationBarItems(leading: BackButton {
+            self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+        }) // 自定义返回按钮
         .onAppear {
             Task {
                 await self.getUserRouteDetail() // 获取用户步行记录详情

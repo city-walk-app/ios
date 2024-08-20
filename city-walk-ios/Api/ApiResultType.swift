@@ -17,37 +17,37 @@ struct UserInfoType: Codable {
     var signature: String?
     var birthday: String?
     var gender: String?
-    var preference_type: [String]?
-//    var preference_type: PreferenceType?
+//    var preference_type: [String]?
+    var preference_type: PreferenceType?
 
-//    enum PreferenceType: Codable {
-//        case string(String)
-//        case array([String])
-//        case none
-//
-//        init(from decoder: Decoder) throws {
-//            let container = try decoder.singleValueContainer()
-//            if let strValue = try? container.decode(String.self) {
-//                self = .string(strValue)
-//            } else if let arrayValue = try? container.decode([String].self) {
-//                self = .array(arrayValue)
-//            } else {
-//                self = .none
-//            }
-//        }
-//
-//        func encode(to encoder: Encoder) throws {
-//            var container = encoder.singleValueContainer()
-//            switch self {
-//            case .string(let str):
-//                try container.encode(str)
-//            case .array(let array):
-//                try container.encode(array)
-//            case .none:
-//                try container.encodeNil()
-//            }
-//        }
-//    }
+    enum PreferenceType: Codable {
+        case string(String)
+        case array([String])
+        case none
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            if let strValue = try? container.decode(String.self) {
+                self = .string(strValue)
+            } else if let arrayValue = try? container.decode([String].self) {
+                self = .array(arrayValue)
+            } else {
+                self = .none
+            }
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            switch self {
+            case .string(let str):
+                try container.encode(str)
+            case .array(let array):
+                try container.encode(array)
+            case .none:
+                try container.encodeNil()
+            }
+        }
+    }
 }
 
 // 获取用户指定月份打卡热力图
@@ -129,7 +129,7 @@ struct UserLoginEmailType: Decodable {
 
     var message: String
     var code: Int
-    var data: UserLoginEmailData
+    var data: UserLoginEmailData?
 }
 
 /// 获取用户的动态发布日历热力图

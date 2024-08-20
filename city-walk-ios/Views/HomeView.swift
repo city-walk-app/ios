@@ -105,7 +105,7 @@ struct HomeView: View {
     private let pictureMaxCount = 2
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ZStack {
                 // 地图
                 Map(initialPosition: .region(region))
@@ -194,153 +194,176 @@ struct HomeView: View {
                     Spacer()
                     
                     // 底部功能
-                    HStack(spacing: 12) {
-                        VStack(spacing: 16) {
-                            // 我的朋友
-                            NavigationLink(destination: FriendsView()) {
-                                // 背景图片
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-friends.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 166, height: 98)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        .overlay {
-                                            HStack {
-                                                VStack(alignment: .leading, spacing: 2) {
-                                                    Text("我的朋友")
-                                                        .font(.headline)
-                                                        .bold()
-                                                        .foregroundColor(.white)
-                                                            
-                                                    Text("My Friends")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(.white)
-                                                    
-                                                    Spacer()
-                                                }
-                                                
-                                                Spacer()
-                                            }
-                                            .padding(.top, 14)
-                                            .padding(.leading, 16)
-                                        }
-                                } placeholder: {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
-                                        .frame(width: 166, height: 98)
-                                }
-                            }
-                            
-                            // 邀请朋友
-                            NavigationLink(destination: InviteView()) {
-                                // 背景图片
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-invite.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 166, height: 98) // 设置按钮的大小
-                                        .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
-                                        .overlay {
-                                            HStack {
-                                                VStack(alignment: .leading, spacing: 2) {
-                                                    Text("邀请朋友")
-                                                        .font(.headline)
-                                                        .bold()
-                                                        .foregroundColor(.white)
-                                                                
-                                                    Text("City Walk Together")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(.white)
-                                                        
-                                                    Spacer()
-                                                }
-                                                    
-                                                Spacer()
-                                            }
-                                            .padding(.top, 14)
-                                            .padding(.leading, 16)
-                                        }
-                                } placeholder: {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
-                                        .frame(width: 166, height: 98)
-                                }
-                            }
-                        }
+                    ZStack {
+//                        LinearGradient(
+//                            //                            gradient: Gradient(colors: [.clear, .black.opacity(0.3)]),
+//                            gradient: Gradient(colors: [.clear, .red]),
+//                            startPoint: .top,
+//                            endPoint: .bottom
+//                        )
+//                        .frame(height: 200) // 渐变的高度
+//                        .frame(maxWidth: .infinity)
+//                        .blur(radius: 20)
                         
-                        VStack(spacing: 12) {
-                            // 地点打卡
-                            Button {
-                                Task {
-                                    await self.onRecord()
-                                }
-                            } label: {
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-record.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 166, height: 120)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        .overlay {
-                                            HStack {
-                                                VStack(alignment: .leading, spacing: 2) {
-                                                    Text("打卡")
-                                                        .font(.headline)
-                                                        .bold()
-                                                        .foregroundColor(.white)
-                                                                    
-                                                    Text("Record location")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(.white)
-                                                            
+//                        LinearGradient(
+//                            gradient: Gradient(stops: [
+//                                .init(color: .purple, location: 0),
+//                                .init(color: .clear, location: 0.4),
+//                            ]),
+//                            startPoint: .bottom,
+//                            endPoint: .top
+//                        )
+//                        .frame(height: 400) // 渐变的高度
+//                        .frame(maxWidth: .infinity)
+                        
+                        HStack(spacing: 12) {
+                            VStack(spacing: 16) {
+                                // 我的朋友
+                                NavigationLink(destination: FriendsView()) {
+                                    // 背景图片
+                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-friends.png")) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 166, height: 98)
+                                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                                            .overlay {
+                                                HStack {
+                                                    VStack(alignment: .leading, spacing: 2) {
+                                                        Text("我的朋友")
+                                                            .font(.headline)
+                                                            .bold()
+                                                            .foregroundColor(.white)
+                                                        
+                                                        Text("My Friends")
+                                                            .font(.subheadline)
+                                                            .foregroundColor(.white)
+                                                        
+                                                        Spacer()
+                                                    }
+                                                    
                                                     Spacer()
                                                 }
-                                                        
-                                                Spacer()
+                                                .padding(.top, 14)
+                                                .padding(.leading, 16)
                                             }
-                                            .padding(.top, 14)
-                                            .padding(.leading, 16)
-                                        }
-                                } placeholder: {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
-                                        .frame(width: 166, height: 120)
+                                    } placeholder: {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(skeletonBackground)
+                                            .frame(width: 166, height: 98)
+                                    }
+                                }
+                                
+                                // 邀请朋友
+                                NavigationLink(destination: InviteView()) {
+                                    // 背景图片
+                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-invite.png")) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 166, height: 98) // 设置按钮的大小
+                                            .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
+                                            .overlay {
+                                                HStack {
+                                                    VStack(alignment: .leading, spacing: 2) {
+                                                        Text("邀请朋友")
+                                                            .font(.headline)
+                                                            .bold()
+                                                            .foregroundColor(.white)
+                                                        
+                                                        Text("City Walk Together")
+                                                            .font(.subheadline)
+                                                            .foregroundColor(.white)
+                                                        
+                                                        Spacer()
+                                                    }
+                                                    
+                                                    Spacer()
+                                                }
+                                                .padding(.top, 14)
+                                                .padding(.leading, 16)
+                                            }
+                                    } placeholder: {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(skeletonBackground)
+                                            .frame(width: 166, height: 98)
+                                    }
                                 }
                             }
                             
-                            // 排行榜
-                            NavigationLink(destination: RankingView()) {
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-ranking.png")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 166, height: 76)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        .overlay {
-                                            HStack {
-                                                VStack(alignment: .leading, spacing: 2) {
-                                                    Text("排行榜")
-                                                        .font(.headline)
-                                                        .bold()
-                                                        .foregroundColor(.white)
-                                                                        
-                                                    Text("Ranking")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(.white)
-                                                                
+                            VStack(spacing: 12) {
+                                // 地点打卡
+                                Button {
+                                    Task {
+                                        await self.onRecord()
+                                    }
+                                } label: {
+                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-record.png")) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 166, height: 120)
+                                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                                            .overlay {
+                                                HStack {
+                                                    VStack(alignment: .leading, spacing: 2) {
+                                                        Text("打卡")
+                                                            .font(.headline)
+                                                            .bold()
+                                                            .foregroundColor(.white)
+                                                        
+                                                        Text("Record location")
+                                                            .font(.subheadline)
+                                                            .foregroundColor(.white)
+                                                        
+                                                        Spacer()
+                                                    }
+                                                    
                                                     Spacer()
                                                 }
-                                                            
-                                                Spacer()
+                                                .padding(.top, 14)
+                                                .padding(.leading, 16)
                                             }
-                                            .padding(.top, 14)
-                                            .padding(.leading, 16)
-                                        }
-                                } placeholder: {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
-                                        .frame(width: 166, height: 76)
+                                    } placeholder: {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(skeletonBackground)
+                                            .frame(width: 166, height: 120)
+                                    }
+                                }
+                                
+                                // 排行榜
+                                NavigationLink(destination: RankingView()) {
+                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-ranking.png")) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 166, height: 76)
+                                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                                            .overlay {
+                                                HStack {
+                                                    VStack(alignment: .leading, spacing: 2) {
+                                                        Text("排行榜")
+                                                            .font(.headline)
+                                                            .bold()
+                                                            .foregroundColor(.white)
+                                                        
+                                                        Text("Ranking")
+                                                            .font(.subheadline)
+                                                            .foregroundColor(.white)
+                                                        
+                                                        Spacer()
+                                                    }
+                                                    
+                                                    Spacer()
+                                                }
+                                                .padding(.top, 14)
+                                                .padding(.leading, 16)
+                                            }
+                                    } placeholder: {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(skeletonBackground)
+                                            .frame(width: 166, height: 76)
+                                    }
                                 }
                             }
                         }
@@ -657,7 +680,6 @@ struct HomeView: View {
                 }
             }
         }
-
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
         .onAppear {
