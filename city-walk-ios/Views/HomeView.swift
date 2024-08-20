@@ -239,7 +239,15 @@ struct HomeView: View {
 //                        .frame(height: 400) // 渐变的高度
 //                        .frame(maxWidth: .infinity)
                         
+                        // 线性渐变背景
+                        LinearGradient(gradient: Gradient(colors: [.white, .clear]), startPoint: .bottom, endPoint: .top)
+                            .frame(height: 300)
+                        
+//                            .blur(radius: 10) // 添加模糊效果，可以调整半径值来控制模糊程度
+                        
+                        // 底部卡片
                         VStack(spacing: 33) {
+                            // 天气
                             HStack {
                                 Button {
                                     self.openWeatherApp()
@@ -285,6 +293,7 @@ struct HomeView: View {
                             }
                             .padding(.horizontal, 19)
                             
+                            // 卡片列表
                             HStack(spacing: 12) {
                                 VStack(spacing: 16) {
                                     // 我的朋友
@@ -459,19 +468,16 @@ struct HomeView: View {
                                     AsyncImage(url: URL(string: province_url)) { phase in
                                         if let image = phase.image {
                                             Color(hex: recordDetail.background_color ?? "#F3943F")
-                                                .frame(width: .infinity, height: .infinity)
                                                 .mask {
                                                     image
                                                         .resizable()
                                                         .aspectRatio(contentMode: .fill)
-                                                        .frame(width: .infinity, height: .infinity)
                                                 }
                                             
                                         } else {
                                             // 在加载过程中显示其它占位符
                                             Circle()
                                                 .fill(skeletonBackground)
-                                                .frame(width: .infinity, height: .infinity)
                                         }
                                     }
                                 )
@@ -805,7 +811,7 @@ struct HomeView: View {
         .toolbar(.hidden)
         .onAppear {
             Task {
-                await self.getLocationPopularRecommend() // 获取周边热门地点
+//                await self.getLocationPopularRecommend() // 获取周边热门地点
             }
         }
     }
