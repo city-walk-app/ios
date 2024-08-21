@@ -25,7 +25,8 @@ struct city_walk_iosApp: App {
                 .environmentObject(LaunchScreenData())
                 .environmentObject(UserInfoData())
                 .environmentObject(FriendsData())
-//                .environmentObject(GlobalData())
+                .environmentObject(MainData())
+                .environmentObject(RankingData())
         }
     }
 }

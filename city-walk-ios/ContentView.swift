@@ -25,6 +25,8 @@ struct ContentView: View {
                     HomeView()
                         .environmentObject(UserInfoData())
                         .environmentObject(FriendsData())
+                        .environmentObject(RankingData())
+                        .environmentObject(MainData())
                 }
                 // 否则需要登录
                 else {
@@ -33,7 +35,6 @@ struct ContentView: View {
             } else {
                 LaunchView()
                     .environmentObject(UserInfoData())
-//                    .environmentObject(GlobalData())
             }
         }
     }
@@ -44,5 +45,6 @@ struct ContentView: View {
         .environmentObject(LaunchScreenData())
         .environmentObject(UserInfoData())
         .environmentObject(FriendsData())
-//        .environmentObject(GlobalData())
+        .environmentObject(RankingData())
+        .environmentObject(MainData())
 }

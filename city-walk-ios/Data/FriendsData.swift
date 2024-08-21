@@ -17,8 +17,10 @@ class FriendsData: ObservableObject {
     /// 获取朋友列表
     func friendList() async {
         do {
-            withAnimation {
-                isFriendsLoading = true
+            if friends.isEmpty {
+                withAnimation {
+                    isFriendsLoading = true
+                }
             }
 
             let res = try await Api.shared.friendList(params: [:])

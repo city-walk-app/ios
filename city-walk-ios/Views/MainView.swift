@@ -34,31 +34,33 @@ struct MainView: View {
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
-    /// 省份列表
-    @State private var provinceList: [GetUserProvinceJigsawType.GetUserProvinceJigsawData] = []
-    /// 热力图
-    @State private var heatmap: [GetLocationUserHeatmapType.GetLocationUserHeatmapData] = []
-    /// 步行记录列表
-    @State private var routeList: [GetUserRouteListType.GetUserRouteListData] = []
-    /// 步行记录详情列表
-    @State private var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes]?
-    /// 步行记录详情列表是否在加载中
-    @State private var isRouteDetailListLoading = true
-    /// 用户的身份信息
-    @State private var userInfo: UserInfoType?
+//    /// 省份列表
+//    @State private var provinceList: [GetUserProvinceJigsawType.GetUserProvinceJigsawData] = []
+//    /// 热力图
+//    @State private var heatmap: [GetLocationUserHeatmapType.GetLocationUserHeatmapData] = []
+//    /// 步行记录列表
+//    @State private var routeList: [GetUserRouteListType.GetUserRouteListData] = []
+//    /// 步行记录详情列表
+//    @State private var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes]?
+//    /// 步行记录详情列表是否在加载中
+//    @State private var isRouteDetailListLoading = true
+//    /// 用户的身份信息
+//    @State private var userInfo: UserInfoType?
+    
+    @EnvironmentObject var mainData: MainData
     /// 当前日期
     @State private var selectedDate = Date()
     /// 是否显示选择日期的对话框
     @State private var showDatePicker = false
-    /// 选中的热力图元素索引
-    @State private var routeDetailActiveIndex: Int?
+//    /// 选中的热力图元素索引
+//    @State private var routeDetailActiveIndex: Int?
   
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     // 用户信息
-                    if let userInfo = self.userInfo {
+                    if let userInfo = mainData.userInfo {
                         // 头像
                         AsyncImage(url: URL(string: userInfo.avatar ?? defaultAvatar)) { image in
                             image
@@ -102,10 +104,10 @@ struct MainView: View {
                     }
                     
                     // 省份版图
-                    if !self.provinceList.isEmpty {
+                    if !mainData.provinceList.isEmpty {
                         ScrollView(.horizontal) {
                             HStack {
-                                ForEach(self.provinceList, id: \.vis_id) { item in
+                                ForEach(mainData.provinceList, id: \.vis_id) { item in
                                     Button {} label: {
                                         Color.clear
                                             .frame(width: 107, height: 107)
@@ -159,7 +161,7 @@ struct MainView: View {
                     ]
                     
                     // 热力图
-                    if !self.heatmap.isEmpty {
+                    if !mainData.heatmap.isEmpty {
                         // 日期选择
                         HStack {
                             Spacer()
@@ -242,7 +244,7 @@ struct MainView: View {
                             HStack {
                                 ZStack {
                                     LazyVGrid(columns: heatmapColumns, spacing: 13) {
-                                        ForEach(Array(self.heatmap.enumerated()), id: \.element.date) { index, item in
+                                        ForEach(Array(mainData.heatmap.enumerated()), id: \.element.date) { index, item in
                                             let isHaveRoute: Bool = item.route_count != nil
                                                 && item.route_count! > 0
                                                 && item.background_color != nil
@@ -250,12 +252,12 @@ struct MainView: View {
                                             Button {
                                                 if isHaveRoute {
                                                     withAnimation {
-                                                        if self.routeDetailActiveIndex == index {
-                                                            self.routeDetailActiveIndex = nil
-                                                            self.routeDetailList = nil
+                                                        if mainData.routeDetailActiveIndex == index {
+                                                            mainData.routeDetailActiveIndex = nil
+                                                            mainData.routeDetailList = nil
                                                         } else {
-                                                            self.routeDetailActiveIndex = index
-                                                            self.routeDetailList = item.routes
+                                                            mainData.routeDetailActiveIndex = index
+                                                            mainData.routeDetailList = item.routes
                                                         }
                                                     }
                                                 }
@@ -268,26 +270,26 @@ struct MainView: View {
                                                     ))
                                                     .frame(width: 26, height: 26)
                                             }
-                                            .scaleEffect(self.routeDetailActiveIndex == index ? 40 : 1)
-                                            .zIndex(self.routeDetailActiveIndex == index ? 30 : 1)
-                                            .offset(x: self.routeDetailActiveIndex == index ? -13 : 0, y: self.routeDetailActiveIndex == index ? -13 : 0) // 根据放大倍数进行偏移
+                                            .scaleEffect(mainData.routeDetailActiveIndex == index ? 40 : 1)
+                                            .zIndex(mainData.routeDetailActiveIndex == index ? 30 : 1)
+                                            .offset(x: mainData.routeDetailActiveIndex == index ? -13 : 0, y: mainData.routeDetailActiveIndex == index ? -13 : 0) // 根据放大倍数进行偏移
                                         }
                                     }
                                     
-                                    if let activeIndex = self.routeDetailActiveIndex {
-                                        let item = self.heatmap[activeIndex]
+                                    if let activeIndex = mainData.routeDetailActiveIndex {
+                                        let item = mainData.heatmap[activeIndex]
                                         
                                         Button {
                                             withAnimation {
-                                                self.routeDetailActiveIndex = nil
-                                                self.routeDetailList = nil
+                                                mainData.routeDetailActiveIndex = nil
+                                                mainData.routeDetailList = nil
                                             }
                                         } label: {
                                             RoundedRectangle(cornerRadius: 4)
                                                 .fill(Color(hex: "\(item.background_color!)"))
                                                 .scaleEffect(1)
                                                 .zIndex(3)
-                                                .animation(.easeInOut(duration: 0.3), value: self.routeDetailActiveIndex)
+                                                .animation(.easeInOut(duration: 0.3), value: mainData.routeDetailActiveIndex)
                                                 .transition(.identity)
                                                 .buttonStyle(PlainButtonStyle())
                                                 .overlay {
@@ -346,9 +348,9 @@ struct MainView: View {
                     }
                     
                     // 步行记录详情
-                    if let routeDetailList = self.routeDetailList,
-                       self.routeDetailList != nil,
-                       !self.routeDetailList!.isEmpty
+                    if let routeDetailList = mainData.routeDetailList,
+                       mainData.routeDetailList != nil,
+                       !mainData.routeDetailList!.isEmpty
                     {
                         VStack(spacing: 24) {
                             ForEach(Array(routeDetailList.enumerated()), id: \.element.create_at) { index, item in
@@ -356,7 +358,7 @@ struct MainView: View {
                                     // 左侧标识和头像
                                     VStack {
                                         if index == 0 {
-                                            if let userInfo = self.userInfo {
+                                            if let userInfo = mainData.userInfo {
                                                 AsyncImage(url: URL(string: userInfo.avatar ?? defaultAvatar)) { image in
                                                     image
                                                         .resizable()
@@ -466,7 +468,7 @@ struct MainView: View {
                             GridItem(.flexible()),
                         ]
                         
-                        if isRouteDetailListLoading {
+                        if mainData.isRouteDetailListLoading {
                             LazyVGrid(columns: columns, alignment: .center) {
                                 ForEach(0 ..< 5) { _ in
                                     RoundedRectangle(cornerRadius: 8)
@@ -476,9 +478,9 @@ struct MainView: View {
                                 }
                             }
                         } else {
-                            if !self.routeList.isEmpty {
+                            if !mainData.routeList.isEmpty {
                                 LazyVGrid(columns: columns, alignment: .center) {
-                                    ForEach(self.routeList, id: \.list_id) { item in
+                                    ForEach(mainData.routeList, id: \.list_id) { item in
                                         NavigationLink(destination: RouteDetailView(list_id: item.list_id, user_id: self.user_id)) {
                                             RoundedRectangle(cornerRadius: 8)
                                                 .fill(Color(hex: item.mood_color ?? "#FFCC94"))
@@ -578,7 +580,7 @@ struct MainView: View {
                 Spacer()
 
                 Button {
-                    self.showDatePicker = false
+                    self.showDatePicker.toggle()
                 } label: {
                     Text("确定")
                         .padding()
@@ -595,94 +597,16 @@ struct MainView: View {
         }
         .onAppear {
             Task {
-                await self.getUserInfo() // 获取用户信息
-                await self.getLocationUserHeatmap() // 获取用户指定月份打卡热力图
-                await self.getUserProvinceJigsaw() // 获取用户解锁的省份版图列表
-                await self.getUserRouteList() // 获取用户步行记录列表
+                await mainData.getUserInfo(user_id: user_id) // 获取用户信息
+                await mainData.getLocationUserHeatmap(user_id: user_id) // 获取用户指定月份打卡热力图
+                await mainData.getUserProvinceJigsaw(user_id: user_id) // 获取用户解锁的省份版图列表
+                await mainData.getUserRouteList(user_id: user_id) // 获取用户步行记录列表
             }
-        }
-    }
-    
-    /// 获取用户步行记录列表
-    private func getUserRouteList() async {
-        do {
-            withAnimation {
-                self.isRouteDetailListLoading = true
-            }
-            
-            let res = try await Api.shared.getUserRouteList(params: ["user_id": user_id])
-
-            withAnimation {
-                self.isRouteDetailListLoading = false
-            }
-            
-            guard res.code == 200, let data = res.data else {
-                return
-            }
-
-            withAnimation {
-                self.routeList = data
-            }
-        } catch {
-            print("获取用户步行记录列表异常")
-            withAnimation {
-                self.isRouteDetailListLoading = false
-            }
-        }
-    }
-
-    /// 获取用户解锁的省份版图列表
-    private func getUserProvinceJigsaw() async {
-        do {
-            let res = try await Api.shared.getUserProvinceJigsaw(params: ["user_id": user_id])
-
-            guard res.code == 200, let data = res.data else {
-                return
-            }
-
-            withAnimation {
-                self.provinceList = data
-            }
-        } catch {
-            print("获取用户解锁的省份版图列表异常")
-        }
-    }
-
-    /// 获取用户信息
-    private func getUserInfo() async {
-        do {
-            let res = try await Api.shared.getUserInfo(params: ["user_id": user_id])
-
-            guard res.code == 200, let data = res.data else {
-                return
-            }
-            
-            withAnimation {
-                self.userInfo = data
-            }
-        } catch {
-            print("获取用户信息异常")
-        }
-    }
-
-    /// 获取用户指定月份打卡热力图
-    private func getLocationUserHeatmap() async {
-        do {
-            let res = try await Api.shared.getLocationUserHeatmap(params: ["user_id": user_id])
-
-            guard res.code == 200, let data = res.data else {
-                return
-            }
-            
-            withAnimation {
-                self.heatmap = data
-            }
-        } catch {
-            print("取用户指定月份打卡热力图异常")
         }
     }
 }
 
 #Preview {
     MainView(user_id: "U131995175454824711531011225172573302849")
+        .environmentObject(MainData())
 }

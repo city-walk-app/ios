@@ -166,7 +166,5 @@ struct LaunchView: View {
 #Preview {
     LaunchView()
         .environmentObject(UserInfoData())
-//        .environmentObject(GlobalData())
         .environmentObject(LaunchScreenData())
-        .environmentObject(FriendsData())
 }

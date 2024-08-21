@@ -1012,4 +1012,6 @@ struct HomeView: View {
 #Preview {
     HomeView()
         .environmentObject(FriendsData())
+        .environmentObject(RankingData())
+        .environmentObject(MainData())
 }

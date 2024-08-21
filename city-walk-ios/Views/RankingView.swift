@@ -13,16 +13,13 @@ struct RankingView: View {
     // presentationMode.wrappedValue.dismiss() 可以用于关闭当前视图或返回到前一个视图
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
-    /// 排名列表
-    @State private var rankingList: [FriendGetExperienceRankingType.FriendGetExperienceRankingData] = []
-    /// 排名列表是否加载中
-    @State private var isRankingListLoading = true
+    @EnvironmentObject var rankingData: RankingData
 
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
-                    if self.isRankingListLoading {
+                    if rankingData.isRankingListLoading {
                         ForEach(1 ..< 4) { _ in
                             Rectangle()
                                 .fill(Color(hex: "#f4f4f4"))
@@ -30,8 +27,8 @@ struct RankingView: View {
                                 .frame(height: 80)
                         }
                     } else {
-                        if !self.rankingList.isEmpty {
-                            ForEach(Array(self.rankingList.enumerated()), id: \.element.user_id) { index, item in
+                        if !rankingData.rankingList.isEmpty {
+                            ForEach(Array(rankingData.rankingList.enumerated()), id: \.element.user_id) { index, item in
                                 HStack(spacing: 14) {
                                     if item.experiences != nil && item.experiences ?? 0 > 0 {
                                         if index == 0 {
@@ -150,40 +147,13 @@ struct RankingView: View {
         .background(.gray.opacity(0.1))
         .onAppear {
             Task {
-                await self.friendGetExperienceRanking() // 获取朋友经验排行榜
+                await rankingData.friendGetExperienceRanking() // 获取朋友经验排行榜
             }
-        }
-    }
-
-    /// 获取朋友经验排行榜
-    private func friendGetExperienceRanking() async {
-        do {
-            withAnimation {
-                isRankingListLoading = true
-            }
-
-            let res = try await Api.shared.friendGetExperienceRanking(params: [:])
-
-            withAnimation {
-                isRankingListLoading = false
-            }
-
-            guard res.code == 200, let data = res.data else {
-                return
-            }
-
-            withAnimation {
-                rankingList = data
-            }
-        } catch {
-            withAnimation {
-                isRankingListLoading = false
-            }
-            print("获取朋友经验排行异常")
         }
     }
 }
 
 #Preview {
     RankingView()
+        .environmentObject(RankingData())
 }
