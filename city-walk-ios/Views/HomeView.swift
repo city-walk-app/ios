@@ -146,8 +146,8 @@ struct HomeView: View {
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                            .frame(width: 48, height: 48) // 设置图片的大小
-                                            .clipShape(Circle()) // 将图片裁剪为圆形
+                                            .frame(width: 48, height: 48)
+                                            .clipShape(Circle())
                                     } placeholder: {
                                         Circle()
                                             .fill(skeletonBackground)
@@ -158,6 +158,17 @@ struct HomeView: View {
                                         .fill(skeletonBackground)
                                         .frame(width: 48, height: 48)
                                 }
+                            }
+                        } else {
+                            NavigationLink(destination: LoginView()) {
+                                Circle()
+                                    .fill(skeletonBackground)
+                                    .frame(width: 48, height: 48)
+                                    .overlay {
+                                        Image(systemName: "person")
+                                            .foregroundStyle(Color(hex: "#333333"))
+                                            .font(.system(size: 22))
+                                    }
                             }
                         }
                         
@@ -191,8 +202,8 @@ struct HomeView: View {
                                         .overlay {
                                             Image(systemName: "map")
                                                 .resizable()
+                                                .foregroundStyle(Color(hex: "#333333"))
                                                 .frame(width: 23, height: 23)
-                                                .foregroundColor(.black)
                                         }
                                 }
                                
@@ -204,8 +215,8 @@ struct HomeView: View {
                                         .overlay {
                                             Image(systemName: "paperplane")
                                                 .resizable()
+                                                .foregroundStyle(Color(hex: "#333333"))
                                                 .frame(width: 23, height: 23)
-                                                .foregroundColor(.black)
                                         }
                                 }
                             }
@@ -213,6 +224,7 @@ struct HomeView: View {
                         }
                     }
                     .padding(.horizontal, 16)
+                    .padding(.top, 20)
                     
                     Spacer()
                     
@@ -240,8 +252,8 @@ struct HomeView: View {
 //                        .frame(maxWidth: .infinity)
                         
                         // 线性渐变背景
-                        LinearGradient(gradient: Gradient(colors: [.white, .clear]), startPoint: .bottom, endPoint: .top)
-                            .frame(height: 300)
+//                        LinearGradient(gradient: Gradient(colors: [.white, .clear]), startPoint: .bottom, endPoint: .top)
+//                            .frame(height: 300)
                         
 //                            .blur(radius: 10) // 添加模糊效果，可以调整半径值来控制模糊程度
                         
@@ -252,21 +264,23 @@ struct HomeView: View {
                                 Button {
                                     self.openWeatherApp()
                                 } label: {
-                                    VStack(spacing: -7) {
+                                    VStack(spacing: -13) {
                                         Circle()
                                             .fill(.ultraThinMaterial)
-                                            .frame(width: 40, height: 40)
+                                            .frame(width: 50, height: 50)
                                             .overlay(
                                                 Circle()
-                                                    .stroke(Color.white, lineWidth: 1)
-                                                    .overlay(content: {
+                                                    .stroke(Color.white, lineWidth: 1.2)
+                                                    .overlay {
                                                         Image(systemName: "sun.max")
+                                                            .font(.system(size: 18))
                                                             .foregroundStyle(Color(hex: "#FE8718"))
-                                                    })
+                                                            .padding(.top, -5)
+                                                    }
                                             )
                                     
                                         RoundedRectangle(cornerRadius: 18)
-                                            .frame(width: 50, height: 18)
+                                            .frame(width: 55, height: 23)
                                             .overlay(
                                                 ZStack {
                                                     RoundedRectangle(cornerRadius: 18)
@@ -283,7 +297,7 @@ struct HomeView: View {
                                                         .cornerRadius(18)
                                                 
                                                     Text("26度")
-                                                        .font(.system(size: 10))
+                                                        .font(.system(size: 13))
                                                         .foregroundColor(.white)
                                                 }
                                             )
@@ -380,7 +394,7 @@ struct HomeView: View {
                                             image
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
-                                                .frame(width: 170, height: 120)
+                                                .frame(width: 170, height: 130)
                                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                                 .overlay {
                                                     HStack {
@@ -449,6 +463,11 @@ struct HomeView: View {
                         }
                     }
                 }
+            }
+            .overlay(alignment: .top) {
+                VariableBlurView(maxBlurRadius: 12)
+                    .frame(height: topSafeAreaInsets)
+                    .ignoresSafeArea()
             }
         }
         // 打卡的对话框

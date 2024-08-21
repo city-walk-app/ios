@@ -234,6 +234,11 @@ struct SettingView: View {
                         }
                     }
                 }
+                .overlay(alignment: .top) {
+                    VariableBlurView(maxBlurRadius: 12)
+                        .frame(height: topSafeAreaInsets)
+                        .ignoresSafeArea()
+                }
                 
                 // 跳转到首页
                 NavigationLink(destination: LoginView(), isActive: $isGoLoginView) {

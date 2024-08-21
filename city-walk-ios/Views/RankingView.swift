@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct RankingView: View {
-    /// 排名列表
-    @State private var rankingList: [FriendGetExperienceRankingType.FriendGetExperienceRankingData] = []
     // 使用 @Environment 属性包装器从环境中获取 presentationMode，这里 presentationMode 是一个 Binding<PresentationMode>
     // PresentationMode 表示视图的显示状态，可以通过它来控制视图的弹出或返回
     // presentationMode.wrappedValue.dismiss() 可以用于关闭当前视图或返回到前一个视图
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
+    /// 排名列表
+    @State private var rankingList: [FriendGetExperienceRankingType.FriendGetExperienceRankingData] = []
 
     var body: some View {
         NavigationView {
@@ -78,6 +79,11 @@ struct RankingView: View {
                 .padding(16)
                 .padding(.bottom, 200)
                 .frame(maxWidth: .infinity)
+            }
+            .overlay(alignment: .top) {
+                VariableBlurView(maxBlurRadius: 12)
+                    .frame(height: topSafeAreaInsets)
+                    .ignoresSafeArea()
             }
         }
         .navigationBarBackButtonHidden(true)

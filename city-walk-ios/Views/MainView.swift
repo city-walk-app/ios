@@ -89,12 +89,10 @@ struct MainView: View {
                                                 AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png")) { phase in
                                                     if let image = phase.image {
                                                         Color(hex: item.background_color)
-                                                            .frame(width: .infinity, height: .infinity)
                                                             .mask {
                                                                 image
                                                                     .resizable()
                                                                     .aspectRatio(contentMode: .fill)
-                                                                    .frame(width: .infinity, height: .infinity)
                                                             }
                                                     } else {
                                                         Circle()
@@ -479,6 +477,11 @@ struct MainView: View {
                     }
                     .padding(.horizontal, 16)
                 }
+            }
+            .overlay(alignment: .top) {
+                VariableBlurView(maxBlurRadius: 12)
+                    .frame(height: topSafeAreaInsets)
+                    .ignoresSafeArea()
             }
         }
         .background(Color(hex: "#FAF9FA"))

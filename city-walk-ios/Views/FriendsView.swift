@@ -56,6 +56,11 @@ struct FriendsView: View {
                     }
                 }
             }
+            .overlay(alignment: .top) {
+                VariableBlurView(maxBlurRadius: 12)
+                    .frame(height: topSafeAreaInsets)
+                    .ignoresSafeArea()
+            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
