@@ -24,6 +24,7 @@ struct ContentView: View {
                 if (userInfoDataModel.cacheInfo != nil) && (userInfoDataModel.cacheInfo?.user_id != nil) {
                     HomeView()
                         .environmentObject(UserInfoData())
+                        .environmentObject(FriendsData())
                 }
                 // 否则需要登录
                 else {
@@ -42,5 +43,6 @@ struct ContentView: View {
     ContentView()
         .environmentObject(LaunchScreenData())
         .environmentObject(UserInfoData())
+        .environmentObject(FriendsData())
 //        .environmentObject(GlobalData())
 }

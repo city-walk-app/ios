@@ -9,18 +9,17 @@ import SwiftUI
 
 struct FriendsView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    /// 朋友数据
+//    @StateObject private var friendsData = FriendsData()
 
-    /// 朋友列表
-    @State private var friends: [FriendListType.FriendListData] = []
-    /// 朋友列表是否在加载中
-    @State private var isFriendsLoading = true
+    @EnvironmentObject private var friendsData: FriendsData
 
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack {
                     // 加载中
-                    if isFriendsLoading {
+                    if friendsData.isFriendsLoading {
                         let columns = [
                             GridItem(.flexible()),
                             GridItem(.flexible()),
@@ -36,7 +35,7 @@ struct FriendsView: View {
                             }
                         }
                     } else {
-                        if !self.friends.isEmpty {
+                        if !friendsData.friends.isEmpty {
                             let columns = [
                                 GridItem(.flexible()),
                                 GridItem(.flexible()),
@@ -44,7 +43,7 @@ struct FriendsView: View {
                             ]
 
                             LazyVGrid(columns: columns, spacing: 20) {
-                                ForEach(self.friends, id: \.user_id) { item in
+                                ForEach(friendsData.friends, id: \.user_id) { item in
 
                                     NavigationLink(destination: MainView(user_id: item.user_id)) {
                                         VStack(spacing: 12) {
@@ -99,37 +98,7 @@ struct FriendsView: View {
         })) // 自定义返回按钮
         .onAppear {
             Task {
-                await self.friendList() // 获取朋友列表
-            }
-        }
-    }
-
-    /// 获取朋友列表
-    private func friendList() async {
-        do {
-            withAnimation {
-                isFriendsLoading = true
-            }
-
-            let res = try await Api.shared.friendList(params: [:])
-
-            print("获取朋友列表", res)
-
-            withAnimation {
-                isFriendsLoading = false
-            }
-
-            guard res.code == 200, let data = res.data else {
-                return
-            }
-
-            withAnimation {
-                friends = data
-            }
-        } catch {
-            print("获取朋友列表异常")
-            withAnimation {
-                isFriendsLoading = false
+                await friendsData.friendList() // 获取朋友列表
             }
         }
     }
@@ -137,4 +106,5 @@ struct FriendsView: View {
 
 #Preview {
     FriendsView()
+        .environmentObject(FriendsData())
 }

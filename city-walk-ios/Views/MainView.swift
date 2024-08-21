@@ -40,18 +40,18 @@ struct MainView: View {
     @State private var heatmap: [GetLocationUserHeatmapType.GetLocationUserHeatmapData] = []
     /// 步行记录列表
     @State private var routeList: [GetUserRouteListType.GetUserRouteListData] = []
-    /// 用户的身份信息
-    @State private var userInfo: UserInfoType?
     /// 步行记录详情列表
     @State private var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes]?
+    /// 步行记录详情列表是否在加载中
+    @State private var isRouteDetailListLoading = true
+    /// 用户的身份信息
+    @State private var userInfo: UserInfoType?
     /// 当前日期
     @State private var selectedDate = Date()
     /// 是否显示选择日期的对话框
     @State private var showDatePicker = false
     /// 选中的热力图元素索引
     @State private var routeDetailActiveIndex: Int?
-    /// 步行记录详情列表是否在加载中
-    @State private var isRouteDetailListLoading = true
   
     var body: some View {
         NavigationView {

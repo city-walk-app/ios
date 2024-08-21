@@ -8,9 +8,20 @@
 import Foundation
 
 class UserInfoData: ObservableObject {
+    init() {
+        
+    }
+ 
     /// 用户信息
     /// 使用 @Published 修饰符确保在更改时发送通知
-    @Published var data: UserInfoType?
+    @Published var data: UserInfoType? {
+        // 设置前调用
+        willSet {}
+
+        // 设置后调用
+        didSet {}
+    }
+
     /// 缓存信息
     let cacheInfo = UserCache.shared.getInfo()
 

@@ -10,7 +10,7 @@ import Network
 import SwiftUI
 
 struct LaunchView: View {
-    let API = Api()
+//    let API = Api()
 
     /// 用于存储定位权限状态的状态变量，默认为未确定状态
 //    @State private var locationAuthorizationStatus: CLAuthorizationStatus = .notDetermined
@@ -168,4 +168,5 @@ struct LaunchView: View {
         .environmentObject(UserInfoData())
 //        .environmentObject(GlobalData())
         .environmentObject(LaunchScreenData())
+        .environmentObject(FriendsData())
 }
