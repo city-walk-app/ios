@@ -21,7 +21,7 @@ struct FriendsView: View {
                         let columns = [
                             GridItem(.flexible()),
                             GridItem(.flexible()),
-                            GridItem(.flexible())
+                            GridItem(.flexible()),
                         ]
 
                         LazyVGrid(columns: columns, spacing: 20) {
@@ -58,9 +58,10 @@ struct FriendsView: View {
             }
             .overlay(alignment: .top) {
                 VariableBlurView(maxBlurRadius: 12)
-                    .frame(height: topSafeAreaInsets)
+                    .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
                     .ignoresSafeArea()
             }
+            .background(viewBackground)
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -72,7 +73,6 @@ struct FriendsView: View {
         .navigationBarItems(leading: BackButton {
             self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
         }) // 自定义返回按钮
-        .background(.gray.opacity(0.1))
         .onAppear {
             Task {
                 await self.friendList() // 获取朋友列表

@@ -82,9 +82,10 @@ struct RankingView: View {
             }
             .overlay(alignment: .top) {
                 VariableBlurView(maxBlurRadius: 12)
-                    .frame(height: topSafeAreaInsets)
+                    .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
                     .ignoresSafeArea()
             }
+            .background(viewBackground)
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {

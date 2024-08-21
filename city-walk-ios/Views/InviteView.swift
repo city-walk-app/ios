@@ -18,6 +18,7 @@ struct InviteView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
+            .background(viewBackground)
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {

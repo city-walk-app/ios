@@ -48,7 +48,6 @@ struct RouteDetailView: View {
             }
             .ignoresSafeArea(.all) // 忽略安全区域边缘
         }
-//        .ignoresSafeArea(.all) // 忽略安全区域边缘
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
         .navigationBarItems(leading: BackButton {

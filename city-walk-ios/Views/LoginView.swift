@@ -178,6 +178,7 @@ struct LoginView: View {
                         .offset(x: -CGFloat(step) * geometry.size.width)
                         .animation(.easeInOut, value: step)
                     }
+                    .background(viewBackground)
                     
                     // loading
                     if isLoading {

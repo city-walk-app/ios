@@ -480,9 +480,10 @@ struct MainView: View {
             }
             .overlay(alignment: .top) {
                 VariableBlurView(maxBlurRadius: 12)
-                    .frame(height: topSafeAreaInsets)
+                    .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
                     .ignoresSafeArea()
             }
+            .background(viewBackground)
         }
         .background(Color(hex: "#FAF9FA"))
         .navigationBarItems(leading: BackButton {

@@ -225,7 +225,7 @@ struct HomeView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 20)
-                    
+                  
                     Spacer()
                     
                     // 底部功能
@@ -468,6 +468,7 @@ struct HomeView: View {
                 VariableBlurView(maxBlurRadius: 12)
                     .frame(height: topSafeAreaInsets)
                     .ignoresSafeArea()
+                    .zIndex(20)
             }
         }
         // 打卡的对话框
