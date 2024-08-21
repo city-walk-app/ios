@@ -19,82 +19,122 @@ struct RankingView: View {
     @State private var isRankingListLoading = true
 
     var body: some View {
-        NavigationView {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 20) {
-                    if self.isRankingListLoading {
-                        ForEach(1 ..< 4) { _ in
-                            Rectangle()
-                                .fill(Color(hex: "#f4f4f4"))
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 80)
-                        }
-                    } else {
-                        if !self.rankingList.isEmpty {
-                            ForEach(self.rankingList, id: \.user_id) { item in
-                                HStack(spacing: 14) {
-                                    // 头像
-                                    NavigationLink(destination: MainView(user_id: item.user_id)) {
-                                        AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 20) {
+                if self.isRankingListLoading {
+                    ForEach(1 ..< 4) { _ in
+                        Rectangle()
+                            .fill(Color(hex: "#f4f4f4"))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 80)
+                    }
+                } else {
+                    if !self.rankingList.isEmpty {
+                        ForEach(Array(self.rankingList.enumerated()), id: \.element.user_id) { index, item in
+                            HStack(spacing: 14) {
+                                if item.experiences != nil && item.experiences > 0 {
+                                    if index == 0 {
+                                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-1.png")) { image in
                                             image
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
-                                                .frame(width: 46, height: 46) // 设置图片的大小
-                                                .clipShape(Circle()) // 将图片裁剪为圆形
+                                                .frame(width: 25, height: 28)
                                         } placeholder: {
-                                            Circle()
-                                                .fill(skeletonBackground)
-                                                .frame(width: 46, height: 46)
+                                            Color.clear
+                                                .frame(width: 25, height: 28)
+                                        }
+                                    } else if index == 1 {
+                                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-2.png")) { image in
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 25, height: 28)
+                                        } placeholder: {
+                                            Color.clear
+                                                .frame(width: 25, height: 28)
+                                        }
+                                    } else if index == 2 {
+                                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-3.png")) { image in
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 25, height: 28)
+                                        } placeholder: {
+                                            Color.clear
+                                                .frame(width: 25, height: 28)
                                         }
                                     }
-
-                                    HStack(alignment: .top) {
-                                        // 文案
-                                        VStack(alignment: .leading, spacing: 7) {
-                                            Text("\(item.nick_name ?? "")")
-                                                .foregroundStyle(Color(hex: "#333333"))
+                                } else {
+                                    Color.clear
+                                        .frame(width: 25, height: 28)
+                                        .overlay {
+                                            Text("\(index + 1)")
                                                 .font(.system(size: 16))
-
-                                            HStack {
-                                                Text("今日共打卡")
-                                                Text("\(item.count)")
-                                                    .foregroundStyle(Color(hex: "#F3943F"))
-                                                Text("个地点")
-                                            }
-                                            .font(.system(size: 14))
+                                                .foregroundStyle(Color(hex: "#333333"))
                                         }
+                                }
 
-                                        Spacer()
-
-                                        Text("\(item.experiences)")
-                                            .font(.system(size: 30))
-                                            .foregroundStyle(Color(hex: "#F8D035"))
+                                // 头像
+                                NavigationLink(destination: MainView(user_id: item.user_id)) {
+                                    AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 46, height: 46)
+                                            .clipShape(Circle())
+                                    } placeholder: {
+                                        Circle()
+                                            .fill(skeletonBackground)
+                                            .frame(width: 46, height: 46)
                                     }
                                 }
-                                .padding(.vertical, 17)
-                                .padding(.trailing, 15)
-                                .padding(.leading, 16)
-                                .background(.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                                HStack(alignment: .top) {
+                                    // 文案
+                                    VStack(alignment: .leading, spacing: 7) {
+                                        Text("\(item.nick_name ?? "")")
+                                            .foregroundStyle(Color(hex: "#333333"))
+                                            .font(.system(size: 16))
+
+                                        HStack {
+                                            Text("今日共打卡")
+                                            Text("\(item.count)")
+                                                .foregroundStyle(Color(hex: "#F3943F"))
+                                            Text("个地点")
+                                        }
+                                        .font(.system(size: 14))
+                                    }
+
+                                    Spacer()
+
+                                    Text("\(item.experiences)")
+                                        .font(.system(size: 30))
+                                        .foregroundStyle(Color(hex: "#F8D035"))
+                                }
                             }
-                        } else {
-                            EmptyState(title: "暂无数据")
-                                .padding(.top, 100)
+                            .padding(.vertical, 17)
+                            .padding(.trailing, 15)
+                            .padding(.leading, 16)
+                            .background(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
+                    } else {
+                        EmptyState(title: "暂无数据")
+                            .padding(.top, 100)
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 200)
-                .padding(.top, viewPaddingTop)
-                .frame(maxWidth: .infinity)
             }
-            .overlay(alignment: .top) {
-                VariableBlurView(maxBlurRadius: 12)
-                    .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
-                    .ignoresSafeArea()
-            }
-            .background(viewBackground)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 200)
+            .padding(.top, viewPaddingTop)
+            .frame(maxWidth: .infinity)
         }
+        .overlay(alignment: .top) {
+            VariableBlurView(maxBlurRadius: 12)
+                .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
+                .ignoresSafeArea()
+        }
+        .background(viewBackground)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .principal) {

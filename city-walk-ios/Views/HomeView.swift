@@ -146,17 +146,22 @@ struct HomeView: View {
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                            .frame(width: 48, height: 48)
-                                            .clipShape(Circle())
+                                            .frame(width: 53, height: 53)
+                                            .clipShape(
+                                                Circle()
+                                            )
+                                            .shadow(radius: 10)
                                     } placeholder: {
                                         Circle()
                                             .fill(skeletonBackground)
-                                            .frame(width: 48, height: 48)
+                                            .frame(width: 53, height: 53)
+                                            .shadow(radius: 10)
                                     }
                                 } else {
                                     Circle()
                                         .fill(skeletonBackground)
-                                        .frame(width: 48, height: 48)
+                                        .frame(width: 53, height: 53)
+                                        .shadow(radius: 10)
                                 }
                             }
                         } else {
@@ -419,7 +424,7 @@ struct HomeView: View {
                                         } placeholder: {
                                             RoundedRectangle(cornerRadius: 10)
                                                 .fill(skeletonBackground)
-                                                .frame(width: 170, height: 120)
+                                                .frame(width: 170, height: 130)
                                         }
                                     }
                                     

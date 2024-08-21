@@ -11,15 +11,13 @@ struct InviteView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack {
-                    Text("邀请")
-                }
-                .frame(maxWidth: .infinity)
+        ScrollView {
+            VStack {
+                Text("邀请")
             }
-            .background(viewBackground)
+            .frame(maxWidth: .infinity)
         }
+        .background(viewBackground)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .principal) {

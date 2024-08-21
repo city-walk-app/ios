@@ -35,27 +35,25 @@ struct RouteDetailView: View {
     @State private var routeDetail: [GpsGetRouteHistory.GpsGetRouteHistoryData] = []
 
     var body: some View {
-        NavigationView {
-            // 地图
-            Map(coordinateRegion: self.$region, annotationItems: self.landmarks) { landmark in
-                MapAnnotation(coordinate: landmark.coordinate) {
-                    VStack {
-                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-markers.png")) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 50, height: 64)
-                        } placeholder: {}
+        // 地图
+        Map(coordinateRegion: $region, annotationItems: landmarks) { landmark in
+            MapAnnotation(coordinate: landmark.coordinate) {
+                VStack {
+                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-markers.png")) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 50, height: 64)
+                    } placeholder: {}
 
-                        Text("地点")
-                            .font(.system(size: 20))
-                    }
+                    Text("地点")
+                        .font(.system(size: 20))
                 }
             }
-            .ignoresSafeArea(.all) // 忽略安全区域边缘
         }
+        .ignoresSafeArea(.all) // 忽略安全区域边缘
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden)
+//        .toolbar(.hidden)
         .navigationBarItems(leading: BackButton {
             self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
         }) // 自定义返回按钮

@@ -63,137 +63,136 @@ struct LoginView: View {
     @State private var countdownSeconds = 10
   
     var body: some View {
-        NavigationView {
-            VStack {
-                ZStack {
-                    // 内容
-                    GeometryReader { geometry in
-                        HStack(spacing: 0) {
-                            // 邮箱步骤
-                            VStack {
-                                VStack(spacing: 44) {
-                                    LoginHeaderView(title: "欢迎，请登录")
+        VStack {
+            ZStack {
+                // 内容
+                GeometryReader { geometry in
+                    HStack(spacing: 0) {
+                        // 邮箱步骤
+                        VStack {
+                            VStack(spacing: 44) {
+                                LoginHeaderView(title: "欢迎，请登录")
                                     
-                                    VStack(alignment: .center, spacing: 51) {
-                                        TextField("请输入邮箱", text: $email)
-                                            .frame(height: 58)
-                                            .padding(.horizontal, 23)
-                                            .background(Color(hex: "#ECECEC"))
-                                            .keyboardType(.default)
-                                            .textContentType(.emailAddress)
-                                            .focused($focus, equals: .email)
-                                            .submitLabel(.next)
-                                            .onReceive(Just(code), perform: { _ in
-                                                limitMaxLength(content: &code, maxLength: 50)
-                                            })
-                                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                                            .onSubmit { // 监听提交事件
-                                                Task {
-                                                    await self.sendEmail()
-                                                }
-                                            }
-                                        
-                                        Button {
+                                VStack(alignment: .center, spacing: 51) {
+                                    TextField("请输入邮箱", text: $email)
+                                        .frame(height: 58)
+                                        .padding(.horizontal, 23)
+                                        .background(Color(hex: "#ECECEC"))
+                                        .keyboardType(.default)
+                                        .textContentType(.emailAddress)
+                                        .focused($focus, equals: .email)
+                                        .submitLabel(.next)
+                                        .onReceive(Just(code), perform: { _ in
+                                            limitMaxLength(content: &code, maxLength: 50)
+                                        })
+                                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                                        .onSubmit { // 监听提交事件
                                             Task {
                                                 await self.sendEmail()
                                             }
-                                        } label: {
-                                            Circle()
-                                                .fill(Color(hex: "#F3943F"))
-                                                .frame(width: 90, height: 90)
-                                                .overlay {
-                                                    Image(systemName: "chevron.right")
-                                                        .foregroundStyle(.white)
-                                                        .font(.system(size: 27))
-                                                }
                                         }
-                                    }
-                                    
-                                    Spacer()
-                                }
-                                .padding(.horizontal, 26)
-                            }
-                            .frame(width: geometry.size.width)
-                            .frame(maxHeight: .infinity)
-                            .padding(.top, 79)
-                            
-                            // 验证码
-                            VStack {
-                                VStack(spacing: 44) {
-                                    LoginHeaderView(title: "请输入验证码")
-                                    
-                                    VStack(alignment: .center, spacing: 51) {
-                                        TextField("请输入验证码", text: $code)
-                                            .frame(height: 58)
-                                            .padding(.horizontal, 23)
-                                            .keyboardType(.numberPad) // 设置键盘类型为数字键盘
-                                            .textContentType(.oneTimeCode) // 设置内容类型为一次性代码，以便系统知道右下角按钮应该显示为“确认”
-                                            .background(Color(hex: "#ECECEC"))
-                                            .keyboardType(.default)
-                                            .textContentType(.emailAddress)
-                                            .focused($focus, equals: .code)
-                                            .submitLabel(.return)
-                                            .onReceive(Just(code), perform: { _ in
-                                                limitMaxLength(content: &code, maxLength: 6)
-                                            }) // 最大长度为 6 位
-                                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                                            .onSubmit { // 监听提交事件
-                                                Task {
-                                                    await self.userLoginEmail()
-                                                }
+                                        
+                                    Button {
+                                        Task {
+                                            await self.sendEmail()
+                                        }
+                                    } label: {
+                                        Circle()
+                                            .fill(Color(hex: "#F3943F"))
+                                            .frame(width: 90, height: 90)
+                                            .overlay {
+                                                Image(systemName: "chevron.right")
+                                                    .foregroundStyle(.white)
+                                                    .font(.system(size: 27))
                                             }
-                                        Button {
+                                    }
+                                }
+                                    
+                                Spacer()
+                            }
+                            .padding(.horizontal, 26)
+                        }
+                        .frame(width: geometry.size.width)
+                        .frame(maxHeight: .infinity)
+                        .padding(.top, 79)
+                            
+                        // 验证码
+                        VStack {
+                            VStack(spacing: 44) {
+                                LoginHeaderView(title: "请输入验证码")
+                                    
+                                VStack(alignment: .center, spacing: 51) {
+                                    TextField("请输入验证码", text: $code)
+                                        .frame(height: 58)
+                                        .padding(.horizontal, 23)
+                                        .keyboardType(.numberPad) // 设置键盘类型为数字键盘
+                                        .textContentType(.oneTimeCode) // 设置内容类型为一次性代码，以便系统知道右下角按钮应该显示为“确认”
+                                        .background(Color(hex: "#ECECEC"))
+                                        .keyboardType(.default)
+                                        .textContentType(.emailAddress)
+                                        .focused($focus, equals: .code)
+                                        .submitLabel(.return)
+                                        .onReceive(Just(code), perform: { _ in
+                                            limitMaxLength(content: &code, maxLength: 6)
+                                        }) // 最大长度为 6 位
+                                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                                        .onSubmit { // 监听提交事件
                                             Task {
                                                 await self.userLoginEmail()
                                             }
-                                        } label: {
-                                            Circle()
-                                                .fill(Color(hex: "#F3943F"))
-                                                .frame(width: 90, height: 90)
-                                                .overlay {
-                                                    Image(systemName: "chevron.right")
-                                                        .foregroundStyle(.white)
-                                                        .font(.system(size: 27))
-                                                }
                                         }
+                                    Button {
+                                        Task {
+                                            await self.userLoginEmail()
+                                        }
+                                    } label: {
+                                        Circle()
+                                            .fill(Color(hex: "#F3943F"))
+                                            .frame(width: 90, height: 90)
+                                            .overlay {
+                                                Image(systemName: "chevron.right")
+                                                    .foregroundStyle(.white)
+                                                    .font(.system(size: 27))
+                                            }
                                     }
-                                    
-                                    Spacer()
                                 }
-                                .padding(.horizontal, 26)
+                                    
+                                Spacer()
                             }
-                            .frame(width: geometry.size.width)
-                            .frame(maxHeight: .infinity)
-                            .padding(.top, 79)
-                            
-                            HStack {
-                                Text("偏好")
-                            }
-                            .frame(width: geometry.size.width)
-                            .frame(maxHeight: .infinity)
-                            .background(.green)
+                            .padding(.horizontal, 26)
                         }
-                        .frame(width: geometry.size.width * 3, alignment: .leading)
-                        .offset(x: -CGFloat(step) * geometry.size.width)
-                        .animation(.easeInOut, value: step)
+                        .frame(width: geometry.size.width)
+                        .frame(maxHeight: .infinity)
+                        .padding(.top, 79)
+                            
+                        HStack {
+                            Text("偏好")
+                        }
+                        .frame(width: geometry.size.width)
+                        .frame(maxHeight: .infinity)
+                        .background(.green)
                     }
-                    .background(viewBackground)
-                    
-                    // loading
-                    if isLoading {
-                        Loading(title: "处理中...")
-                    }
+                    .frame(width: geometry.size.width * 3, alignment: .leading)
+                    .offset(x: -CGFloat(step) * geometry.size.width)
+                    .animation(.easeInOut, value: step)
                 }
-                
-                NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
-                    EmptyView()
+                .background(viewBackground)
+                    
+                // loading
+                if isLoading {
+                    Loading(title: "处理中...")
                 }
             }
-            // 点击空白处隐藏输入框
-            .onTapGesture {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                
+            NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
+                EmptyView()
             }
         }
+        // 点击空白处隐藏输入框
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+   
         .navigationBarBackButtonHidden(true)
         .onAppear {
             // 页面展示的时候将验证码输入框聚焦
