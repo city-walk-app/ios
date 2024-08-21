@@ -15,69 +15,77 @@ struct RankingView: View {
 
     /// 排名列表
     @State private var rankingList: [FriendGetExperienceRankingType.FriendGetExperienceRankingData] = []
+    /// 排名列表是否加载中
+    @State private var isRankingListLoading = true
 
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
-                    if !self.rankingList.isEmpty {
-                        ForEach(self.rankingList, id: \.user_id) { item in
-                            HStack(spacing: 14) {
-                                // 头像
-                                NavigationLink(destination: MainView(user_id: item.user_id)) {
-                                    AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 46, height: 46) // 设置图片的大小
-                                            .clipShape(Circle()) // 将图片裁剪为圆形
-                                    } placeholder: {
-                                        Circle()
-                                            .fill(skeletonBackground)
-                                            .frame(width: 46, height: 46)
-                                    }
-                                }
-
-                                HStack(alignment: .top) {
-                                    // 文案
-                                    VStack(alignment: .leading, spacing: 7) {
-                                        Text("\(item.nick_name ?? "")")
-                                            .foregroundStyle(Color(hex: "#333333"))
-                                            .font(.system(size: 16))
-
-                                        HStack {
-                                            Text("今日共打卡")
-                                            Text("\(item.count)")
-                                                .foregroundStyle(Color(hex: "#F3943F"))
-                                            Text("个地点")
-                                        }
-                                        .font(.system(size: 14))
-                                    }
-
-                                    Spacer()
-
-                                    Text("\(item.experiences)")
-                                        .font(.system(size: 30))
-                                        .foregroundStyle(Color(hex: "#F8D035"))
-                                }
-                            }
-                            .padding(.vertical, 17)
-                            .padding(.trailing, 15)
-                            .padding(.leading, 16)
-                            .background(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                        }
-                    } else {
+                    if self.isRankingListLoading {
                         ForEach(1 ..< 4) { _ in
                             Rectangle()
                                 .fill(Color(hex: "#f4f4f4"))
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 80)
                         }
+                    } else {
+                        if !self.rankingList.isEmpty {
+                            ForEach(self.rankingList, id: \.user_id) { item in
+                                HStack(spacing: 14) {
+                                    // 头像
+                                    NavigationLink(destination: MainView(user_id: item.user_id)) {
+                                        AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 46, height: 46) // 设置图片的大小
+                                                .clipShape(Circle()) // 将图片裁剪为圆形
+                                        } placeholder: {
+                                            Circle()
+                                                .fill(skeletonBackground)
+                                                .frame(width: 46, height: 46)
+                                        }
+                                    }
+
+                                    HStack(alignment: .top) {
+                                        // 文案
+                                        VStack(alignment: .leading, spacing: 7) {
+                                            Text("\(item.nick_name ?? "")")
+                                                .foregroundStyle(Color(hex: "#333333"))
+                                                .font(.system(size: 16))
+
+                                            HStack {
+                                                Text("今日共打卡")
+                                                Text("\(item.count)")
+                                                    .foregroundStyle(Color(hex: "#F3943F"))
+                                                Text("个地点")
+                                            }
+                                            .font(.system(size: 14))
+                                        }
+
+                                        Spacer()
+
+                                        Text("\(item.experiences)")
+                                            .font(.system(size: 30))
+                                            .foregroundStyle(Color(hex: "#F8D035"))
+                                    }
+                                }
+                                .padding(.vertical, 17)
+                                .padding(.trailing, 15)
+                                .padding(.leading, 16)
+                                .background(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+                        } else {
+                            EmptyState(title: "暂无数据")
+                                .padding(.top, 100)
+                        }
                     }
                 }
-                .padding(16)
+                .padding(.horizontal, 16)
                 .padding(.bottom, 200)
+                .padding(.top, viewPaddingTop)
                 .frame(maxWidth: .infinity)
             }
             .overlay(alignment: .top) {
@@ -108,14 +116,27 @@ struct RankingView: View {
     /// 获取朋友经验排行榜
     private func friendGetExperienceRanking() async {
         do {
+            withAnimation {
+                isRankingListLoading = true
+            }
+
             let res = try await Api.shared.friendGetExperienceRanking(params: [:])
 
-            print("获取朋友排行榜信息", res)
+            withAnimation {
+                isRankingListLoading = false
+            }
 
-            if res.code == 200 && res.data != nil {
-                self.rankingList = res.data!
+            guard res.code == 200, let data = res.data else {
+                return
+            }
+
+            withAnimation {
+                rankingList = data
             }
         } catch {
+            withAnimation {
+                isRankingListLoading = false
+            }
             print("获取朋友经验排行异常")
         }
     }
@@ -123,5 +144,4 @@ struct RankingView: View {
 
 #Preview {
     RankingView()
-//        .environmentObject(GlobalData())
 }

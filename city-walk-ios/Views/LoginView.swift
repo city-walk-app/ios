@@ -142,7 +142,6 @@ struct LoginView: View {
                                                     await self.userLoginEmail()
                                                 }
                                             }
-                                        
                                         Button {
                                             Task {
                                                 await self.userLoginEmail()
@@ -239,48 +238,67 @@ struct LoginView: View {
         }
         
         do {
-            isLoading = true
-            
+            withAnimation {
+                isLoading = true
+            }
+         
             let res = try await Api.shared.emailSend(params: ["email": email])
         
-            isLoading = false
-            
+            withAnimation {
+                isLoading = false
+            }
+         
             print("获取邮箱验证码结果", res)
             
             if res.code == 200 {
-                step = 1
+                withAnimation {
+                    step = 1
+                }
             }
         } catch {
             print("获取验证码错误")
             
-            isLoading = false
+            withAnimation {
+                isLoading = false
+            }
         }
     }
     
     /// 邮箱验证码登录
     private func userLoginEmail() async {
         do {
-            isLoading = true
-            
+            withAnimation {
+                isLoading = true
+            }
+           
             let res = try await Api.shared.userLoginEmail(params: ["email": email, "code": code])
             
-            isLoading = false
+            withAnimation {
+                isLoading = false
+            }
             
             print("登录结果", res)
             
-            if let data = res.data, res.code == 200 {
-                UserCache.shared.saveInfo(info: data.user_info)
-                UserCache.shared.saveToken(token: data.token)
-                
-                if data.is_new_user {
-                    step = 2
-                } else {
-                    isToHomeView = true
-                }
+            guard res.code == 200, let data = res.data else {
+                return
             }
+            
+            UserCache.shared.saveInfo(info: data.user_info)
+            UserCache.shared.saveToken(token: data.token)
+                
+            if data.is_new_user {
+                withAnimation {
+                    step = 2
+                }
+            } else {
+                isToHomeView = true
+            }
+           
         } catch {
             print("邮箱登录错误")
-            isLoading = false
+            withAnimation {
+                isLoading = false
+            }
         }
     }
     

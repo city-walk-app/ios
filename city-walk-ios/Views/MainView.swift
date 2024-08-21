@@ -11,7 +11,29 @@ struct MainView: View {
     /// 用户 id
     var user_id: String
 
+    struct MonthSelectItem {
+        var title: String
+        var key: Int
+        var active: Bool
+    }
+    
+    let monthSelectList = [
+        MonthSelectItem(title: "一", key: 1, active: false),
+        MonthSelectItem(title: "二", key: 2, active: false),
+        MonthSelectItem(title: "三", key: 3, active: false),
+        MonthSelectItem(title: "四", key: 4, active: false),
+        MonthSelectItem(title: "五", key: 5, active: false),
+        MonthSelectItem(title: "六", key: 6, active: false),
+        MonthSelectItem(title: "七", key: 7, active: false),
+        MonthSelectItem(title: "八", key: 8, active: false),
+        MonthSelectItem(title: "九", key: 9, active: false),
+        MonthSelectItem(title: "十", key: 10, active: false),
+        MonthSelectItem(title: "十一", key: 11, active: false),
+        MonthSelectItem(title: "十二", key: 12, active: false),
+    ]
+    
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
     /// 省份列表
     @State private var provinceList: [GetUserProvinceJigsawType.GetUserProvinceJigsawData] = []
     /// 热力图
@@ -28,6 +50,8 @@ struct MainView: View {
     @State private var showDatePicker = false
     /// 选中的热力图元素索引
     @State private var routeDetailActiveIndex: Int?
+    /// 步行记录详情列表是否在加载中
+    @State private var isRouteDetailListLoading = true
   
     var body: some View {
         NavigationView {
@@ -68,13 +92,13 @@ struct MainView: View {
                         RoundedRectangle(cornerRadius: 4)
                             .fill(skeletonBackground)
                             .padding(.top, 16)
-                            .frame(width: 54, height: 34)
+                            .frame(width: 54, height: 31)
                            
                         // 签名
                         RoundedRectangle(cornerRadius: 4)
                             .fill(skeletonBackground)
                             .padding(.top, 16)
-                            .frame(width: 280, height: 34)
+                            .frame(width: 280, height: 31)
                     }
                     
                     // 省份版图
@@ -101,7 +125,6 @@ struct MainView: View {
                                                     }
                                                 }
                                             }
-//
                                     }
                                 }
                             }
@@ -110,15 +133,29 @@ struct MainView: View {
                         .scrollIndicators(.hidden)
                         .padding(.vertical, 24)
                     } else {
-                        HStack {
-                            ForEach(0 ..< 3) { _ in
-                                Circle()
-                                    .fill(skeletonBackground)
-                                    .frame(width: 107, height: 107)
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach(0 ..< 4) { _ in
+                                    Circle()
+                                        .fill(skeletonBackground)
+                                        .frame(width: 107, height: 107)
+                                }
                             }
+                            .padding(.horizontal, 17)
                         }
+                        .scrollIndicators(.hidden)
                         .padding(.vertical, 24)
                     }
+                    
+                    let heatmapColumns = [
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                    ]
                   
                     // 热力图
                     if !self.heatmap.isEmpty {
@@ -141,6 +178,7 @@ struct MainView: View {
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 8)
                                 .background(Color(hex: "#F3F3F3"))
+                                .clipShape(RoundedRectangle(cornerRadius: 3))
                             }
                         }
                         .padding(.horizontal, 16)
@@ -154,8 +192,11 @@ struct MainView: View {
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                            .frame(width: 15, height: 17) // 设置图片的大小
-                                    } placeholder: {}
+                                            .frame(width: 15, height: 17)
+                                    } placeholder: {
+                                        Color.clear
+                                            .frame(width: 15, height: 17)
+                                    }
                                     
                                     Text("打卡多")
                                         .foregroundStyle(Color(hex: "#666666"))
@@ -168,7 +209,10 @@ struct MainView: View {
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
                                             .frame(width: 15, height: 17)
-                                    } placeholder: {}
+                                    } placeholder: {
+                                        Color.clear
+                                            .frame(width: 15, height: 17)
+                                    }
                                     
                                     Text("打卡少")
                                         .foregroundStyle(Color(hex: "#666666"))
@@ -180,8 +224,11 @@ struct MainView: View {
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                            .frame(width: 15, height: 17) // 设置图片的大小
-                                    } placeholder: {}
+                                            .frame(width: 15, height: 17)
+                                    } placeholder: {
+                                        Color.clear
+                                            .frame(width: 15, height: 17)
+                                    }
                                     
                                     Text("未打卡")
                                         .foregroundStyle(Color(hex: "#666666"))
@@ -192,18 +239,8 @@ struct MainView: View {
                             
                             // 热力图
                             HStack {
-                                let columns = [
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible()),
-                                ]
-                                
                                 ZStack {
-                                    LazyVGrid(columns: columns, spacing: 13) {
+                                    LazyVGrid(columns: heatmapColumns, spacing: 13) {
                                         ForEach(Array(self.heatmap.enumerated()), id: \.element.date) { index, item in
                                             let isHaveRoute: Bool = item.route_count != nil
                                                 && item.route_count! > 0
@@ -295,11 +332,16 @@ struct MainView: View {
                             
                             // 热力图
                             HStack {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(skeletonBackground)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                LazyVGrid(columns: heatmapColumns, spacing: 13) {
+                                    ForEach(0 ..< 31) { _ in
+                                        Color.clear
+                                            .frame(width: 26, height: 26)
+                                    }
+                                }
                             }
                             .frame(maxWidth: .infinity)
+                            .background(skeletonBackground)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
                         .padding(16)
                     }
@@ -420,96 +462,138 @@ struct MainView: View {
                     
                     // 步行记录
                     HStack(spacing: 17) {
-                        if !self.routeList.isEmpty {
-                            let columns = [
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                            ]
-                            
+                        let columns = [
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                        ]
+                        
+                        if isRouteDetailListLoading {
                             LazyVGrid(columns: columns, alignment: .center) {
-                                ForEach(self.routeList, id: \.list_id) { item in
-                                    NavigationLink(destination: RouteDetailView(list_id: item.list_id, user_id: self.user_id)) {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color(hex: item.mood_color ?? "#FFCC94"))
-                                            .frame(height: 116)
-                                            .frame(maxWidth: .infinity)
-                                            .overlay {
-                                                HStack {
-                                                    Spacer()
-                                                    
-                                                    VStack {
-                                                        // 地点数量
-                                                        Text("地点×\(item.count)")
-                                                            .foregroundStyle(.white)
-                                                            .font(.system(size: 16))
-                                                            .padding(.top, 28)
-                                                            .padding(.trailing, 16)
-                                                        
-                                                        Spacer()
-                                                        
-                                                        // 时间
-                                                        Text("\(convertToDateOnly(from: item.create_at)!)")
-                                                            .foregroundStyle(.white)
-                                                            .font(.system(size: 14))
-                                                            .padding(.bottom, 10)
-                                                            .padding(.trailing, 16)
-                                                    }
-                                                }
-                                            }
-                                    }
-                                }
-                            }
-                        } else {
-                            let columns = [
-                                GridItem(.flexible(), spacing: 17),
-                                GridItem(.flexible(), spacing: 0),
-                            ]
-                            
-                            LazyVGrid(columns: columns, alignment: .center, spacing: 17) {
-                                ForEach(0 ..< 3) { _ in
+                                ForEach(0 ..< 5) { _ in
                                     RoundedRectangle(cornerRadius: 8)
                                         .fill(skeletonBackground)
                                         .frame(height: 116)
                                         .frame(maxWidth: .infinity)
                                 }
                             }
+                        } else {
+                            if !self.routeList.isEmpty {
+                                LazyVGrid(columns: columns, alignment: .center) {
+                                    ForEach(self.routeList, id: \.list_id) { item in
+                                        NavigationLink(destination: RouteDetailView(list_id: item.list_id, user_id: self.user_id)) {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color(hex: item.mood_color ?? "#FFCC94"))
+                                                .frame(height: 116)
+                                                .frame(maxWidth: .infinity)
+                                                .overlay {
+                                                    HStack {
+                                                        Spacer()
+                                                    
+                                                        VStack {
+                                                            // 地点数量
+                                                            Text("地点×\(item.count)")
+                                                                .foregroundStyle(.white)
+                                                                .font(.system(size: 16))
+                                                                .padding(.top, 28)
+                                                                .padding(.trailing, 16)
+                                                        
+                                                            Spacer()
+                                                        
+                                                            // 时间
+                                                            Text("\(convertToDateOnly(from: item.create_at)!)")
+                                                                .foregroundStyle(.white)
+                                                                .font(.system(size: 14))
+                                                                .padding(.bottom, 10)
+                                                                .padding(.trailing, 16)
+                                                        }
+                                                    }
+                                                }
+                                        }
+                                    }
+                                }
+                            } else {
+                                EmptyState(title: "暂无打卡记录")
+                                    .padding(.top, 100)
+                            }
                         }
                     }
                     .padding(.horizontal, 16)
                 }
+                .padding(.top, viewPaddingTop)
             }
+            .background(viewBackground)
             .overlay(alignment: .top) {
                 VariableBlurView(maxBlurRadius: 12)
                     .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
                     .ignoresSafeArea()
             }
-            .background(viewBackground)
         }
         .background(Color(hex: "#FAF9FA"))
         .navigationBarItems(leading: BackButton {
             self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
         }) // 自定义返回按钮
         .navigationBarBackButtonHidden(true)
-        .sheet(isPresented: self.$showDatePicker) {
+        .sheet(isPresented: $showDatePicker) {
             VStack {
-                DatePicker("选择日期", selection: self.$selectedDate, displayedComponents: [.date])
-                    .datePickerStyle(WheelDatePickerStyle())
-                    .labelsHidden()
-                    .environment(\.locale, Locale(identifier: "zh_CN"))
-                    .frame(maxHeight: 300)
-                    .clipped()
-                    .padding()
+                VStack {
+                    // 选择年份
+                    ScrollView(.horizontal) {
+                        HStack {
+                            ForEach(monthSelectList, id: \.key) { item in
+                                Button {} label: {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color(hex: "#eeeeee"))
+                                        .frame(width: 110, height: 110)
+                                        .overlay(alignment: .bottomTrailing) {
+                                            Text("\(item.title)月")
+                                                .padding()
+                                                .foregroundStyle(Color(hex: "#333333"))
+                                        }
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                    }
+                    .scrollIndicators(.hidden)
+                    
+                    // 选择月份
+                    ScrollView(.horizontal) {
+                        HStack {
+                            ForEach(monthSelectList, id: \.key) { item in
+                                Button {} label: {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color(hex: "#eeeeee"))
+                                        .frame(width: 110, height: 110)
+                                        .overlay(alignment: .bottomTrailing) {
+                                            Text("\(item.title)月")
+                                                .padding()
+                                                .foregroundStyle(Color(hex: "#333333"))
+                                        }
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                    }
+                    .scrollIndicators(.hidden)
+                }
+                
+                Spacer()
 
                 Button {
                     self.showDatePicker = false
                 } label: {
                     Text("确定")
                         .padding()
-                        .background(Color(hex: "#F7B535"))
+                        .frame(width: 100)
+                        .background(Color(hex: "#F3943F"))
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
             }
+            .padding(.top, 40)
+            // https://x.com/ios_dev_alb/status/1824031474502246710
+            .presentationDetents([.medium])
+            .presentationCornerRadius(40)
         }
         .onAppear {
             Task {
@@ -524,26 +608,41 @@ struct MainView: View {
     /// 获取用户步行记录列表
     private func getUserRouteList() async {
         do {
-            let res = try await Api.shared.getUserRouteList(params: ["user_id": self.user_id])
+            withAnimation {
+                self.isRouteDetailListLoading = true
+            }
+            
+            let res = try await Api.shared.getUserRouteList(params: ["user_id": user_id])
 
-            print("获取用户步行记录列表", res)
+            withAnimation {
+                self.isRouteDetailListLoading = false
+            }
+            
+            guard res.code == 200, let data = res.data else {
+                return
+            }
 
-            if let data = res.data, res.code == 200 {
+            withAnimation {
                 self.routeList = data
             }
         } catch {
             print("获取用户步行记录列表异常")
+            withAnimation {
+                self.isRouteDetailListLoading = false
+            }
         }
     }
 
     /// 获取用户解锁的省份版图列表
     private func getUserProvinceJigsaw() async {
         do {
-            let res = try await Api.shared.getUserProvinceJigsaw(params: ["user_id": self.user_id])
+            let res = try await Api.shared.getUserProvinceJigsaw(params: ["user_id": user_id])
 
-//            print("获取用户解锁的省份版图列表", res)
+            guard res.code == 200, let data = res.data else {
+                return
+            }
 
-            if let data = res.data, res.code == 200 {
+            withAnimation {
                 self.provinceList = data
             }
         } catch {
@@ -554,11 +653,13 @@ struct MainView: View {
     /// 获取用户信息
     private func getUserInfo() async {
         do {
-            let res = try await Api.shared.getUserInfo(params: ["user_id": self.user_id])
+            let res = try await Api.shared.getUserInfo(params: ["user_id": user_id])
 
-//            print("我的页面获取的用户信息", res)
-
-            if let data = res.data, res.code == 200 {
+            guard res.code == 200, let data = res.data else {
+                return
+            }
+            
+            withAnimation {
                 self.userInfo = data
             }
         } catch {
@@ -569,11 +670,13 @@ struct MainView: View {
     /// 获取用户指定月份打卡热力图
     private func getLocationUserHeatmap() async {
         do {
-            let res = try await Api.shared.getLocationUserHeatmap(params: ["user_id": self.user_id])
+            let res = try await Api.shared.getLocationUserHeatmap(params: ["user_id": user_id])
 
-//            print("我的页面获取用户指定月份打卡热力图", res)
-
-            if let data = res.data, res.code == 200 {
+            guard res.code == 200, let data = res.data else {
+                return
+            }
+            
+            withAnimation {
                 self.heatmap = data
             }
         } catch {
@@ -585,5 +688,4 @@ struct MainView: View {
 #Preview {
     MainView(user_id: "U131995175454824711531011225172573302849")
         .environmentObject(UserInfoData())
-//        .environmentObject(GlobalData())
 }

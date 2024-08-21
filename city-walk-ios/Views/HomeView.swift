@@ -929,17 +929,20 @@ struct HomeView: View {
     
     /// 获取用户信息
     private func getUserInfo() async {
+        guard cacheInfo != nil else {
+            return
+        }
+        
         do {
-            guard cacheInfo != nil else {
-                return
-            }
             let res = try await Api.shared.getUserInfo(params: ["user_id": cacheInfo!.user_id])
 
             print("我的页面获取的用户信息", res)
-
-            if let data = res.data, res.code == 200 {
-                userInfo = data
+            
+            guard res.code == 200, let data = res.data else {
+                return
             }
+
+            userInfo = data
         } catch {
             print("获取用户信息异常")
         }
@@ -953,17 +956,20 @@ struct HomeView: View {
                 "latitude": latitude,
             ])
 
-            if let data = res.data, res.code == 200 {
-                recordDetail = data
-                
-                recordDetail!.province_url = data.province_code != nil
-                    ? "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(data.province_code!).png"
-                    : nil
-                
-                routeDetailForm.route_id = data.route_id
-                
-                visibleSheet.toggle() // 打开对话框
+            guard res.code == 200, let data = res.data else {
+                return
             }
+            
+            recordDetail = data
+                
+            recordDetail!.province_url = data.province_code != nil
+                ? "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(data.province_code!).png"
+                : nil
+                
+            routeDetailForm.route_id = data.route_id
+                
+            visibleSheet.toggle() // 打开对话框
+           
         } catch {
             print("打卡当前地点异常")
         }
@@ -1000,5 +1006,4 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
-//        .environmentObject(UserInfoData())
 }

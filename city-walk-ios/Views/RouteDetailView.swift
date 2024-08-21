@@ -1,5 +1,5 @@
 //
-//  MapView.swift
+//  RouteDetailView.swift
 //  city-walk-ios
 //
 //  Created by Tyh2001 on 2024/4/4.
@@ -7,6 +7,12 @@
 
 import MapKit
 import SwiftUI
+
+struct Landmark: Identifiable {
+    let id = UUID()
+    var coordinate: CLLocationCoordinate2D
+    var name: String
+}
 
 struct RouteDetailView: View {
     /// 列表 id
@@ -63,11 +69,13 @@ struct RouteDetailView: View {
     /// 获取用户步行记录详情
     private func getUserRouteDetail() async {
         do {
-            let res = try await Api.shared.getUserRouteDetail(params: ["list_id": self.list_id, "user_id": self.user_id])
+            let res = try await Api.shared.getUserRouteDetail(params: ["list_id": list_id, "user_id": user_id])
 
-            print("获取指定步行记录历史打卡记录列表", res)
+            guard res.code == 200, let data = res.data else {
+                return
+            }
 
-            if let data = res.data, res.code == 200 {
+            withAnimation {
                 self.region = MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: Double(data[0].latitude) ?? 0, longitude: Double(data[0].longitude) ?? 0),
                     span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
@@ -77,15 +85,9 @@ struct RouteDetailView: View {
                 }
             }
         } catch {
-            print("错误")
+            print("获取用户步行记录详情异常", error)
         }
     }
-}
-
-struct Landmark: Identifiable {
-    let id = UUID()
-    var coordinate: CLLocationCoordinate2D
-    var name: String
 }
 
 #Preview {
