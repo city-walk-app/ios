@@ -16,26 +16,11 @@ struct FriendsView: View {
     @State private var isFriendsLoading = true
 
     var body: some View {
-        ScrollView {
-            VStack {
-                // 加载中
-                if isFriendsLoading {
-                    let columns = [
-                        GridItem(.flexible()),
-                        GridItem(.flexible()),
-                        GridItem(.flexible()),
-                    ]
-
-                    LazyVGrid(columns: columns, spacing: 20) {
-                        ForEach(0 ..< 4) { _ in
-                            Rectangle()
-                                .fill(skeletonBackground)
-                                .frame(width: 106, height: 106)
-                                .clipShape(RoundedRectangle(cornerRadius: 20))
-                        }
-                    }
-                } else {
-                    if !self.friends.isEmpty {
+        NavigationView {
+            ScrollView {
+                VStack {
+                    // 加载中
+                    if isFriendsLoading {
                         let columns = [
                             GridItem(.flexible()),
                             GridItem(.flexible()),
@@ -43,46 +28,65 @@ struct FriendsView: View {
                         ]
 
                         LazyVGrid(columns: columns, spacing: 20) {
-                            ForEach(self.friends, id: \.user_id) { item in
-
-                                NavigationLink(destination: MainView(user_id: item.user_id)) {
-                                    VStack(spacing: 12) {
-                                        // 头像
-                                        AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 106, height: 106)
-                                                .clipShape(RoundedRectangle(cornerRadius: 20))
-                                        } placeholder: {
-                                            Rectangle()
-                                                .fill(skeletonBackground)
-                                                .frame(width: 106, height: 106)
-                                                .clipShape(RoundedRectangle(cornerRadius: 20))
-                                        }
-
-                                        // 昵称
-                                        Text("\(item.nick_name ?? "")")
-                                            .foregroundStyle(Color(hex: "#666666"))
-                                    }
-                                }
+                            ForEach(0 ..< 4) { _ in
+                                Rectangle()
+                                    .fill(skeletonBackground)
+                                    .frame(width: 106, height: 106)
+                                    .clipShape(RoundedRectangle(cornerRadius: 20))
                             }
                         }
                     } else {
-                        EmptyState(title: "暂无朋友")
-                            .padding(.top, 100)
+                        if !self.friends.isEmpty {
+                            let columns = [
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                            ]
+
+                            LazyVGrid(columns: columns, spacing: 20) {
+                                ForEach(self.friends, id: \.user_id) { item in
+
+                                    NavigationLink(destination: MainView(user_id: item.user_id)) {
+                                        VStack(spacing: 12) {
+                                            // 头像
+                                            AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
+                                                image
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .frame(width: 106, height: 106)
+                                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                                            } placeholder: {
+                                                Rectangle()
+                                                    .fill(skeletonBackground)
+                                                    .frame(width: 106, height: 106)
+                                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                                            }
+
+                                            // 昵称
+                                            Text("\(item.nick_name ?? "")")
+                                                .foregroundStyle(Color(hex: "#666666"))
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            EmptyState(title: "暂无朋友")
+                                .padding(.top, 100)
+                        }
                     }
                 }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 200)
+                .padding(.top, viewPaddingTop)
+                .frame(maxWidth: .infinity)
             }
+            .overlay(alignment: .top) {
+                VariableBlurView(maxBlurRadius: 12)
+                    .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
+                    .ignoresSafeArea()
+            }
+            .background(viewBackground)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.top, viewPaddingTop)
-        .overlay(alignment: .top) {
-            VariableBlurView(maxBlurRadius: 12)
-                .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
-                .ignoresSafeArea()
-        }
-        .background(viewBackground)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -90,9 +94,9 @@ struct FriendsView: View {
                     .font(.headline)
             }
         }
-        .navigationBarItems(leading: BackButton {
+        .navigationBarItems(leading: BackButton(action: {
             self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
-        }) // 自定义返回按钮
+        })) // 自定义返回按钮
         .onAppear {
             Task {
                 await self.friendList() // 获取朋友列表
@@ -103,7 +107,9 @@ struct FriendsView: View {
     /// 获取朋友列表
     private func friendList() async {
         do {
-            isFriendsLoading = true
+            withAnimation {
+                isFriendsLoading = true
+            }
 
             let res = try await Api.shared.friendList(params: [:])
 

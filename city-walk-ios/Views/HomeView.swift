@@ -111,7 +111,7 @@ struct HomeView: View {
     @State private var landmarks: [Landmark] = []
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 // 地图
 //                Map(initialPosition: .region(region))

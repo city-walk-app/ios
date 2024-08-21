@@ -68,182 +68,184 @@ struct SettingView: View {
     @State private var preferenceList = preferences
   
     var body: some View {
-        VStack {
-            List {
-                // 基本信息
-                Section {
-                    // 头像设置
-                    Button {
-                        self.visibleSheet.toggle()
-                        self.sheetKey = .avatar
-                    } label: {
-                        HStack {
-                            // 头像
-                            AsyncImage(url: URL(string: userInfo.avatar)) { image in
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 60, height: 60) // 设置图片的大小
-                                    .clipShape(Circle()) // 将图片裁剪为圆形
-                            } placeholder: {
-                                Circle()
-                                    .fill(skeletonBackground)
-                                    .frame(width: 60, height: 60)
-                            }
-                                
-                            Text("我的头像")
-                                .foregroundStyle(.black)
-                                
-                            Spacer()
-                                
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(Color(hex: "#B5B5B5"))
-                        }
-                    }
-                }
-            
-                // 信息
-                Section {
-                    ForEach(infoItems, id: \.key) { item in
+        NavigationView {
+            // 选项列表
+            VStack {
+                List {
+                    // 基本信息
+                    Section {
+                        // 头像设置
                         Button {
                             self.visibleSheet.toggle()
-                            self.sheetKey = item.key
+                            self.sheetKey = .avatar
                         } label: {
                             HStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 36, height: 36)
-                                    .foregroundColor(Color(hex: item.color)) // 修改为指定的颜色
-                                    .overlay {
-                                        Image(systemName: item.icon)
-                                            .foregroundColor(.white)
-                                    }
-                                 
-                                Text(item.title)
+                                // 头像
+                                AsyncImage(url: URL(string: userInfo.avatar)) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 60, height: 60) // 设置图片的大小
+                                        .clipShape(Circle()) // 将图片裁剪为圆形
+                                } placeholder: {
+                                    Circle()
+                                        .fill(skeletonBackground)
+                                        .frame(width: 60, height: 60)
+                                }
+                                
+                                Text("我的头像")
                                     .foregroundStyle(.black)
+                                
                                 Spacer()
-                                    
+                                
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(Color(hex: "#B5B5B5"))
                             }
                         }
                     }
-                }
+            
+                    // 信息
+                    Section {
+                        ForEach(infoItems, id: \.key) { item in
+                            Button {
+                                self.visibleSheet.toggle()
+                                self.sheetKey = item.key
+                            } label: {
+                                HStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: 36, height: 36)
+                                        .foregroundColor(Color(hex: item.color)) // 修改为指定的颜色
+                                        .overlay {
+                                            Image(systemName: item.icon)
+                                                .foregroundColor(.white)
+                                        }
+                                 
+                                    Text(item.title)
+                                        .foregroundStyle(.black)
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(Color(hex: "#B5B5B5"))
+                                }
+                            }
+                        }
+                    }
                     
-                // 赞助
-                Section {
-                    HStack {
+                    // 赞助
+                    Section {
+                        HStack {
+                            Button {} label: {
+                                Text("赞助")
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(Color(hex: "#B5B5B5"))
+                        }
+                    }
+                    
+                    // 作者
+                    Section(header: Text("作者")) {
+                        Button {
+                            if let url = URL(string: "https://github.com/Tyh2001/images/blob/master/my/we-chat.jpg") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
+                            HStack {
+                                Text("微信")
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(Color(hex: "#B5B5B5"))
+                            }
+                        }
+                        
+                        Button {
+                            if let url = URL(string: "https://x.com/tyh20011") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
+                            HStack {
+                                Text("𝕏")
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(Color(hex: "#B5B5B5"))
+                            }
+                        }
+                        
+                        Button {
+                            if let url = URL(string: "https://github.com/Tyh2001") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
+                            HStack {
+                                Text("Github")
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(Color(hex: "#B5B5B5"))
+                            }
+                        }
+                    }
+                    
+                    // 应用服务
+                    Section {
                         Button {} label: {
-                            Text("赞助")
+                            Text("给个好评")
                         }
-                            
-                        Spacer()
-                            
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(Color(hex: "#B5B5B5"))
+                        
+                        Button {} label: {
+                            Text("分享给好友")
+                        }
+                        
+                        Button {} label: {
+                            Text("加入CityWalk开发者")
+                        }
                     }
-                }
                     
-                // 作者
-                Section(header: Text("作者")) {
-                    Button {
-                        if let url = URL(string: "https://github.com/Tyh2001/images/blob/master/my/we-chat.jpg") {
-                            UIApplication.shared.open(url)
+                    // 退出登录
+                    Section {
+                        Button {
+                            self.showingLogoutAlert.toggle()
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Text("退出登录")
+                                    .foregroundStyle(.red)
+                                Spacer()
+                            }
                         }
-                    } label: {
-                        HStack {
-                            Text("微信")
-                                
-                            Spacer()
-                                
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(Color(hex: "#B5B5B5"))
-                        }
-                    }
-                        
-                    Button {
-                        if let url = URL(string: "https://x.com/tyh20011") {
-                            UIApplication.shared.open(url)
-                        }
-                    } label: {
-                        HStack {
-                            Text("𝕏")
-                                
-                            Spacer()
-                                
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(Color(hex: "#B5B5B5"))
-                        }
-                    }
-                        
-                    Button {
-                        if let url = URL(string: "https://github.com/Tyh2001") {
-                            UIApplication.shared.open(url)
-                        }
-                    } label: {
-                        HStack {
-                            Text("Github")
-                                
-                            Spacer()
-                                
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(Color(hex: "#B5B5B5"))
+                        .alert(isPresented: $showingLogoutAlert) {
+                            // 当 showingLogoutAlert 为 true 时，显示确认框
+                            Alert(
+                                title: Text("提示"),
+                                message: Text("确定退出当前账号吗?"),
+                                primaryButton: .destructive(Text("确定"), action: {
+                                    UserCache.shared.clearAll()
+                                    isGoLoginView = true
+                                }),
+                                secondaryButton: .cancel(Text("取消"))
+                            )
                         }
                     }
                 }
-                    
-                // 应用服务
-                Section {
-                    Button {} label: {
-                        Text("给个好评")
-                    }
-                        
-                    Button {} label: {
-                        Text("分享给好友")
-                    }
-                        
-                    Button {} label: {
-                        Text("加入CityWalk开发者")
-                    }
+                .overlay(alignment: .top) {
+                    VariableBlurView(maxBlurRadius: 12)
+                        .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
+                        .ignoresSafeArea()
                 }
-                    
-                // 退出登录
-                Section {
-                    Button {
-                        self.showingLogoutAlert.toggle()
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("退出登录")
-                                .foregroundStyle(.red)
-                            Spacer()
-                        }
-                    }
-                    .alert(isPresented: $showingLogoutAlert) {
-                        // 当 showingLogoutAlert 为 true 时，显示确认框
-                        Alert(
-                            title: Text("提示"),
-                            message: Text("确定退出当前账号吗?"),
-                            primaryButton: .destructive(Text("确定"), action: {
-                                UserCache.shared.clearAll()
-                                isGoLoginView = true
-                            }),
-                            secondaryButton: .cancel(Text("取消"))
-                        )
-                    }
-                }
-            }
-            .overlay(alignment: .top) {
-                VariableBlurView(maxBlurRadius: 12)
-                    .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
-                    .ignoresSafeArea()
-            }
                 
-            // 跳转到首页
-            NavigationLink(destination: LoginView(), isActive: $isGoLoginView) {
-                EmptyView()
+                // 跳转到首页
+                NavigationLink(destination: LoginView(), isActive: $isGoLoginView) {
+                    EmptyView()
+                }
             }
         }
-   
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .principal) {

@@ -191,7 +191,7 @@ struct FriendGetExperienceRankingType: Decodable {
     struct FriendGetExperienceRankingData: Codable {
         var avatar: String?
         var count: Int
-        var experiences: Int
+        var experiences: Int?
         var nick_name: String?
         var user_id: String
     }
