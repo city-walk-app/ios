@@ -323,7 +323,8 @@ struct MainView: View {
                             HStack {
                                 LazyVGrid(columns: heatmapColumns, spacing: 13) {
                                     ForEach(0 ..< 31) { _ in
-                                        Color(hex: "#eeeeee")
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(Color(hex: "#eeeeee"))
                                             .frame(width: 26, height: 26)
                                     }
                                 }
