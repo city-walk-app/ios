@@ -13,7 +13,7 @@ struct RankingView: View {
     // presentationMode.wrappedValue.dismiss() 可以用于关闭当前视图或返回到前一个视图
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
-    @EnvironmentObject var rankingData: RankingData
+    @EnvironmentObject private var rankingData: RankingData
 
     var body: some View {
         NavigationView {

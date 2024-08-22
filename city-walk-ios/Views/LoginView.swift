@@ -37,11 +37,12 @@ struct LoginView: View {
     }
 
     /// 创建一个每秒触发一次的定时器
-    let timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
+    private let timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
-//    @EnvironmentObject var loadingData: LoadingData
+    /// loading 数据
+    @EnvironmentObject var loadingData: LoadingData
     
     /// 操作步骤
     @State private var step = 0
@@ -64,9 +65,9 @@ struct LoginView: View {
   
     var body: some View {
         VStack {
-            ZStack {
-                // 内容
-                GeometryReader { geometry in
+            // 内容
+            GeometryReader { geometry in
+                ZStack {
                     HStack(spacing: 0) {
                         // 邮箱步骤
                         VStack {
@@ -175,9 +176,12 @@ struct LoginView: View {
                     .frame(width: geometry.size.width * 3, alignment: .leading)
                     .offset(x: -CGFloat(step) * geometry.size.width)
                     .animation(.easeInOut, value: step)
+                    
+                    // loading 元素
+                    Loading()
                 }
-                .background(viewBackground)
             }
+            .background(viewBackground)
                 
             NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
                 EmptyView()
@@ -232,8 +236,12 @@ struct LoginView: View {
         }
         
         do {
+            loadingData.showLoading(options: LoadingParams(title: "获取中..."))
+            
             let res = try await Api.shared.emailSend(params: ["email": email])
         
+            loadingData.hiddenLoading()
+            
             print("获取邮箱验证码结果", res)
             
             if res.code == 200 {
@@ -243,13 +251,18 @@ struct LoginView: View {
             }
         } catch {
             print("获取验证码错误")
+            loadingData.hiddenLoading()
         }
     }
     
     /// 邮箱验证码登录
     private func userLoginEmail() async {
         do {
+            loadingData.showLoading(options: LoadingParams(title: "登录中..."))
+            
             let res = try await Api.shared.userLoginEmail(params: ["email": email, "code": code])
+            
+            loadingData.hiddenLoading()
             
             print("登录结果", res)
             
@@ -270,6 +283,7 @@ struct LoginView: View {
            
         } catch {
             print("邮箱登录错误")
+            loadingData.hiddenLoading()
         }
     }
     
@@ -286,5 +300,5 @@ struct LoginView: View {
 
 #Preview {
     LoginView()
-//        .environmentObject(LoadingData())
+        .environmentObject(LoadingData())
 }

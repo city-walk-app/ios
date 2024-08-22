@@ -17,7 +17,7 @@ struct MainView: View {
         var active: Bool
     }
     
-    let monthSelectList = [
+    private let monthSelectList = [
         MonthSelectItem(title: "一", key: 1, active: false),
         MonthSelectItem(title: "二", key: 2, active: false),
         MonthSelectItem(title: "三", key: 3, active: false),
@@ -33,27 +33,13 @@ struct MainView: View {
     ]
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    
-//    /// 省份列表
-//    @State private var provinceList: [GetUserProvinceJigsawType.GetUserProvinceJigsawData] = []
-//    /// 热力图
-//    @State private var heatmap: [GetLocationUserHeatmapType.GetLocationUserHeatmapData] = []
-//    /// 步行记录列表
-//    @State private var routeList: [GetUserRouteListType.GetUserRouteListData] = []
-//    /// 步行记录详情列表
-//    @State private var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes]?
-//    /// 步行记录详情列表是否在加载中
-//    @State private var isRouteDetailListLoading = true
-//    /// 用户的身份信息
-//    @State private var userInfo: UserInfoType?
-    
-    @EnvironmentObject var mainData: MainData
+
+    /// 我的数据
+    @EnvironmentObject private var mainData: MainData
     /// 当前日期
     @State private var selectedDate = Date()
     /// 是否显示选择日期的对话框
     @State private var showDatePicker = false
-//    /// 选中的热力图元素索引
-//    @State private var routeDetailActiveIndex: Int?
   
     var body: some View {
         NavigationView {

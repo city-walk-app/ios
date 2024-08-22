@@ -10,7 +10,8 @@ import SwiftUI
 struct InviteView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
-//    @EnvironmentObject var loadingData: LoadingData
+    /// loading 数据
+    @EnvironmentObject private var loadingData: LoadingData
 
     var body: some View {
         NavigationView {
@@ -20,7 +21,7 @@ struct InviteView: View {
                         // 按钮操作组
                         HStack(spacing: 23) {
                             Button {
-//                                loadingData.showLoading(options: LoadingParams(title: "处理中..."))
+                                loadingData.showLoading(options: LoadingParams(title: "处理中..."))
                             } label: {
                                 Text("复制邀请链接")
                                     .frame(width: 160, height: 48)
@@ -54,7 +55,8 @@ struct InviteView: View {
                         .padding(.top, 34)
                     }
 
-//                    Loading()
+                    // loading 组件
+                    Loading()
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 200)
@@ -83,5 +85,5 @@ struct InviteView: View {
 
 #Preview {
     InviteView()
-//        .environmentObject(LoadingData())
+        .environmentObject(LoadingData())
 }

@@ -10,8 +10,6 @@ import SwiftUI
 struct FriendsView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     /// 朋友数据
-//    @StateObject private var friendsData = FriendsData()
-
     @EnvironmentObject private var friendsData: FriendsData
 
     var body: some View {

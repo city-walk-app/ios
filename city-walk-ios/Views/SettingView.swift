@@ -30,6 +30,15 @@ struct SettingView: View {
         var title: String
         var color: String
     }
+    
+    /// 信息设置的每一项
+    private let infoItems = [
+        InfoItemBar(icon: "person", key: .nick_name, title: "名字", color: "#EF7708"),
+        InfoItemBar(icon: "circlebadge.2", key: .gender, title: "性别", color: "#0043E6"),
+        InfoItemBar(icon: "smartphone", key: .mobile, title: "手机", color: "#FF323E"),
+        InfoItemBar(icon: "hand.thumbsup", key: .preference_type, title: "偏好", color: "#EF7606"),
+        InfoItemBar(icon: "lightbulb", key: .signature, title: "签名", color: "#0348F2"),
+    ]
 
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
@@ -47,14 +56,6 @@ struct SettingView: View {
     @State private var selectAvatarImage: UIImage?
     /// 是否显示选择头像的对话框
     @State private var visibleSheet = false
-    /// 信息设置的每一项
-    private let infoItems = [
-        InfoItemBar(icon: "person", key: .nick_name, title: "名字", color: "#EF7708"),
-        InfoItemBar(icon: "circlebadge.2", key: .gender, title: "性别", color: "#0043E6"),
-        InfoItemBar(icon: "smartphone", key: .mobile, title: "手机", color: "#FF323E"),
-        InfoItemBar(icon: "hand.thumbsup", key: .preference_type, title: "偏好", color: "#EF7606"),
-        InfoItemBar(icon: "lightbulb", key: .signature, title: "签名", color: "#0348F2"),
-    ]
     /// 用户信息配置对象
     @State private var userInfo = UserInfo(
         avatar: "",

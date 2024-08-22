@@ -69,7 +69,7 @@ struct HomeView: View {
     private let pictureMaxCount = 2
     
     /// loading 数据
-//    @EnvironmentObject var loadingData: LoadingData
+    @EnvironmentObject private var loadingData: LoadingData
     
     /// 定位数据管理对象
     @StateObject private var locationDataManager = LocationDataManager()
@@ -473,7 +473,7 @@ struct HomeView: View {
                 }
                 
                 // loading 组件
-//                Loading()
+                Loading()
             }
             .overlay(alignment: .top) {
                 VariableBlurView(maxBlurRadius: 12)
@@ -839,7 +839,7 @@ struct HomeView: View {
                     }
                     
                     // loading 组件
-//                    Loading()
+                    Loading()
                 }
             }
         }
@@ -905,7 +905,7 @@ struct HomeView: View {
     /// 完善步行打卡记录详情
     private func updateRouteDetail() async {
         do {
-//            loadingData.showLoading(options: LoadingParams(title: "提交中..."))
+            loadingData.showLoading(options: LoadingParams(title: "提交中..."))
             
             // 有选择照片
             if !selectedImages.isEmpty {
@@ -925,7 +925,7 @@ struct HomeView: View {
                 "picture": routeDetailForm.picture,
             ])
             
-//            loadingData.hiddenLoading()
+            loadingData.hiddenLoading()
             
             print("完善记录详情", res)
             
@@ -944,7 +944,7 @@ struct HomeView: View {
             
         } catch {
             print("完善步行打卡记录详情异常")
-//            loadingData.hiddenLoading()
+            loadingData.hiddenLoading()
         }
     }
     
@@ -972,14 +972,14 @@ struct HomeView: View {
     /// 打卡当前地点
     private func locationCreateRecord(longitude: String, latitude: String) async {
         do {
-//            loadingData.showLoading(options: LoadingParams(title: "打卡中..."))
+            loadingData.showLoading(options: LoadingParams(title: "打卡中..."))
             
             let res = try await Api.shared.locationCreateRecord(params: [
                 "longitude": longitude,
                 "latitude": latitude,
             ])
             
-//            loadingData.hiddenLoading()
+            loadingData.hiddenLoading()
 
             guard res.code == 200, let data = res.data else {
                 return
@@ -997,7 +997,7 @@ struct HomeView: View {
            
         } catch {
             print("打卡当前地点异常")
-//            loadingData.hiddenLoading()
+            loadingData.hiddenLoading()
         }
     }
     
@@ -1035,6 +1035,5 @@ struct HomeView: View {
         .environmentObject(FriendsData())
         .environmentObject(RankingData())
         .environmentObject(MainData())
-//        .environmentObject(UserInfoData())
-//        .environmentObject(LoadingData())
+        .environmentObject(LoadingData())
 }

@@ -22,11 +22,11 @@ struct ContentView: View {
                 // 如果存在信息，进入首页
                 if (userInfoData.cacheInfo != nil) && (userInfoData.cacheInfo?.user_id != nil) {
                     HomeView()
-                        .environmentObject(UserInfoData())
+//                        .environmentObject(UserInfoData())
                         .environmentObject(FriendsData())
                         .environmentObject(RankingData())
                         .environmentObject(MainData())
-//                        .environmentObject(LoadingData())
+                        .environmentObject(LoadingData())
                 }
                 // 否则需要登录
                 else {
@@ -45,8 +45,4 @@ struct ContentView: View {
     ContentView()
         .environmentObject(LaunchScreenData())
         .environmentObject(UserInfoData())
-        .environmentObject(FriendsData())
-        .environmentObject(RankingData())
-        .environmentObject(MainData())
-//        .environmentObject(LoadingData())
 }
