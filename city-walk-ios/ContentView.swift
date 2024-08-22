@@ -12,6 +12,8 @@ struct ContentView: View {
     @EnvironmentObject var launchScreenData: LaunchScreenData
     /// 用户数据
     @EnvironmentObject var userInfoData: UserInfoData
+    /// loading 数据
+    @EnvironmentObject var loadingData: LoadingData
 
     var body: some View {
         ZStack {
@@ -24,10 +26,12 @@ struct ContentView: View {
                         .environmentObject(FriendsData())
                         .environmentObject(RankingData())
                         .environmentObject(MainData())
+                        .environmentObject(LoadingData())
                 }
                 // 否则需要登录
                 else {
                     LoginView()
+                        .environmentObject(LoadingData())
                 }
             } else {
                 LaunchView()
@@ -44,4 +48,5 @@ struct ContentView: View {
         .environmentObject(FriendsData())
         .environmentObject(RankingData())
         .environmentObject(MainData())
+        .environmentObject(LoadingData())
 }

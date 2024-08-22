@@ -41,6 +41,8 @@ struct LoginView: View {
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
+    @EnvironmentObject var loadingData: LoadingData
+    
     /// 操作步骤
     @State private var step = 0
     /// 邮箱
@@ -57,8 +59,6 @@ struct LoginView: View {
     @FocusState var focus: FocusedField?
     /// 是否在倒计时中
     @State private var isCountingDown = false
-    /// 是否在加载中
-    @State private var isLoading = false
     /// 设置倒计时秒数
     @State private var countdownSeconds = 10
   
@@ -177,11 +177,6 @@ struct LoginView: View {
                     .animation(.easeInOut, value: step)
                 }
                 .background(viewBackground)
-                    
-                // loading
-                if isLoading {
-                    Loading(title: "处理中...")
-                }
             }
                 
             NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
@@ -237,16 +232,8 @@ struct LoginView: View {
         }
         
         do {
-            withAnimation {
-                isLoading = true
-            }
-         
             let res = try await Api.shared.emailSend(params: ["email": email])
         
-            withAnimation {
-                isLoading = false
-            }
-         
             print("获取邮箱验证码结果", res)
             
             if res.code == 200 {
@@ -256,25 +243,13 @@ struct LoginView: View {
             }
         } catch {
             print("获取验证码错误")
-            
-            withAnimation {
-                isLoading = false
-            }
         }
     }
     
     /// 邮箱验证码登录
     private func userLoginEmail() async {
         do {
-            withAnimation {
-                isLoading = true
-            }
-           
             let res = try await Api.shared.userLoginEmail(params: ["email": email, "code": code])
-            
-            withAnimation {
-                isLoading = false
-            }
             
             print("登录结果", res)
             
@@ -295,9 +270,6 @@ struct LoginView: View {
            
         } catch {
             print("邮箱登录错误")
-            withAnimation {
-                isLoading = false
-            }
         }
     }
     
@@ -314,4 +286,5 @@ struct LoginView: View {
 
 #Preview {
     LoginView()
+        .environmentObject(LoadingData())
 }
