@@ -9,35 +9,31 @@ import SwiftUI
 
 struct ContentView: View {
     /// 启动页面数据
-    @EnvironmentObject var launchScreenData: LaunchScreenData
+    @EnvironmentObject private var launchScreenData: LaunchScreenData
     /// 用户数据
-    @EnvironmentObject var userInfoData: UserInfoData
-    /// loading 数据
-//    @EnvironmentObject var loadingData: LoadingData
+    @EnvironmentObject private var userInfoData: UserInfoData
 
     var body: some View {
-        ZStack {
-            // 离开启动页面进入模板页
+        Group {
             if launchScreenData.states == .leave {
-                // 如果存在信息，进入首页
-                if (userInfoData.cacheInfo != nil) && (userInfoData.cacheInfo?.user_id != nil) {
-                    HomeView()
-//                        .environmentObject(UserInfoData())
-                        .environmentObject(FriendsData())
-                        .environmentObject(RankingData())
-                        .environmentObject(MainData())
-                        .environmentObject(LoadingData())
-                }
-                // 否则需要登录
-                else {
+                if userInfoData.cacheInfo != nil {
+                    homeViewGroup
+                } else {
                     LoginView()
-//                        .environmentObject(LoadingData())
                 }
             } else {
                 LaunchView()
-                    .environmentObject(UserInfoData())
             }
         }
+        .environmentObject(UserInfoData())
+    }
+
+    private var homeViewGroup: some View {
+        HomeView()
+            .environmentObject(FriendsData())
+            .environmentObject(RankingData())
+            .environmentObject(MainData())
+            .environmentObject(LoadingData())
     }
 }
 
