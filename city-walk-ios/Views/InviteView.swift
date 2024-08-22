@@ -10,11 +10,51 @@ import SwiftUI
 struct InviteView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
+//    @EnvironmentObject var loadingData: LoadingData
+
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack {
-                    Text("邀请")
+                ZStack {
+                    VStack {
+                        // 按钮操作组
+                        HStack(spacing: 23) {
+                            Button {
+//                                loadingData.showLoading(options: LoadingParams(title: "处理中..."))
+                            } label: {
+                                Text("复制邀请链接")
+                                    .frame(width: 160, height: 48)
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(Color(hex: "#F3943F"))
+                                    .background(Color(hex: "#ffffff"))
+                                    .border(Color(hex: "#F3943F"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                    )
+                            }
+
+                            Button {
+//                                loadingData.showLoading(options: LoadingParams(title: "处理中..."))
+                            } label: {
+                                Text("分享")
+                                    .frame(width: 160, height: 48)
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(.white)
+                                    .background(Color(hex: "#F3943F"))
+                                    .border(Color(hex: "#F3943F"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                    )
+                            }
+                        }
+                        .padding(.top, 34)
+                    }
+
+//                    Loading()
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 200)
@@ -43,4 +83,5 @@ struct InviteView: View {
 
 #Preview {
     InviteView()
+//        .environmentObject(LoadingData())
 }

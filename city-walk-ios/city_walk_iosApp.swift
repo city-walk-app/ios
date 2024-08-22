@@ -21,15 +21,15 @@ struct city_walk_iosApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                ContentView()
-                    .environmentObject(LaunchScreenData())
-                    .environmentObject(UserInfoData())
-                    .environmentObject(FriendsData())
-                    .environmentObject(MainData())
-                    .environmentObject(RankingData())
-                    .environmentObject(LoadingData())
-            }
+//            ZStack {
+            ContentView()
+                .environmentObject(LaunchScreenData())
+                .environmentObject(UserInfoData())
+                .environmentObject(FriendsData())
+                .environmentObject(MainData())
+                .environmentObject(RankingData())
+//                    .environmentObject(LoadingData())
+//            }
         }
     }
 }

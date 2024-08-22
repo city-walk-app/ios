@@ -41,7 +41,7 @@ struct LoginView: View {
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
-    @EnvironmentObject var loadingData: LoadingData
+//    @EnvironmentObject var loadingData: LoadingData
     
     /// 操作步骤
     @State private var step = 0
@@ -286,5 +286,5 @@ struct LoginView: View {
 
 #Preview {
     LoginView()
-        .environmentObject(LoadingData())
+//        .environmentObject(LoadingData())
 }
