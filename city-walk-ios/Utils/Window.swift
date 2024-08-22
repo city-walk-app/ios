@@ -16,3 +16,13 @@ func getTopSafeAreaInsets() -> CGFloat {
 
 /// 顶部安全距离
 let topSafeAreaInsets = getTopSafeAreaInsets()
+
+/// 获取底部安全距离
+/// - Returns: 安全尺寸
+func getBottomSafeAreaInsets() -> CGFloat {
+    let window = UIApplication.shared.windows.first
+    return window?.safeAreaInsets.bottom ?? 0
+}
+
+/// 底部安全距离
+let bottomSafeAreaInsets = getBottomSafeAreaInsets()

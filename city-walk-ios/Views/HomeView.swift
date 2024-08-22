@@ -237,33 +237,10 @@ struct HomeView: View {
                     Spacer()
                     
                     // 底部功能
-                    ZStack {
-//                        LinearGradient(
-//                            //                            gradient: Gradient(colors: [.clear, .black.opacity(0.3)]),
-//                            gradient: Gradient(colors: [.clear, .red]),
-//                            startPoint: .top,
-//                            endPoint: .bottom
-//                        )
-//                        .frame(height: 200) // 渐变的高度
-//                        .frame(maxWidth: .infinity)
-//                        .blur(radius: 20)
-                        
-//                        LinearGradient(
-//                            gradient: Gradient(stops: [
-//                                .init(color: .purple, location: 0),
-//                                .init(color: .clear, location: 0.4),
-//                            ]),
-//                            startPoint: .bottom,
-//                            endPoint: .top
-//                        )
-//                        .frame(height: 400) // 渐变的高度
-//                        .frame(maxWidth: .infinity)
-                        
-                        // 线性渐变背景
-//                        LinearGradient(gradient: Gradient(colors: [.white, .clear]), startPoint: .bottom, endPoint: .top)
-//                            .frame(height: 300)
-                        
-//                            .blur(radius: 10) // 添加模糊效果，可以调整半径值来控制模糊程度
+                    ZStack(alignment: .bottom) {
+                        VariableBlurView(maxBlurRadius: 12)
+                            .frame(height: 240)
+                            .rotationEffect(.degrees(180))
                         
                         // 底部卡片
                         VStack(spacing: 33) {
@@ -469,9 +446,11 @@ struct HomeView: View {
                             }
                             .frame(maxWidth: .infinity)
                         }
+                        .padding(.bottom, bottomSafeAreaInsets)
                     }
                 }
-                
+                .ignoresSafeArea(.all, edges: .bottom)
+             
                 // loading 组件
                 Loading()
             }
@@ -838,11 +817,12 @@ struct HomeView: View {
         .toolbar(.hidden)
         .onAppear {
             Task {
-//                await self.getLocationPopularRecommend() // 获取周边热门地点
+                await self.getLocationPopularRecommend() // 获取周边热门地点
             }
         }
     }
     
+    /// 隐藏键盘
     private func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
@@ -873,7 +853,11 @@ struct HomeView: View {
             
             print("获取周边热门地点", res)
             
-            if let data = res.data, res.code == 200 {
+            guard res.code == 200, let data = res.data else {
+                return
+            }
+            
+            withAnimation {
                 region = MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: data[0].latitude ?? 0, longitude: data[0].longitude ?? 0),
                     span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
@@ -881,12 +865,6 @@ struct HomeView: View {
                 landmarks = data.map { item in
                     Landmark(coordinate: CLLocationCoordinate2D(latitude: item.latitude ?? 0, longitude: item.longitude ?? 0), name: item.name ?? "")
                 }
-                
-//                let list = res.data!
-//                let _landmarks = list.map { item in
-//                    Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude), longitude: Double(item.longitude)), name: item.name)
-//                }
-//                landmarks = _landmarks
             }
         } catch {
             print("获取周边热门地点异常")

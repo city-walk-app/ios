@@ -23,9 +23,27 @@ class MainData: ObservableObject {
     @Published var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes]?
     /// 步行记录详情列表是否在加载中
     @Published var isRouteDetailListLoading = true
+    /// 用户 id
+    @Published var user_id: String = ""
+
+    /// 设置当前用户 id
+    /// - Parameter user_id: 用户 id
+    func setUserId(user_id: String) {
+        // 和上一次访问的用户不一致
+        if self.user_id != "" && self.user_id != user_id {
+            userInfo = nil
+            provinceList = []
+            heatmap = []
+            routeList = []
+            routeDetailList = nil
+            isRouteDetailListLoading = true
+        }
+
+        self.user_id = user_id
+    }
 
     /// 获取用户步行记录列表
-    func getUserRouteList(user_id: String) async {
+    func getUserRouteList() async {
         do {
             if routeList.isEmpty {
                 withAnimation {
@@ -55,7 +73,7 @@ class MainData: ObservableObject {
     }
 
     /// 获取用户解锁的省份版图列表
-    func getUserProvinceJigsaw(user_id: String) async {
+    func getUserProvinceJigsaw() async {
         do {
             let res = try await Api.shared.getUserProvinceJigsaw(params: ["user_id": user_id])
 
@@ -72,7 +90,7 @@ class MainData: ObservableObject {
     }
 
     /// 获取用户信息
-    func getUserInfo(user_id: String) async {
+    func getUserInfo() async {
         do {
             let res = try await Api.shared.getUserInfo(params: ["user_id": user_id])
 
@@ -89,7 +107,7 @@ class MainData: ObservableObject {
     }
 
     /// 获取用户指定月份打卡热力图
-    func getLocationUserHeatmap(user_id: String) async {
+    func getLocationUserHeatmap() async {
         do {
             let res = try await Api.shared.getLocationUserHeatmap(params: ["user_id": user_id])
 

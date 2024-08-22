@@ -51,9 +51,9 @@ struct MainView: View {
                         AsyncImage(url: URL(string: userInfo.avatar ?? defaultAvatar)) { image in
                             image
                                 .resizable()
+                                .frame(width: 74, height: 74)
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: 74, height: 74) // 设置图片的大小
-                                .clipShape(Circle()) // 将图片裁剪为圆形
+                                .clipShape(Circle())
                         } placeholder: {
                             Circle()
                                 .fill(skeletonBackground)
@@ -349,7 +349,8 @@ struct MainView: View {
                                                     image
                                                         .resizable()
                                                         .frame(width: 46, height: 46)
-                                                        .clipShape(Circle()) // 将图片裁剪为圆形
+                                                        .aspectRatio(contentMode: .fill)
+                                                        .clipShape(Circle())
                                                 } placeholder: {}
                                             }
                                         } else {
@@ -421,11 +422,13 @@ struct MainView: View {
                                                                 image
                                                                     .resizable()
                                                                     .frame(width: 174, height: 175)
+                                                                    .aspectRatio(contentMode: .fit)
                                                                     .cornerRadius(8)
                                                             } placeholder: {
                                                                 Rectangle()
                                                                     .fill(skeletonBackground)
                                                                     .frame(width: 174, height: 174)
+                                                                    .cornerRadius(8)
                                                             }
                                                         }
                                                     }
@@ -582,12 +585,18 @@ struct MainView: View {
             .presentationCornerRadius(40)
         }
         .onAppear {
+            mainData.setUserId(user_id: user_id) // 设置用户 id
+            
             Task {
-                await mainData.getUserInfo(user_id: user_id) // 获取用户信息
-                await mainData.getLocationUserHeatmap(user_id: user_id) // 获取用户指定月份打卡热力图
-                await mainData.getUserProvinceJigsaw(user_id: user_id) // 获取用户解锁的省份版图列表
-                await mainData.getUserRouteList(user_id: user_id) // 获取用户步行记录列表
+                await mainData.getUserInfo() // 获取用户信息
+                await mainData.getLocationUserHeatmap() // 获取用户指定月份打卡热力图
+                await mainData.getUserProvinceJigsaw() // 获取用户解锁的省份版图列表
+                await mainData.getUserRouteList() // 获取用户步行记录列表
             }
+        }
+        .onDisappear {
+            mainData.routeDetailList = nil
+            mainData.routeDetailActiveIndex = nil
         }
     }
 }
