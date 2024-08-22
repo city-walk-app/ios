@@ -505,11 +505,8 @@ struct HomeView: View {
                                                             .resizable()
                                                             .aspectRatio(contentMode: .fill)
                                                     }
-                                            
                                             } else {
-                                                // 在加载过程中显示其它占位符
-                                                Circle()
-                                                    .fill(skeletonBackground)
+                                                Color.clear
                                             }
                                         }
                                     )
@@ -529,7 +526,6 @@ struct HomeView: View {
                                     AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/330000.png")) { phase in
                                         if let image = phase.image {
                                             Color(hex: "#F3943F")
-                                                .frame(width: .infinity, height: .infinity)
                                                 .mask {
                                                     image
                                                         .resizable()
@@ -538,10 +534,7 @@ struct HomeView: View {
                                                 }
                                         
                                         } else {
-                                            // 在加载过程中显示其它占位符
-                                            Circle()
-                                                .fill(skeletonBackground)
-                                                .frame(width: .infinity, height: .infinity)
+                                            Color.clear
                                         }
                                     }
                                 )
@@ -568,8 +561,7 @@ struct HomeView: View {
                                                     .resizable()
                                                     .frame(width: 69, height: 64)
                                             } placeholder: {
-                                                Circle()
-                                                    .fill(skeletonBackground)
+                                                Color.clear
                                                     .frame(width: 69, height: 64)
                                             }
                                     
@@ -607,8 +599,7 @@ struct HomeView: View {
                                                     .resizable()
                                                     .frame(width: 69, height: 64)
                                             } placeholder: {
-                                                Circle()
-                                                    .fill(skeletonBackground)
+                                                Color.clear
                                                     .frame(width: 69, height: 64)
                                             }
                                         }
