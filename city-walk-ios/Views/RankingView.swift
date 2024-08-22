@@ -21,8 +21,8 @@ struct RankingView: View {
                 VStack(spacing: 20) {
                     if rankingData.isRankingListLoading {
                         ForEach(1 ..< 4) { _ in
-                            Rectangle()
-                                .fill(Color(hex: "#f4f4f4"))
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(skeletonBackground)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 80)
                         }
@@ -69,7 +69,7 @@ struct RankingView: View {
                                             .overlay {
                                                 Text("\(index + 1)")
                                                     .font(.system(size: 16))
-                                                    .foregroundStyle(Color(hex: "#333333"))
+                                                    .foregroundStyle(Color("text-1"))
                                             }
                                     }
 
@@ -104,7 +104,7 @@ struct RankingView: View {
                                         // 文案
                                         VStack(alignment: .leading, spacing: 7) {
                                             Text("\(item.nick_name ?? "")")
-                                                .foregroundStyle(Color(hex: "#333333"))
+                                                .foregroundStyle(Color("text-1"))
                                                 .font(.system(size: 16))
 
                                             HStack {
@@ -114,6 +114,7 @@ struct RankingView: View {
                                                 Text("个地点")
                                             }
                                             .font(.system(size: 14))
+                                            .foregroundStyle(Color("text-1"))
                                         }
 
                                         Spacer()
@@ -126,7 +127,7 @@ struct RankingView: View {
                                 .padding(.vertical, 17)
                                 .padding(.trailing, 15)
                                 .padding(.leading, 16)
-                                .background(.white)
+                                .background(Color("background-1"))
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
                         } else {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// 骨架图背景色
-let skeletonBackground = Color(hex: "#dddddd")
+let skeletonBackground = Color("skeleton-background")
 
 /// 页面渐变背景色
 let viewBackground = LinearGradient(

@@ -197,38 +197,39 @@ struct HomeView: View {
                                         Image(systemName: "gearshape")
                                             .resizable()
                                             .frame(width: 23, height: 23)
-                                            .foregroundColor(.black)
+                                            .foregroundColor(Color("text-1"))
                                     }
                             }
                             
                             VStack(spacing: 0) {
                                 // 切换主题按钮
                                 Button {} label: {
-                                    RoundedRectangle(cornerRadius: 8)
+                                    Rectangle()
                                         .fill(.ultraThinMaterial)
                                         .frame(width: 42, height: 42)
                                         .overlay {
                                             Image(systemName: "map")
                                                 .resizable()
-                                                .foregroundStyle(Color(hex: "#333333"))
+                                                .foregroundStyle(Color("text-1"))
                                                 .frame(width: 23, height: 23)
                                         }
                                 }
                                
                                 // 回到当前位置按钮
                                 Button {} label: {
-                                    RoundedRectangle(cornerRadius: 8)
+                                    Rectangle()
                                         .fill(.ultraThinMaterial)
                                         .frame(width: 42, height: 42)
                                         .overlay {
                                             Image(systemName: "paperplane")
                                                 .resizable()
-                                                .foregroundStyle(Color(hex: "#333333"))
+                                                .foregroundStyle(Color("text-1"))
                                                 .frame(width: 23, height: 23)
                                         }
                                 }
                             }
-                            .background(.ultraThinMaterial)
+                            .clipped()
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     }
                     .padding(.horizontal, 16)

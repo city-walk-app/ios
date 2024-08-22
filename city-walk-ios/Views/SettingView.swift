@@ -95,12 +95,13 @@ struct SettingView: View {
                                 }
                                 
                                 Text("我的头像")
-                                    .foregroundStyle(.black)
+                                    .foregroundColor(Color("text-1"))
+                                    .padding(.leading, 10)
                                 
                                 Spacer()
                                 
                                 Image(systemName: "chevron.right")
-                                    .foregroundColor(Color(hex: "#B5B5B5"))
+                                    .foregroundColor(Color("text-1"))
                             }
                         }
                     }
@@ -122,7 +123,7 @@ struct SettingView: View {
                                         }
                                  
                                     Text(item.title)
-                                        .foregroundStyle(.black)
+                                        .foregroundColor(Color("text-1"))
                                     Spacer()
                                     
                                     Image(systemName: "chevron.right")

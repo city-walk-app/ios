@@ -63,13 +63,14 @@ struct MainView: View {
                         // 昵称
                         Text("\(userInfo.nick_name)")
                             .padding(.top, 16)
-                            .foregroundStyle(Color(hex: "#333333"))
+                            .foregroundStyle(Color("text-1"))
+//                            .foregroundStyle(Color(hex: "#333333"))
                             .font(.system(size: 18))
                         
                         // 签名
                         Text("\(userInfo.signature ?? "")")
                             .padding(.top, 8)
-                            .foregroundStyle(Color(hex: "#666666"))
+                            .foregroundStyle(Color("text-2"))
                             .font(.system(size: 14))
                     } else {
                         Circle()
@@ -157,16 +158,16 @@ struct MainView: View {
                             } label: {
                                 HStack {
                                     Text("2024年08月")
-                                        .foregroundStyle(Color(hex: "#9A9A9A"))
+                                        .foregroundStyle(Color("text-3"))
                                         .font(.system(size: 12))
                                     
                                     Image(systemName: "chevron.down")
-                                        .foregroundStyle(Color(hex: "#9A9A9A"))
+                                        .foregroundStyle(Color("text-3"))
                                         .font(.system(size: 12))
                                 }
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 8)
-                                .background(Color(hex: "#F3F3F3"))
+                                .background(Color("background-2"))
                                 .clipShape(RoundedRectangle(cornerRadius: 3))
                             }
                         }
@@ -188,7 +189,7 @@ struct MainView: View {
                                     }
                                     
                                     Text("打卡多")
-                                        .foregroundStyle(Color(hex: "#666666"))
+                                        .foregroundStyle(Color("text-2"))
                                         .font(.system(size: 14))
                                 }
                                 
@@ -204,7 +205,7 @@ struct MainView: View {
                                     }
                                     
                                     Text("打卡少")
-                                        .foregroundStyle(Color(hex: "#666666"))
+                                        .foregroundStyle(Color("text-2"))
                                         .font(.system(size: 14))
                                 }
                                 
@@ -220,7 +221,7 @@ struct MainView: View {
                                     }
                                     
                                     Text("未打卡")
-                                        .foregroundStyle(Color(hex: "#666666"))
+                                        .foregroundStyle(Color("text-2"))
                                         .font(.system(size: 14))
                                 }
                             }
