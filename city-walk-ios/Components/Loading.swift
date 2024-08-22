@@ -12,7 +12,7 @@ struct Loading: View {
 
     var body: some View {
         ZStack {
-            Color.gray.opacity(0.3)
+            Color.clear
                 .ignoresSafeArea() // 忽略安全区域，扩展到整个屏幕
 
             VStack(spacing: 10) {
@@ -27,9 +27,11 @@ struct Loading: View {
             .padding(.top, 33)
             .padding(.bottom, 23)
             .padding(.horizontal, 25)
-            .background(Color.white)
-            .cornerRadius(11)
+            .background(.ultraThickMaterial)
+            .cornerRadius(14)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .ignoresSafeArea(.keyboard) // 忽略键盘的安全区域，以防止加载视图移动
     }
 }
 
