@@ -41,6 +41,7 @@ struct RankingView: View {
                                                 Color.clear
                                                     .frame(width: 25, height: 28)
                                             }
+
                                         } else if index == 1 {
                                             AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-2.png")) { image in
                                                 image
@@ -80,6 +81,18 @@ struct RankingView: View {
                                                 .aspectRatio(contentMode: .fill)
                                                 .frame(width: 46, height: 46)
                                                 .clipShape(Circle())
+                                                .overlay {
+                                                    if index == 0 && item.experiences != nil && item.experiences ?? 0 > 0 {
+                                                        // 皇冠
+                                                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-crown.png")) { image in
+                                                            image
+                                                                .resizable()
+                                                                .aspectRatio(contentMode: .fill)
+                                                                .frame(width: 25, height: 25)
+                                                                .offset(x: 15, y: -22)
+                                                        } placeholder: {}
+                                                    }
+                                                }
                                         } placeholder: {
                                             Circle()
                                                 .fill(skeletonBackground)
