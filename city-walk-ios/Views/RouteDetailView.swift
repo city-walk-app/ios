@@ -8,12 +8,6 @@
 import MapKit
 import SwiftUI
 
-struct Landmark: Identifiable {
-    let id = UUID()
-    var coordinate: CLLocationCoordinate2D
-    var name: String
-}
-
 struct RouteDetailView: View {
     /// 列表 id
     var list_id: String

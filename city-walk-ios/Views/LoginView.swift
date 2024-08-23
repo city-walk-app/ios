@@ -38,6 +38,8 @@ struct LoginView: View {
 
     /// 创建一个每秒触发一次的定时器
     private let timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
+    /// 卡片数量
+    private let cardCount: CGFloat = 2
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
@@ -165,15 +167,8 @@ struct LoginView: View {
                         .frame(width: geometry.size.width)
                         .frame(maxHeight: .infinity)
                         .padding(.top, 79)
-                            
-                        HStack {
-                            Text("偏好")
-                        }
-                        .frame(width: geometry.size.width)
-                        .frame(maxHeight: .infinity)
-                        .background(.green)
                     }
-                    .frame(width: geometry.size.width * 3, alignment: .leading)
+                    .frame(width: geometry.size.width * cardCount, alignment: .leading)
                     .offset(x: -CGFloat(step) * geometry.size.width)
                     .animation(.easeInOut, value: step)
                     
@@ -273,14 +268,13 @@ struct LoginView: View {
             UserCache.shared.saveInfo(info: data.user_info)
             UserCache.shared.saveToken(token: data.token)
                 
-            if data.is_new_user {
-                withAnimation {
-                    step = 2
-                }
-            } else {
-                isToHomeView = true
-            }
-           
+//            if data.is_new_user {
+//                withAnimation {
+//                    step = 2
+//                }
+//            } else {
+            isToHomeView = true
+//            }
         } catch {
             print("邮箱登录错误")
             loadingData.hiddenLoading()

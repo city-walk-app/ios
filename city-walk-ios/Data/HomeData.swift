@@ -9,9 +9,15 @@ import Foundation
 import MapKit
 import SwiftUI
 
+struct Landmark: Identifiable {
+    let id = UUID()
+
+    var coordinate: CLLocationCoordinate2D
+    var picure: [String]?
+    var name: String?
+}
+
 class HomeData: ObservableObject {
-    /// 今日的打卡记录
-//    @Published var todayRecord: [GetTodayRecordType.GetTodayRecordData] = []
     /// 地图区域
     @Published var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
@@ -31,15 +37,19 @@ class HomeData: ObservableObject {
                 return
             }
 
-//            self.todayRecord = data
-
             withAnimation {
                 self.region = MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: Double(data[0].latitude) ?? 0, longitude: Double(data[0].longitude) ?? 0),
                     span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
                 )
                 self.landmarks = data.map { item in
-                    Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude) ?? 0, longitude: Double(item.longitude) ?? 0), name: "")
+                    Landmark(
+                        coordinate: CLLocationCoordinate2D(
+                            latitude: Double(item.latitude) ?? 0,
+                            longitude: Double(item.longitude) ?? 0
+                        ),
+                        picure: item.picture
+                    )
                 }
             }
 

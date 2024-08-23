@@ -24,7 +24,6 @@
 		2628877E2C732369006BBE1E /* UploadImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628877D2C732369006BBE1E /* UploadImages.swift */; };
 		264B8F132BEC57D100AA2E79 /* LaunchScreenData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264B8F122BEC57D100AA2E79 /* LaunchScreenData.swift */; };
 		265201702C6C976700222C9A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2652016F2C6C976700222C9A /* Utils.swift */; };
-		265201752C6E297D00222C9A /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265201742C6E297D00222C9A /* Preferences.swift */; };
 		265201772C6F9F9D00222C9A /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265201762C6F9F9D00222C9A /* BackButton.swift */; };
 		265ED6942C44AF3F009142A7 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265ED6932C44AF3F009142A7 /* Request.swift */; };
 		265ED6962C44BC89009142A7 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265ED6952C44BC89009142A7 /* Api.swift */; };
@@ -71,7 +70,6 @@
 		2628877D2C732369006BBE1E /* UploadImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadImages.swift; sourceTree = "<group>"; };
 		264B8F122BEC57D100AA2E79 /* LaunchScreenData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenData.swift; sourceTree = "<group>"; };
 		2652016F2C6C976700222C9A /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		265201742C6E297D00222C9A /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		265201762C6F9F9D00222C9A /* BackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
 		265ED6932C44AF3F009142A7 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		265ED6952C44BC89009142A7 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
@@ -126,7 +124,6 @@
 		265201732C6E296300222C9A /* Enum */ = {
 			isa = PBXGroup;
 			children = (
-				265201742C6E297D00222C9A /* Preferences.swift */,
 				2628877B2C720A1E006BBE1E /* MoodColors.swift */,
 			);
 			path = Enum;
@@ -189,6 +186,7 @@
 		26B998542BBD92EF000D1E88 /* city-walk-ios */ = {
 			isa = PBXGroup;
 			children = (
+				26C5153D2C78D0D8007541E4 /* Struct */,
 				262887782C72042F006BBE1E /* Extension */,
 				265201732C6E296300222C9A /* Enum */,
 				26A624052BE52A4B0074352D /* Data */,
@@ -234,8 +232,6 @@
 		26B998642BBD9621000D1E88 /* Api */ = {
 			isa = PBXGroup;
 			children = (
-				26B9986E2BBD9788000D1E88 /* ApiResultType.swift */,
-				265ED6932C44AF3F009142A7 /* Request.swift */,
 				265ED6952C44BC89009142A7 /* Api.swift */,
 			);
 			path = Api;
@@ -244,6 +240,7 @@
 		26B998652BBD963E000D1E88 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				265ED6932C44AF3F009142A7 /* Request.swift */,
 				2617B7E52C7583FB00E3BD82 /* Window.swift */,
 				26B9986A2BBD9723000D1E88 /* UserCache.swift */,
 				262368532BC3715400264BD9 /* LocationDataManager.swift */,
@@ -251,6 +248,14 @@
 				2628877D2C732369006BBE1E /* UploadImages.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		26C5153D2C78D0D8007541E4 /* Struct */ = {
+			isa = PBXGroup;
+			children = (
+				26B9986E2BBD9788000D1E88 /* ApiResultType.swift */,
+			);
+			path = Struct;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -363,7 +368,6 @@
 				26B9986B2BBD9723000D1E88 /* UserCache.swift in Sources */,
 				2617B7E82C758CF100E3BD82 /* EmptyState.swift in Sources */,
 				26B998752BBD982A000D1E88 /* RankingView.swift in Sources */,
-				265201752C6E297D00222C9A /* Preferences.swift in Sources */,
 				265201772C6F9F9D00222C9A /* BackButton.swift in Sources */,
 				2617B7E42C7581FB00E3BD82 /* VariableBlur.swift in Sources */,
 				265ED69E2C4501D1009142A7 /* FriendsView.swift in Sources */,

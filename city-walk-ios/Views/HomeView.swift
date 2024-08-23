@@ -51,11 +51,6 @@ struct HomeView: View {
     @State private var locationManager = CLLocationManager()
     /// 位置权限状态
     @State private var authorizationStatus: CLAuthorizationStatus = .notDetermined
-    /// 地图区域
-//    @State private var region = MKCoordinateRegion(
-//        center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
-//        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-//    )
     /// 用户的身份信息
     @State private var userInfo: UserInfoType?
     /// 打卡详情
@@ -79,8 +74,6 @@ struct HomeView: View {
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
-//    // 标注列表
-//    @State private var landmarks: [Landmark] = []
     
     var body: some View {
         NavigationStack {
@@ -94,18 +87,27 @@ struct HomeView: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 50, height: 64)
-                            } placeholder: {
-                                Rectangle()
-                                    .fill(.red)
-                                    .frame(width: 50, height: 64)
+                            } placeholder: {}
+                            
+                            if let picture = landmark.picure, !picture.isEmpty {
+                                ForEach(picture, id: \.self) { item in
+                                    AsyncImage(url: URL(string: item)) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 30, height: 30)
+                                    } placeholder: {}
+                                }
                             }
+                            
+//                            if landmark.
                          
-                            Text("\(landmark.name)")
-                                .font(.system(size: 14))
-                                .frame(maxWidth: 120)
-                                .lineLimit(1)
-                                .truncationMode(.tail)
-                                .foregroundStyle(Color("text-1"))
+//                            Text("\(landmark.name)")
+//                                .font(.system(size: 14))
+//                                .frame(maxWidth: 120)
+//                                .lineLimit(1)
+//                                .truncationMode(.tail)
+//                                .foregroundStyle(Color("text-1"))
                         }
                     }
                 }

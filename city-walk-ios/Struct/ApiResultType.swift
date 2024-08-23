@@ -17,37 +17,6 @@ struct UserInfoType: Codable {
     var signature: String?
     var birthday: String?
     var gender: String?
-//    var preference_type: [String]?
-    var preference_type: PreferenceType?
-
-    enum PreferenceType: Codable {
-        case string(String)
-        case array([String])
-        case none
-
-        init(from decoder: Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            if let strValue = try? container.decode(String.self) {
-                self = .string(strValue)
-            } else if let arrayValue = try? container.decode([String].self) {
-                self = .array(arrayValue)
-            } else {
-                self = .none
-            }
-        }
-
-        func encode(to encoder: Encoder) throws {
-            var container = encoder.singleValueContainer()
-            switch self {
-            case .string(let str):
-                try container.encode(str)
-            case .array(let array):
-                try container.encode(array)
-            case .none:
-                try container.encodeNil()
-            }
-        }
-    }
 }
 
 // 获取用户指定月份打卡热力图
@@ -391,22 +360,14 @@ struct UniversalContentUploadType: Decodable {
 /// 获取今天的打卡记录
 struct GetTodayRecordType: Decodable {
     struct GetTodayRecordData: Codable {
-        var address: String?
-        var city: String?
+        var latitude: String
+        var longitude: String
         var content: String?
         var create_at: String
-        var experience_value: Int?
-        var id: Int
-        var latitude: String
-        var list_id: String
-        var longitude: String
-        var mood_color: String?
-        var picture: String?
-        var province: String?
-        var province_code: String?
-        var route_id: String
         var travel_type: String?
-        var user_id: String
+        var province_code: String?
+        var picture: [String]?
+        var list_id: String
     }
 
     var message: String
