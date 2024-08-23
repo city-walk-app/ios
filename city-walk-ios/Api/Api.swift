@@ -160,4 +160,14 @@ class Api {
             type: GetAroundAddressType.self
         )
     }
+    
+    /// 获取今天的打卡记录
+    func getTodayRecord(params: [String: Any]) async throws -> GetTodayRecordType {
+        return try await Request.shared.request(
+            url: "/location/get/today/record",
+            params: params,
+            method: .post,
+            type: GetTodayRecordType.self
+        )
+    }
 }

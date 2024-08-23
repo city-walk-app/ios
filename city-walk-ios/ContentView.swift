@@ -34,6 +34,7 @@ struct ContentView: View {
             .environmentObject(RankingData())
             .environmentObject(MainData())
             .environmentObject(LoadingData())
+            .environmentObject(HomeData())
     }
 }
 

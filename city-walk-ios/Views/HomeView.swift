@@ -35,6 +35,8 @@ struct HomeView: View {
     
     /// loading 数据
     @EnvironmentObject private var loadingData: LoadingData
+    /// 首页数据
+    @EnvironmentObject private var homeData: HomeData
     
     /// 定位数据管理对象
     @StateObject private var locationDataManager = LocationDataManager()
@@ -50,10 +52,10 @@ struct HomeView: View {
     /// 位置权限状态
     @State private var authorizationStatus: CLAuthorizationStatus = .notDetermined
     /// 地图区域
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
-        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-    )
+//    @State private var region = MKCoordinateRegion(
+//        center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
+//        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+//    )
     /// 用户的身份信息
     @State private var userInfo: UserInfoType?
     /// 打卡详情
@@ -77,14 +79,14 @@ struct HomeView: View {
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
-    // 标注列表
-    @State private var landmarks: [Landmark] = []
+//    // 标注列表
+//    @State private var landmarks: [Landmark] = []
     
     var body: some View {
         NavigationStack {
             ZStack {
                 // 地图
-                Map(coordinateRegion: self.$region, annotationItems: self.landmarks) { landmark in
+                Map(coordinateRegion: $homeData.region, annotationItems: homeData.landmarks) { landmark in
                     MapAnnotation(coordinate: landmark.coordinate) {
                         VStack(spacing: 3) {
                             AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-markers.png")) { image in
@@ -92,8 +94,12 @@ struct HomeView: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 50, height: 64)
-                            } placeholder: {}
-
+                            } placeholder: {
+                                Rectangle()
+                                    .fill(.red)
+                                    .frame(width: 50, height: 64)
+                            }
+                         
                             Text("\(landmark.name)")
                                 .font(.system(size: 14))
                                 .frame(maxWidth: 120)
@@ -801,6 +807,7 @@ struct HomeView: View {
             }
             
             Task {
+                await homeData.getTodayRecord() // 获取今天的打卡记录
 //                await self.getLocationPopularRecommend() // 获取周边热门地点
             }
         }
@@ -841,43 +848,10 @@ struct HomeView: View {
         }
     }
     
-    /// 获取周边热门地点
-    private func getLocationPopularRecommend() async {
-        let longitude = "\(region.center.longitude)"
-        let latitude = "\(region.center.latitude)"
-        
-        do {
-            let res = try await Api.shared.getLocationPopularRecommend(params: [
-                "longitude": longitude,
-                "latitude": latitude,
-//                "longitude": "120.298501",
-//                "latitude": "30.41875",
-            ])
-            
-            print("获取周边热门地点", res)
-            
-            guard res.code == 200, let data = res.data else {
-                return
-            }
-            
-            withAnimation {
-                region = MKCoordinateRegion(
-                    center: CLLocationCoordinate2D(latitude: data[0].latitude ?? 0, longitude: data[0].longitude ?? 0),
-                    span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-                )
-                landmarks = data.map { item in
-                    Landmark(coordinate: CLLocationCoordinate2D(latitude: item.latitude ?? 0, longitude: item.longitude ?? 0), name: item.name ?? "")
-                }
-            }
-        } catch {
-            print("获取周边热门地点异常")
-        }
-    }
-    
     /// 获取周边地址
     private func getAroundAddress() async {
-        let longitude = "\(region.center.longitude)"
-        let latitude = "\(region.center.latitude)"
+        let longitude = "\(homeData.region.center.longitude)"
+        let latitude = "\(homeData.region.center.latitude)"
         
         do {
             let res = try await Api.shared.getAroundAddress(params: [
@@ -1038,4 +1012,5 @@ struct HomeView: View {
         .environmentObject(RankingData())
         .environmentObject(MainData())
         .environmentObject(LoadingData())
+        .environmentObject(HomeData())
 }

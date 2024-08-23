@@ -48,6 +48,7 @@
 		26B9986F2BBD9788000D1E88 /* ApiResultType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B9986E2BBD9788000D1E88 /* ApiResultType.swift */; };
 		26B998732BBD97FF000D1E88 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998722BBD97FF000D1E88 /* MainView.swift */; };
 		26B998752BBD982A000D1E88 /* RankingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B998742BBD982A000D1E88 /* RankingView.swift */; };
+		26C5153C2C78C3B3007541E4 /* HomeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C5153B2C78C3B3007541E4 /* HomeData.swift */; };
 		26CE0B932C1143B4001984D9 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26CE0B922C1143B4001984D9 /* LoginView.swift */; };
 		26DB3C282C6B3C4000D14719 /* Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DB3C272C6B3C4000D14719 /* Default.swift */; };
 /* End PBXBuildFile section */
@@ -96,6 +97,7 @@
 		26B9986E2BBD9788000D1E88 /* ApiResultType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiResultType.swift; sourceTree = "<group>"; };
 		26B998722BBD97FF000D1E88 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		26B998742BBD982A000D1E88 /* RankingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingView.swift; sourceTree = "<group>"; };
+		26C5153B2C78C3B3007541E4 /* HomeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeData.swift; sourceTree = "<group>"; };
 		26CE0B922C1143B4001984D9 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		26DB3C272C6B3C4000D14719 /* Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Default.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -152,6 +154,7 @@
 				2617B7EF2C761EE600E3BD82 /* MainData.swift */,
 				2617B7F12C762B6400E3BD82 /* RankingData.swift */,
 				2617B7F32C76D82500E3BD82 /* LoadingData.swift */,
+				26C5153B2C78C3B3007541E4 /* HomeData.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				26A3CD612C70E1EB00635D6D /* UINavigationController.swift in Sources */,
 				265201702C6C976700222C9A /* Utils.swift in Sources */,
 				2685D0262C6B9E1600892F5B /* Color.swift in Sources */,
+				26C5153C2C78C3B3007541E4 /* HomeData.swift in Sources */,
 				2617B7F22C762B6400E3BD82 /* RankingData.swift in Sources */,
 				2628877E2C732369006BBE1E /* UploadImages.swift in Sources */,
 				2670A68F2BD403290004E3A1 /* SettingView.swift in Sources */,
