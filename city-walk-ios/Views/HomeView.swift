@@ -65,6 +65,8 @@ struct HomeView: View {
         address: "",
         picture: []
     )
+    /// 推荐的地址列表
+    @State private var addressList: [GetAroundAddressType.GetAroundAddressData] = []
     /// 心情颜色选中的配置
     @State private var moodColorActive: MoodColor?
     /// 打卡信息详情
@@ -591,12 +593,21 @@ struct HomeView: View {
                             if self.fullScreenCoverType == .picture {
                                 ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount - selectedImages.count)
                             } else if self.fullScreenCoverType == .location {
-                                Text("位置选择")
-                                
                                 Button {
                                     visibleFullScreenCover.toggle()
                                 } label: {
                                     Text("关闭")
+                                }
+                           
+                                ScrollView {
+                                    ForEach(addressList, id: \.name) { item in
+                                        HStack {
+                                            Text("\(String(describing: item.name))")
+                                                .bold()
+                                                
+                                            Text("\(String(describing: item.address))")
+                                        }
+                                    }
                                 }
                             }
                         })
@@ -658,6 +669,9 @@ struct HomeView: View {
                         
                         // 选择当前位置
                         Button {
+                            Task {
+                                await self.getAroundAddress()
+                            }
                             self.fullScreenCoverType = .location
                             self.visibleFullScreenCover.toggle()
                         } label: {
@@ -787,7 +801,7 @@ struct HomeView: View {
             }
             
             Task {
-                await self.getLocationPopularRecommend() // 获取周边热门地点
+//                await self.getLocationPopularRecommend() // 获取周边热门地点
             }
         }
         .onDisappear {
@@ -857,6 +871,32 @@ struct HomeView: View {
             }
         } catch {
             print("获取周边热门地点异常")
+        }
+    }
+    
+    /// 获取周边地址
+    private func getAroundAddress() async {
+        let longitude = "\(region.center.longitude)"
+        let latitude = "\(region.center.latitude)"
+        
+        do {
+            let res = try await Api.shared.getAroundAddress(params: [
+                "longitude": longitude,
+                "latitude": latitude,
+//                "longitude": "120.298501",
+//                "latitude": "30.41875",
+                "page_num": 1,
+            ])
+            
+            print("获取周边地址", res)
+            
+            guard res.code == 200, let data = res.data else {
+                return
+            }
+            
+            addressList = data
+        } catch {
+            print("获取周边地址异常")
         }
     }
   

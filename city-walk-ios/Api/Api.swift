@@ -150,4 +150,14 @@ class Api {
             type: UniversalContentUploadType.self
         )
     }
+    
+    /// 获取周边地址
+    func getAroundAddress(params: [String: Any]) async throws -> GetAroundAddressType {
+        return try await Request.shared.request(
+            url: "/location/get/around/address",
+            params: params,
+            method: .post,
+            type: GetAroundAddressType.self
+        )
+    }
 }

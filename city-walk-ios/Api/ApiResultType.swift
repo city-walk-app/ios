@@ -350,6 +350,22 @@ struct GetLocationPopularRecommendType: Decodable {
     var data: [GetLocationPopularRecommendData]?
 }
 
+/// 获取周边地址
+struct GetAroundAddressType: Decodable {
+    struct GetAroundAddressData: Codable {
+        var city: String?
+        var latitude: Double?
+        var longitude: Double?
+        var name: String?
+        var province: String?
+        var address: String?
+    }
+
+    var message: String
+    var code: Int
+    var data: [GetAroundAddressData]?
+}
+
 /// 设置用户信息
 struct SetUserInfoType: Decodable {
     var message: String
