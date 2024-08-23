@@ -21,7 +21,11 @@ struct HomeView: View {
         var address: String
         var picture: [String]
     }
-
+    
+    enum FullScreenCoverType {
+        case picture, location
+    }
+    
     /// 缓存信息
     private let cacheInfo = UserCache.shared.getInfo()
     /// 心情颜色
@@ -35,6 +39,8 @@ struct HomeView: View {
     /// 定位数据管理对象
     @StateObject private var locationDataManager = LocationDataManager()
 
+    /// 全屏弹窗显示的类型
+    @State private var fullScreenCoverType: FullScreenCoverType = .picture
     /// 打卡弹窗是否显示
     @State private var visibleSheet = false
     /// 是否显示选择的菜单
@@ -142,7 +148,7 @@ struct HomeView: View {
                         }
                         
                         /// https://stackoverflow.com/questions/64551580/swiftui-sheet-doesnt-access-the-latest-value-of-state-variables-on-first-appear
-                        Text("\(String(describing: recordDetail))")
+                        Text("\(String(describing: recordDetail))\(fullScreenCoverType)")
                             .font(.system(size: 0))
                             .foregroundStyle(Color.clear)
                             
@@ -492,6 +498,7 @@ struct HomeView: View {
                             if selectedImages.count == 0 || selectedImages.isEmpty {
                                 // 发布瞬间
                                 Button {
+                                    self.fullScreenCoverType = .picture
                                     self.visibleFullScreenCover.toggle()
                                 } label: {
                                     VStack {
@@ -531,6 +538,7 @@ struct HomeView: View {
                                         }
                                     
                                     Button {
+                                        self.fullScreenCoverType = .picture
                                         self.visibleFullScreenCover.toggle()
                                     } label: {
                                         AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")) { image in
@@ -580,7 +588,17 @@ struct HomeView: View {
                         .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
                         // 选择照片的全屏弹出对话框
                         .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
-                            ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount - selectedImages.count)
+                            if self.fullScreenCoverType == .picture {
+                                ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount - selectedImages.count)
+                            } else if self.fullScreenCoverType == .location {
+                                Text("位置选择")
+                                
+                                Button {
+                                    visibleFullScreenCover.toggle()
+                                } label: {
+                                    Text("关闭")
+                                }
+                            }
                         })
                         .actionSheet(isPresented: $visibleActionSheet) {
                             ActionSheet(
@@ -639,7 +657,10 @@ struct HomeView: View {
                         .padding(.top, 16)
                         
                         // 选择当前位置
-                        Button {} label: {
+                        Button {
+                            self.fullScreenCoverType = .location
+                            self.visibleFullScreenCover.toggle()
+                        } label: {
                             Text("选择当前位置")
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 13)
@@ -813,10 +834,10 @@ struct HomeView: View {
         
         do {
             let res = try await Api.shared.getLocationPopularRecommend(params: [
-                //                "longitude": longitude,
-//                "latitude": latitude,
-                "longitude": "120.298501",
-                "latitude": "30.41875",
+                "longitude": longitude,
+                "latitude": latitude,
+//                "longitude": "120.298501",
+//                "latitude": "30.41875",
             ])
             
             print("获取周边热门地点", res)
@@ -958,8 +979,8 @@ struct HomeView: View {
 
             print("当前经纬度", longitude, latitude)
 
-            // await locationCreateRecord(longitude: longitude, latitude: latitude)
-            await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
+            await locationCreateRecord(longitude: longitude, latitude: latitude) // 打卡当前地点
+//            await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
       
         case .restricted, .denied:
             print("当前位置数据被限制或拒绝")
