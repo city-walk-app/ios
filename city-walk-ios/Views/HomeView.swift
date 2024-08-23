@@ -34,9 +34,9 @@ struct HomeView: View {
     
     /// 定位数据管理对象
     @StateObject private var locationDataManager = LocationDataManager()
-    
+
     /// 打卡弹窗是否显示
-    @State private var visibleSheet = true
+    @State private var visibleSheet = false
     /// 是否显示选择的菜单
     @State private var visibleActionSheet = false
     /// 定位服务管理对象
@@ -65,8 +65,6 @@ struct HomeView: View {
     @State private var recordDetail: LocationCreateRecordType.LocationCreateRecordData? = nil
     /// 键盘高度
     @State private var keyboardHeight: CGFloat = 0
-    /// 输入框改读
-    @State private var textEditorHeight: CGFloat = UIFont.systemFont(ofSize: 17).lineHeight + 10
     /// 是否显示全屏对话框
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
@@ -80,7 +78,7 @@ struct HomeView: View {
                 // 地图
                 Map(coordinateRegion: self.$region, annotationItems: self.landmarks) { landmark in
                     MapAnnotation(coordinate: landmark.coordinate) {
-                        VStack {
+                        VStack(spacing: 5) {
                             AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-markers.png")) { image in
                                 image
                                     .resizable()
@@ -88,8 +86,12 @@ struct HomeView: View {
                                     .frame(width: 50, height: 64)
                             } placeholder: {}
 
-                            Text("地点")
-                                .font(.system(size: 20))
+                            Text("\(landmark.name)")
+                                .font(.system(size: 14))
+                                .frame(maxWidth: 120)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                                .foregroundStyle(Color(hex: "#333333"))
                         }
                     }
                 }
@@ -423,7 +425,7 @@ struct HomeView: View {
         }
         // 打卡的对话框
         .sheet(isPresented: $visibleSheet, onDismiss: {
-            recordDetail = nil
+            self.clearStepFormData()
         }) {
             ZStack {
                 VStack {
@@ -654,9 +656,18 @@ struct HomeView: View {
                         
                         // 说点什么
                         VStack {
-                            TextField("说点什么", text: $routeDetailForm.content)
+                            TextField("Comment", text: $routeDetailForm.content, prompt: Text("说点什么？"), axis: .vertical)
+                                .lineLimit(4 ... 8)
                                 .submitLabel(.done)
-                                .background(.blue)
+                                .autocapitalization(.none) // 禁止任何自动大写
+                                .disableAutocorrection(true) // 禁止自动更正
+                                .foregroundStyle(Color(hex: "#666666"))
+                                .onChange(of: routeDetailForm.content) {
+                                    // 当内容变化时执行的代码
+                                    if routeDetailForm.content.contains("\n") {
+                                        routeDetailForm.content = routeDetailForm.content.replacingOccurrences(of: "\n", with: "")
+                                    }
+                                }
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity)
@@ -672,11 +683,10 @@ struct HomeView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
                         .padding(.top, 25)
-//                            .padding(.bottom, keyboardHeight) // Adjust padding for keyboard
                         .onTapGesture {
                             self.hideKeyboard()
                         }
-                        
+                    
                         // 按钮操作组
                         HStack(spacing: 23) {
                             Button {
@@ -715,14 +725,13 @@ struct HomeView: View {
                         }
                         .padding(.top, 34)
                         
+                        // 防止键盘挡住输入框
                         Spacer()
                             .frame(height: keyboardHeight)
                     }
                     .padding(16)
                     .frame(maxWidth: .infinity)
-                    .background(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 22))
-//                        .padding(.bottom, keyboardHeight) // 防止键盘挡住输入框
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 61)
@@ -763,6 +772,22 @@ struct HomeView: View {
         .onDisappear {
             NotificationCenter.default.removeObserver(self)
         }
+    }
+    
+    /// 清除打卡对话框内容
+    private func clearStepFormData() {
+        routeDetailForm = RouteDetailForm(
+            route_id: "",
+            content: "",
+            travel_type: "",
+            mood_color: "",
+            address: "",
+            picture: []
+        )
+        
+        recordDetail = nil
+        
+        selectedImages = []
     }
     
     /// 隐藏键盘
@@ -816,6 +841,10 @@ struct HomeView: View {
   
     /// 完善步行打卡记录详情
     private func updateRouteDetail() async {
+        if routeDetailForm.route_id.isEmpty {
+            return
+        }
+        
         do {
             loadingData.showLoading(options: LoadingParams(title: "提交中..."))
             
