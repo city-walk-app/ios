@@ -64,7 +64,6 @@ struct MainView: View {
                         Text("\(userInfo.nick_name)")
                             .padding(.top, 16)
                             .foregroundStyle(Color("text-1"))
-//                            .foregroundStyle(Color(hex: "#333333"))
                             .font(.system(size: 18))
                         
                         // 签名
@@ -583,7 +582,7 @@ struct MainView: View {
             }
             .padding(.top, 40)
             // https://x.com/ios_dev_alb/status/1824031474502246710
-            .presentationDetents([.medium])
+            .presentationDetents([.fraction(0.8), .medium])
             .presentationCornerRadius(40)
         }
         .onAppear {
