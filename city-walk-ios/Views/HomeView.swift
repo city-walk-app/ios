@@ -10,45 +10,6 @@ import CoreLocation
 import MapKit
 import SwiftUI
 
-struct AutoSizingTextEditor: UIViewRepresentable {
-    @Binding var text: String
-    @Binding var height: CGFloat
-
-    func makeUIView(context: Context) -> UITextView {
-        let textView = UITextView()
-        textView.isScrollEnabled = false
-        textView.backgroundColor = .clear
-        textView.font = UIFont.systemFont(ofSize: 17)
-        textView.delegate = context.coordinator
-        return textView
-    }
-
-    func updateUIView(_ uiView: UITextView, context: Context) {
-        uiView.text = text
-        // Adjust height dynamically
-        DispatchQueue.main.async {
-            self.height = uiView.contentSize.height
-        }
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-
-    class Coordinator: NSObject, UITextViewDelegate {
-        var parent: AutoSizingTextEditor
-
-        init(_ parent: AutoSizingTextEditor) {
-            self.parent = parent
-        }
-
-        func textViewDidChange(_ textView: UITextView) {
-            parent.text = textView.text
-            parent.height = textView.contentSize.height
-        }
-    }
-}
-
 /// 主视图，用于显示地图和操作选项
 struct HomeView: View {
     /// 完善步行记录详情表单
