@@ -78,7 +78,7 @@ struct HomeView: View {
                 // 地图
                 Map(coordinateRegion: self.$region, annotationItems: self.landmarks) { landmark in
                     MapAnnotation(coordinate: landmark.coordinate) {
-                        VStack(spacing: 5) {
+                        VStack(spacing: 3) {
                             AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-markers.png")) { image in
                                 image
                                     .resizable()
@@ -91,7 +91,7 @@ struct HomeView: View {
                                 .frame(maxWidth: 120)
                                 .lineLimit(1)
                                 .truncationMode(.tail)
-                                .foregroundStyle(Color(hex: "#333333"))
+                                .foregroundStyle(Color("text-1"))
                         }
                     }
                 }
