@@ -24,7 +24,7 @@ class HomeData: ObservableObject {
         span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
     )
     /// 标注列表
-    @Published var landmarks: [Landmark] = []
+    @Published var landmarks: [Landmark]?
 
     /// 获取今天的打卡记录
     func getTodayRecord() async {
@@ -34,6 +34,7 @@ class HomeData: ObservableObject {
             print("今日打卡记录", res)
 
             guard res.code == 200, let data = res.data else {
+                self.landmarks = nil
                 return
             }
 

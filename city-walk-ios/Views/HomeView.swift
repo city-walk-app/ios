@@ -20,6 +20,8 @@ struct HomeView: View {
         var mood_color: String
         var address: String
         var picture: [String]
+        var latitude: String?
+        var longitude: String?
     }
     
     enum FullScreenCoverType {
@@ -79,7 +81,7 @@ struct HomeView: View {
         NavigationStack {
             ZStack {
                 // 地图
-                Map(coordinateRegion: $homeData.region, annotationItems: homeData.landmarks) { landmark in
+                Map(coordinateRegion: $homeData.region, annotationItems: homeData.landmarks ?? []) { landmark in
                     MapAnnotation(coordinate: landmark.coordinate) {
                         VStack(spacing: 3) {
                             AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-markers.png")) { image in
@@ -99,15 +101,6 @@ struct HomeView: View {
                                     } placeholder: {}
                                 }
                             }
-                            
-//                            if landmark.
-                         
-//                            Text("\(landmark.name)")
-//                                .font(.system(size: 14))
-//                                .frame(maxWidth: 120)
-//                                .lineLimit(1)
-//                                .truncationMode(.tail)
-//                                .foregroundStyle(Color("text-1"))
                         }
                     }
                 }
@@ -601,19 +594,49 @@ struct HomeView: View {
                             if self.fullScreenCoverType == .picture {
                                 ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount - selectedImages.count)
                             } else if self.fullScreenCoverType == .location {
-                                Button {
-                                    visibleFullScreenCover.toggle()
-                                } label: {
-                                    Text("关闭")
-                                }
-                           
-                                ScrollView {
-                                    ForEach(addressList, id: \.name) { item in
-                                        HStack {
-                                            Text("\(String(describing: item.name))")
-                                                .bold()
-                                                
-                                            Text("\(String(describing: item.address))")
+                                NavigationStack {
+                                    VStack {
+                                        ScrollView {
+                                            ForEach(addressList, id: \.name) { item in
+                                                Button {
+                                                    self.selectAddress(longitude: item.longitude, latitude: item.latitude, address: item.address)
+                                                } label: {
+                                                    VStack(alignment: .leading) {
+                                                        Text("\(item.name ?? "")")
+                                                            .bold()
+                                                            .font(.system(size: 16))
+                                                            .foregroundStyle(Color("text-1"))
+                                                    
+                                                        Text("\(item.address ?? "")")
+                                                            .font(.system(size: 11))
+                                                            .foregroundStyle(Color("text-2"))
+                                                            .padding(.top, 2)
+                                                        
+                                                        Rectangle()
+                                                            .fill(Color.gray.opacity(0.2))
+                                                            .frame(height: 1)
+                                                    }
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                    .padding(.vertical, 3)
+                                                    .padding(.horizontal, 4)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .toolbar {
+                                        ToolbarItem(placement: .principal) {
+                                            Text("所在位置")
+                                                .font(.headline)
+                                                .foregroundStyle(Color("text-1"))
+                                        }
+                                        ToolbarItem(placement: .navigationBarTrailing) {
+                                            Button {
+                                                visibleFullScreenCover.toggle()
+                                            } label: {
+                                                Image(systemName: "xmark.circle.fill")
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundStyle(Color("text-2"))
+                                            }
                                         }
                                     }
                                 }
@@ -683,7 +706,7 @@ struct HomeView: View {
                             self.fullScreenCoverType = .location
                             self.visibleFullScreenCover.toggle()
                         } label: {
-                            Text("选择当前位置")
+                            Text("\(routeDetailForm.address == "" ? "选择当前位置" : routeDetailForm.address)")
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 13)
                                 .background(LinearGradient(gradient: Gradient(
@@ -810,12 +833,24 @@ struct HomeView: View {
             
             Task {
                 await homeData.getTodayRecord() // 获取今天的打卡记录
-//                await self.getLocationPopularRecommend() // 获取周边热门地点
             }
         }
         .onDisappear {
             NotificationCenter.default.removeObserver(self)
         }
+    }
+    
+    /// 选择地址
+    /// - Parameters:
+    ///   - longitude: 经度
+    ///   - latitude: 纬度
+    ///   - address: 地址信息
+    private func selectAddress(longitude: Double?, latitude: Double?, address: String?) {
+        routeDetailForm.address = address ?? ""
+        routeDetailForm.longitude = "\(longitude)"
+        routeDetailForm.latitude = "\(latitude)"
+        
+        visibleFullScreenCover.toggle()
     }
     
     /// 清除打卡对话框内容
@@ -830,7 +865,6 @@ struct HomeView: View {
         )
         
         recordDetail = nil
-        
         selectedImages = []
     }
     
@@ -859,17 +893,17 @@ struct HomeView: View {
             let res = try await Api.shared.getAroundAddress(params: [
                 "longitude": longitude,
                 "latitude": latitude,
-//                "longitude": "120.298501",
-//                "latitude": "30.41875",
+                //                "longitude": "120.298501",
+                //                "latitude": "30.41875",
                 "page_num": 1,
             ])
-            
+
             print("获取周边地址", res)
-            
+
             guard res.code == 200, let data = res.data else {
                 return
             }
-            
+
             addressList = data
         } catch {
             print("获取周边地址异常")
@@ -901,6 +935,8 @@ struct HomeView: View {
                 "mood_color": routeDetailForm.mood_color,
                 "address": routeDetailForm.address,
                 "picture": routeDetailForm.picture,
+                "longitude": routeDetailForm.longitude,
+                "latitude": routeDetailForm.latitude,
             ])
             
             loadingData.hiddenLoading()
@@ -910,14 +946,8 @@ struct HomeView: View {
             if res.code == 200 {
                 visibleSheet.toggle()
                 
-                moodColorActive = nil
-                routeDetailForm.route_id = ""
-                routeDetailForm.mood_color = ""
-                routeDetailForm.address = ""
-                routeDetailForm.address = ""
-                routeDetailForm.content = ""
-                routeDetailForm.travel_type = ""
-                routeDetailForm.picture = []
+                await homeData.getTodayRecord() // 获取今天的打卡记录
+                clearStepFormData() // 清空表单
             }
             
         } catch {
