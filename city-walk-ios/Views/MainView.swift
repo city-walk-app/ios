@@ -5,6 +5,7 @@
 //  Created by Tyh2001 on 2024/4/3.
 //
 
+import Kingfisher
 import SwiftUI
 
 struct MainView: View {
@@ -48,18 +49,17 @@ struct MainView: View {
                     // 用户信息
                     if let userInfo = mainData.userInfo {
                         // 头像
-                        AsyncImage(url: URL(string: userInfo.avatar ?? defaultAvatar)) { image in
-                            image
-                                .resizable()
-                                .frame(width: 74, height: 74)
-                                .aspectRatio(contentMode: .fill)
-                                .clipShape(Circle())
-                        } placeholder: {
-                            Circle()
-                                .fill(skeletonBackground)
-                                .frame(width: 74, height: 74)
-                        }
-                        
+                        KFImage(URL(string: userInfo.avatar ?? defaultAvatar))
+                            .placeholder {
+                                Circle()
+                                    .fill(skeletonBackground)
+                                    .frame(width: 74, height: 74)
+                            }
+                            .resizable()
+                            .frame(width: 74, height: 74)
+                            .aspectRatio(contentMode: .fill)
+                            .clipShape(Circle())
+                     
                         // 昵称
                         Text("\(userInfo.nick_name)")
                             .padding(.top, 16)
@@ -98,6 +98,7 @@ struct MainView: View {
                                         Color.clear
                                             .frame(width: 107, height: 107)
                                             .background {
+//                                                KFImage(URL(string: ""))
                                                 AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png")) { phase in
                                                     if let image = phase.image {
                                                         Color(hex: item.background_color)
