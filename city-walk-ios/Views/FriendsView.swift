@@ -5,6 +5,7 @@
 //  Created by Tyh2001 on 2024/7/15.
 //
 
+import Kingfisher
 import SwiftUI
 
 struct FriendsView: View {
@@ -46,18 +47,17 @@ struct FriendsView: View {
                                     NavigationLink(destination: MainView(user_id: item.user_id)) {
                                         VStack(spacing: 12) {
                                             // 头像
-                                            AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
-                                                image
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .frame(width: 106, height: 106)
-                                                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                                            } placeholder: {
-                                                Rectangle()
-                                                    .fill(skeletonBackground)
-                                                    .frame(width: 106, height: 106)
-                                                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                                            }
+                                            KFImage(URL(string: item.avatar ?? defaultAvatar))
+                                                .placeholder {
+                                                    Rectangle()
+                                                        .fill(skeletonBackground)
+                                                        .frame(width: 106, height: 106)
+                                                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                                                }
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 106, height: 106)
+                                                .clipShape(RoundedRectangle(cornerRadius: 20))
 
                                             // 昵称
                                             Text("\(item.nick_name ?? "")")

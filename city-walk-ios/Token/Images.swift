@@ -12,3 +12,5 @@ let homeMarkers = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/ass
 
 /// 打卡成功的选择照片的照相机
 let recordSucceseCamera = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")
+
+let mainPosition = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-position.png")

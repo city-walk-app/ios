@@ -11,6 +11,10 @@ import SwiftUI
 struct MainView: View {
     /// 用户 id
     var user_id: String
+    
+    let mainHeatmap1 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-1.png")
+    let mainHeatmap2 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")
+    let mainHeatmap3 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")
 
     struct MonthSelectItem {
         var title: String
@@ -98,21 +102,17 @@ struct MainView: View {
                                         Color.clear
                                             .frame(width: 107, height: 107)
                                             .background {
-//                                                KFImage(URL(string: ""))
-                                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png")) { phase in
-                                                    if let image = phase.image {
-                                                        Color(hex: item.background_color)
-                                                            .mask {
-                                                                image
-                                                                    .resizable()
-                                                                    .aspectRatio(contentMode: .fill)
+                                                Color(hex: item.background_color)
+                                                    .mask {
+                                                        KFImage(URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png"))
+                                                            .placeholder {
+                                                                Circle()
+                                                                    .fill(skeletonBackground)
+                                                                    .frame(width: 107, height: 107)
                                                             }
-                                                    } else {
-                                                        Circle()
-                                                            .fill(skeletonBackground)
-                                                            .frame(width: 107, height: 107)
+                                                            .resizable()
+                                                            .aspectRatio(contentMode: .fill)
                                                     }
-                                                }
                                             }
                                     }
                                 }
@@ -178,31 +178,29 @@ struct MainView: View {
                             // 图例
                             VStack(spacing: 30) {
                                 HStack(spacing: 7) {
-                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-1.png")) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 15, height: 17)
-                                    } placeholder: {
-                                        Color.clear
-                                            .frame(width: 15, height: 17)
-                                    }
-                                    
+                                    KFImage(mainHeatmap1)
+                                        .placeholder {
+                                            Color.clear
+                                                .frame(width: 15, height: 17)
+                                        }
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 15, height: 17)
+                                 
                                     Text("打卡多")
                                         .foregroundStyle(Color("text-2"))
                                         .font(.system(size: 14))
                                 }
                                 
                                 HStack(spacing: 7) {
-                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 15, height: 17)
-                                    } placeholder: {
-                                        Color.clear
-                                            .frame(width: 15, height: 17)
-                                    }
+                                    KFImage(mainHeatmap2)
+                                        .placeholder {
+                                            Color.clear
+                                                .frame(width: 15, height: 17)
+                                        }
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 15, height: 17)
                                     
                                     Text("打卡少")
                                         .foregroundStyle(Color("text-2"))
@@ -210,15 +208,14 @@ struct MainView: View {
                                 }
                                 
                                 HStack(spacing: 7) {
-                                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 15, height: 17)
-                                    } placeholder: {
-                                        Color.clear
-                                            .frame(width: 15, height: 17)
-                                    }
+                                    KFImage(mainHeatmap3)
+                                        .placeholder {
+                                            Color.clear
+                                                .frame(width: 15, height: 17)
+                                        }
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 15, height: 17)
                                     
                                     Text("未打卡")
                                         .foregroundStyle(Color("text-2"))
@@ -347,13 +344,11 @@ struct MainView: View {
                                     VStack {
                                         if index == 0 {
                                             if let userInfo = mainData.userInfo {
-                                                AsyncImage(url: URL(string: userInfo.avatar ?? defaultAvatar)) { image in
-                                                    image
-                                                        .resizable()
-                                                        .frame(width: 46, height: 46)
-                                                        .aspectRatio(contentMode: .fill)
-                                                        .clipShape(Circle())
-                                                } placeholder: {}
+                                                KFImage(URL(string: userInfo.avatar ?? defaultAvatar))
+                                                    .resizable()
+                                                    .frame(width: 46, height: 46)
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .clipShape(Circle())
                                             }
                                         } else {
                                             Circle()
@@ -374,14 +369,12 @@ struct MainView: View {
                                     
                                     // 右侧详情内容
                                     ZStack(alignment: .topTrailing) {
-                                        // 左上角的图表
-                                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-position.png")) { image in
-                                            image
-                                                .resizable()
-                                                .frame(width: 61, height: 56)
-                                        } placeholder: {}
+                                        // 左上角的图标
+                                        KFImage(mainPosition)
+                                            .resizable()
+                                            .frame(width: 61, height: 56)
                                             .zIndex(30)
-                                        
+                                       
                                         // 主要内容
                                         VStack(alignment: .leading) {
                                             // 头部内容
@@ -420,18 +413,17 @@ struct MainView: View {
                                                 ScrollView(.horizontal) {
                                                     HStack {
                                                         ForEach(item.picture!, id: \.self) { pictureItem in
-                                                            AsyncImage(url: URL(string: pictureItem)) { image in
-                                                                image
-                                                                    .resizable()
-                                                                    .frame(width: 174, height: 175)
-                                                                    .aspectRatio(contentMode: .fit)
-                                                                    .cornerRadius(8)
-                                                            } placeholder: {
-                                                                Rectangle()
-                                                                    .fill(skeletonBackground)
-                                                                    .frame(width: 174, height: 174)
-                                                                    .cornerRadius(8)
-                                                            }
+                                                            KFImage(URL(string: pictureItem))
+                                                                .placeholder {
+                                                                    Rectangle()
+                                                                        .fill(skeletonBackground)
+                                                                        .frame(width: 174, height: 174)
+                                                                        .cornerRadius(8)
+                                                                }
+                                                                .resizable()
+                                                                .frame(width: 174, height: 175)
+                                                                .aspectRatio(contentMode: .fit)
+                                                                .cornerRadius(8)
                                                         }
                                                     }
                                                     .padding(.horizontal, 24)

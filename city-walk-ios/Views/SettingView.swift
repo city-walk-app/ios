@@ -5,6 +5,7 @@
 //  Created by Tyh2001 on 2024/4/20.
 //
 
+import Kingfisher
 import SwiftUI
 
 /// 用户信息编辑键
@@ -79,18 +80,17 @@ struct SettingView: View {
                         } label: {
                             HStack {
                                 // 头像
-                                AsyncImage(url: URL(string: userInfo.avatar)) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 60, height: 60) // 设置图片的大小
-                                        .clipShape(Circle()) // 将图片裁剪为圆形
-                                } placeholder: {
-                                    Circle()
-                                        .fill(skeletonBackground)
-                                        .frame(width: 60, height: 60)
-                                }
-                                
+                                KFImage(URL(string: userInfo.avatar ?? defaultAvatar))
+                                    .placeholder {
+                                        Circle()
+                                            .fill(skeletonBackground)
+                                            .frame(width: 60, height: 60)
+                                    }
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 60, height: 60)
+                                    .clipShape(Circle())
+                             
                                 Text("我的头像")
                                     .foregroundColor(Color("text-1"))
                                     .padding(.leading, 10)
@@ -339,17 +339,16 @@ struct SettingSheetView: View {
                     } label: {
                         VStack {
                             if self.selectedImages.isEmpty {
-                                AsyncImage(url: URL(string: userInfo.avatar)) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 160, height: 160) // 设置图片的大小
-                                        .clipShape(Circle()) // 将图片裁剪为圆形
-                                } placeholder: {
-                                    Circle()
-                                        .fill(skeletonBackground)
-                                        .frame(width: 160, height: 160)
-                                }
+                                KFImage(URL(string: userInfo.avatar ?? defaultAvatar))
+                                    .placeholder {
+                                        Circle()
+                                            .fill(skeletonBackground)
+                                            .frame(width: 160, height: 160)
+                                    }
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 160, height: 160)
+                                    .clipShape(Circle())
                             }
                             else {
                                 Image(uiImage: self.selectedImages[self.selectedImages.count - 1])

@@ -5,9 +5,15 @@
 //  Created by Tyh2001 on 2024/4/3.
 //
 
+import Kingfisher
 import SwiftUI
 
 struct RankingView: View {
+    let ranking1 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-1.png")
+    let ranking2 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-2.png")
+    let ranking3 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-3.png")
+    let rankingCrown = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-crown.png")
+
     // 使用 @Environment 属性包装器从环境中获取 presentationMode，这里 presentationMode 是一个 Binding<PresentationMode>
     // PresentationMode 表示视图的显示状态，可以通过它来控制视图的弹出或返回
     // presentationMode.wrappedValue.dismiss() 可以用于关闭当前视图或返回到前一个视图
@@ -32,36 +38,32 @@ struct RankingView: View {
                                 HStack(spacing: 14) {
                                     if item.experiences != nil && item.experiences ?? 0 > 0 {
                                         if index == 0 {
-                                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-1.png")) { image in
-                                                image
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .frame(width: 25, height: 28)
-                                            } placeholder: {
-                                                Color.clear
-                                                    .frame(width: 25, height: 28)
-                                            }
-
+                                            KFImage(ranking1)
+                                                .placeholder {
+                                                    Color.clear
+                                                        .frame(width: 25, height: 28)
+                                                }
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 25, height: 28)
                                         } else if index == 1 {
-                                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-2.png")) { image in
-                                                image
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .frame(width: 25, height: 28)
-                                            } placeholder: {
-                                                Color.clear
-                                                    .frame(width: 25, height: 28)
-                                            }
+                                            KFImage(ranking2)
+                                                .placeholder {
+                                                    Color.clear
+                                                        .frame(width: 25, height: 28)
+                                                }
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 25, height: 28)
                                         } else if index == 2 {
-                                            AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-3.png")) { image in
-                                                image
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .frame(width: 25, height: 28)
-                                            } placeholder: {
-                                                Color.clear
-                                                    .frame(width: 25, height: 28)
-                                            }
+                                            KFImage(ranking3)
+                                                .placeholder {
+                                                    Color.clear
+                                                        .frame(width: 25, height: 28)
+                                                }
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 25, height: 28)
                                         }
                                     } else {
                                         Color.clear
