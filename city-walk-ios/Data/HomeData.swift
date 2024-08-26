@@ -17,7 +17,7 @@ struct Landmark: Identifiable {
     var name: String?
 }
 
-class HomeData: ObservableObject {
+class HomeData: NSObject, ObservableObject {
     /// 地图区域
     @Published var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
@@ -34,7 +34,7 @@ class HomeData: ObservableObject {
             print("今日打卡记录", res)
 
             guard res.code == 200, let data = res.data else {
-                self.landmarks = nil
+                landmarks = nil
                 return
             }
 

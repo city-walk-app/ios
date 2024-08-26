@@ -38,6 +38,8 @@ struct SettingView: View {
         InfoItemBar(icon: "smartphone", key: .mobile, title: "手机", color: "#FF323E"),
         InfoItemBar(icon: "lightbulb", key: .signature, title: "签名", color: "#0348F2"),
     ]
+    
+    @EnvironmentObject private var storageData: StorageData
 
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
@@ -46,7 +48,7 @@ struct SettingView: View {
     /// 是否显示编辑信息的弹窗
     @State private var isShowSetInfo = false
     /// token
-    private let token = UserCache.shared.getToken()
+//    private let token = UserCache.shared.getToken()
     /// 是否跳转到登录页面
     @State private var isGoLoginView = false
     /// 是否显示退出登录的按钮确认框
@@ -80,7 +82,7 @@ struct SettingView: View {
                         } label: {
                             HStack {
                                 // 头像
-                                KFImage(URL(string: userInfo.avatar ?? defaultAvatar))
+                                KFImage(URL(string: userInfo.avatar))
                                     .placeholder {
                                         Circle()
                                             .fill(skeletonBackground)
@@ -225,7 +227,7 @@ struct SettingView: View {
                                 title: Text("提示"),
                                 message: Text("确定退出当前账号吗?"),
                                 primaryButton: .destructive(Text("确定"), action: {
-                                    UserCache.shared.clearAll()
+                                    storageData.clearCache()
                                     isGoLoginView = true
                                 }),
                                 secondaryButton: .cancel(Text("取消"))
@@ -266,6 +268,7 @@ struct SettingView: View {
         // 修改信息的弹出层
         .sheet(isPresented: $visibleSheet) {
             SettingSheetView(
+                storageData: storageData,
                 sheetKey: $sheetKey,
                 userInfo: $userInfo,
                 visibleSheet: $visibleSheet,
@@ -276,15 +279,15 @@ struct SettingView: View {
     
     /// 获取缓存的用户信息
     private func loadCacheInfo() {
-        let cacheInfo = UserCache.shared.getInfo()
-        
-        if let info = cacheInfo, cacheInfo != nil {
-            userInfo.avatar = info.avatar ?? defaultAvatar
-            userInfo.gender = info.gender ?? ""
-            userInfo.nick_name = info.nick_name
-            userInfo.signature = info.signature ?? ""
-            userInfo.mobile = info.mobile ?? ""
+        guard let info = storageData.userInfo else {
+            return
         }
+        
+        userInfo.avatar = info.avatar ?? defaultAvatar
+        userInfo.gender = info.gender ?? ""
+        userInfo.nick_name = info.nick_name
+        userInfo.signature = info.signature ?? ""
+        userInfo.mobile = info.mobile ?? ""
     }
     
     /// 设置用户信息
@@ -312,8 +315,12 @@ struct SettingView: View {
 
 /// 设置 sheet 弹窗内容
 struct SettingSheetView: View {
+    var storageData: StorageData
+    
     /// 最多选择的照片数量
     private let pictureMaxCount = 1
+    
+//    @StateObject private var userInfoData = UserInfoData()
     
     /// 显示的内容 key
     @Binding var sheetKey: SheetKey
@@ -486,7 +493,7 @@ struct SettingSheetView: View {
                 return
             }
             
-            UserCache.shared.saveInfo(info: data)
+            storageData.saveUserInfo(info: data)
                 
             visibleSheet.toggle()
                 
@@ -502,5 +509,5 @@ struct SettingSheetView: View {
 
 #Preview {
     SettingView()
-//        .environmentObject(UserInfoData())
+        .environmentObject(StorageData())
 }

@@ -30,20 +30,19 @@ struct HomeView: View {
     }
     
     /// 缓存信息
-    private let cacheInfo = UserCache.shared.getInfo()
+//    private let cacheInfo = UserCache.shared.getInfo()
+//    @StateObject private var userInfoData = UserInfoData()
     /// 心情颜色
     private let moodColorList = moodColors
     /// 最多选择的照片数量
     private let pictureMaxCount = 2
-    private let friendsBanner = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-friends.png")
-    private let inviteBanner = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-invite.png")
-    private let recordBanner = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-record.png")
-    private let rankingBanner = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-ranking.png")
-    
+ 
     /// loading 数据
     @EnvironmentObject private var loadingData: LoadingData
     /// 首页数据
     @EnvironmentObject private var homeData: HomeData
+    /// 缓存数据
+    @EnvironmentObject private var storageData: StorageData
     
     /// 定位数据管理对象
     @StateObject private var locationDataManager = LocationDataManager()
@@ -115,7 +114,7 @@ struct HomeView: View {
                 VStack {
                     // 头部操作栏
                     HStack(alignment: .top) {
-                        if let userInfo = cacheInfo {
+                        if let userInfo = storageData.userInfo {
                             NavigationLink(destination: MainView(user_id: userInfo.user_id)) {
                                 if let avatar = userInfo.avatar,
                                    let url = URL(string: avatar)
@@ -142,7 +141,7 @@ struct HomeView: View {
                                 }
                             }
                         } else {
-                            NavigationLink(destination: LoginView()) {
+                            NavigationLink(destination: storageData.token != nil && storageData.token != "" ? LoginView() : LoginView()) {
                                 Circle()
                                     .fill(skeletonBackground)
                                     .frame(width: 48, height: 48)
@@ -211,211 +210,7 @@ struct HomeView: View {
                   
                     Spacer()
                     
-                    // 底部功能
-                    ZStack(alignment: .bottom) {
-                        VariableBlurView(maxBlurRadius: 12)
-                            .frame(height: 240)
-                            .rotationEffect(.degrees(180))
-                        
-                        // 底部卡片
-                        VStack(spacing: 33) {
-                            // 天气
-                            HStack {
-                                Button {
-                                    self.openWeatherApp()
-                                } label: {
-                                    VStack(spacing: -13) {
-                                        Circle()
-                                            .fill(.ultraThinMaterial)
-                                            .frame(width: 50, height: 50)
-                                            .overlay(
-                                                Circle()
-                                                    .stroke(Color.white, lineWidth: 1.2)
-                                                    .overlay {
-                                                        Image(systemName: "sun.max")
-                                                            .font(.system(size: 18))
-                                                            .foregroundStyle(Color(hex: "#FE8718"))
-                                                            .padding(.top, -5)
-                                                    }
-                                            )
-                                    
-                                        RoundedRectangle(cornerRadius: 18)
-                                            .frame(width: 55, height: 23)
-                                            .overlay(
-                                                ZStack {
-                                                    RoundedRectangle(cornerRadius: 18)
-                                                        .stroke(.white, lineWidth: 2)
-                                                        .background(
-                                                            LinearGradient(
-                                                                gradient: Gradient(
-                                                                    colors: [Color(hex: "#FE8718"), Color(hex: "#FEC43D")]
-                                                                ),
-                                                                startPoint: .top,
-                                                                endPoint: .bottom
-                                                            )
-                                                        )
-                                                        .cornerRadius(18)
-                                                
-                                                    Text("26度")
-                                                        .font(.system(size: 13))
-                                                        .foregroundColor(.white)
-                                                }
-                                            )
-                                    }
-                                }
-                                Spacer()
-                            }
-                            .padding(.horizontal, 19)
-                            
-                            // 卡片列表
-                            HStack(spacing: 12) {
-                                VStack(spacing: 16) {
-                                    // 我的朋友
-                                    NavigationLink(destination: FriendsView()) {
-                                        KFImage(friendsBanner)
-                                            .placeholder {
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(skeletonBackground)
-                                                    .frame(width: 170, height: 98)
-                                            }
-                                            .resizable()
-                                            .frame(width: 170, height: 98)
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                                            .overlay {
-                                                HStack {
-                                                    VStack(alignment: .leading, spacing: 2) {
-                                                        Text("我的朋友")
-                                                            .font(.headline)
-                                                            .bold()
-                                                            .foregroundColor(.white)
-                                         
-                                                        Text("My Friends")
-                                                            .font(.subheadline)
-                                                            .foregroundColor(.white)
-                                         
-                                                        Spacer()
-                                                    }
-                                         
-                                                    Spacer()
-                                                }
-                                                .padding(.top, 14)
-                                                .padding(.leading, 16)
-                                            }
-                                    }
-                                    
-                                    // 邀请朋友
-                                    NavigationLink(destination: InviteView()) {
-                                        KFImage(inviteBanner)
-                                            .placeholder {
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(skeletonBackground)
-                                                    .frame(width: 170, height: 98)
-                                            }
-                                            .resizable()
-//                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 170, height: 98) // 设置按钮的大小
-                                            .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
-                                            .overlay {
-                                                HStack {
-                                                    VStack(alignment: .leading, spacing: 2) {
-                                                        Text("邀请朋友")
-                                                            .font(.headline)
-                                                            .bold()
-                                                            .foregroundColor(.white)
-                                                        
-                                                        Text("City Walk Together")
-                                                            .font(.subheadline)
-                                                            .foregroundColor(.white)
-                                                        
-                                                        Spacer()
-                                                    }
-                                                    
-                                                    Spacer()
-                                                }
-                                                .padding(.top, 14)
-                                                .padding(.leading, 16)
-                                            }
-                                    }
-                                }
-                                
-                                VStack(spacing: 12) {
-                                    // 地点打卡
-                                    Button {
-                                        Task {
-                                            await self.onRecord()
-                                        }
-                                    } label: {
-                                        KFImage(recordBanner)
-                                            .placeholder {
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(skeletonBackground)
-                                                    .frame(width: 170, height: 130)
-                                            }
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 170, height: 130)
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                                            .overlay {
-                                                HStack {
-                                                    VStack(alignment: .leading, spacing: 2) {
-                                                        Text("打卡")
-                                                            .font(.headline)
-                                                            .bold()
-                                                            .foregroundColor(.white)
-                                                        
-                                                        Text("Record location")
-                                                            .font(.subheadline)
-                                                            .foregroundColor(.white)
-                                                        
-                                                        Spacer()
-                                                    }
-                                                    
-                                                    Spacer()
-                                                }
-                                                .padding(.top, 14)
-                                                .padding(.leading, 16)
-                                            }
-                                    }
-                                    
-                                    // 排行榜
-                                    NavigationLink(destination: RankingView()) {
-                                        KFImage(rankingBanner)
-                                            .placeholder {
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(skeletonBackground)
-                                                    .frame(width: 170, height: 76)
-                                            }
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 170, height: 76)
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                                            .overlay {
-                                                HStack {
-                                                    VStack(alignment: .leading, spacing: 2) {
-                                                        Text("排行榜")
-                                                            .font(.headline)
-                                                            .bold()
-                                                            .foregroundColor(.white)
-                                                                
-                                                        Text("Ranking")
-                                                            .font(.subheadline)
-                                                            .foregroundColor(.white)
-                                                                
-                                                        Spacer()
-                                                    }
-                                                            
-                                                    Spacer()
-                                                }
-                                                .padding(.top, 14)
-                                                .padding(.leading, 16)
-                                            }
-                                    }
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        .padding(.bottom, bottomSafeAreaInsets)
-                    }
+                    HomeBottomCardsView(onRecord: self.onRecord)
                 }
                 .ignoresSafeArea(.all, edges: .bottom)
              
@@ -861,17 +656,6 @@ struct HomeView: View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     
-    /// 打开 app 的天气软件
-    private func openWeatherApp() {
-        if let url = URL(string: "weather://") {
-            if UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url)
-            } else {
-                print("无法打开天气应用")
-            }
-        }
-    }
-    
     /// 获取周边地址
     private func getAroundAddress() async {
         let longitude = "\(homeData.region.center.longitude)"
@@ -946,12 +730,12 @@ struct HomeView: View {
     
     /// 获取用户信息
     private func getUserInfo() async {
-        guard cacheInfo != nil else {
+        guard storageData.userInfo != nil else {
             return
         }
         
         do {
-            let res = try await Api.shared.getUserInfo(params: ["user_id": cacheInfo!.user_id])
+            let res = try await Api.shared.getUserInfo(params: ["user_id": storageData.userInfo!.user_id])
 
             print("我的页面获取的用户信息", res)
             
@@ -976,6 +760,8 @@ struct HomeView: View {
             ])
             
             loadingData.hiddenLoading()
+            
+            print("打卡结果", res)
 
             guard res.code == 200, let data = res.data else {
                 return
@@ -1033,4 +819,233 @@ struct HomeView: View {
         .environmentObject(MainData())
         .environmentObject(LoadingData())
         .environmentObject(HomeData())
+        .environmentObject(StorageData())
+}
+
+struct HomeBottomCardsView: View {
+    var onRecord: () async -> Void
+    
+    private let friendsBanner = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-friends.png")
+    private let inviteBanner = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-invite.png")
+    private let recordBanner = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-record.png")
+    private let rankingBanner = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-ranking.png")
+    
+    var body: some View {
+        // 底部功能
+        ZStack(alignment: .bottom) {
+            VariableBlurView(maxBlurRadius: 12)
+                .frame(height: 240)
+                .rotationEffect(.degrees(180))
+            
+            // 底部卡片
+            VStack(spacing: 33) {
+                // 天气
+                HStack {
+                    Button {
+                        self.openWeatherApp()
+                    } label: {
+                        VStack(spacing: -13) {
+                            Circle()
+                                .fill(.ultraThinMaterial)
+                                .frame(width: 50, height: 50)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.white, lineWidth: 1.2)
+                                        .overlay {
+                                            Image(systemName: "sun.max")
+                                                .font(.system(size: 18))
+                                                .foregroundStyle(Color(hex: "#FE8718"))
+                                                .padding(.top, -5)
+                                        }
+                                )
+                        
+                            RoundedRectangle(cornerRadius: 18)
+                                .frame(width: 55, height: 23)
+                                .overlay(
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 18)
+                                            .stroke(.white, lineWidth: 2)
+                                            .background(
+                                                LinearGradient(
+                                                    gradient: Gradient(
+                                                        colors: [Color(hex: "#FE8718"), Color(hex: "#FEC43D")]
+                                                    ),
+                                                    startPoint: .top,
+                                                    endPoint: .bottom
+                                                )
+                                            )
+                                            .cornerRadius(18)
+                                    
+                                        Text("26度")
+                                            .font(.system(size: 13))
+                                            .foregroundColor(.white)
+                                    }
+                                )
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 19)
+                
+                // 卡片列表
+                HStack(spacing: 12) {
+                    VStack(spacing: 16) {
+                        // 我的朋友
+                        NavigationLink(destination: FriendsView()) {
+                            KFImage(friendsBanner)
+                                .placeholder {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(skeletonBackground)
+                                        .frame(width: 170, height: 98)
+                                }
+                                .resizable()
+                                .frame(width: 170, height: 98)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .overlay {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("我的朋友")
+                                                .font(.headline)
+                                                .bold()
+                                                .foregroundColor(.white)
+                             
+                                            Text("My Friends")
+                                                .font(.subheadline)
+                                                .foregroundColor(.white)
+                             
+                                            Spacer()
+                                        }
+                             
+                                        Spacer()
+                                    }
+                                    .padding(.top, 14)
+                                    .padding(.leading, 16)
+                                }
+                        }
+                        
+                        // 邀请朋友
+                        NavigationLink(destination: InviteView()) {
+                            KFImage(inviteBanner)
+                                .placeholder {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(skeletonBackground)
+                                        .frame(width: 170, height: 98)
+                                }
+                                .resizable()
+//                                            .aspectRatio(contentMode: .fill)
+                                .frame(width: 170, height: 98) // 设置按钮的大小
+                                .clipShape(RoundedRectangle(cornerRadius: 10)) // 裁剪为圆角矩形
+                                .overlay {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("邀请朋友")
+                                                .font(.headline)
+                                                .bold()
+                                                .foregroundColor(.white)
+                                            
+                                            Text("City Walk Together")
+                                                .font(.subheadline)
+                                                .foregroundColor(.white)
+                                            
+                                            Spacer()
+                                        }
+                                        
+                                        Spacer()
+                                    }
+                                    .padding(.top, 14)
+                                    .padding(.leading, 16)
+                                }
+                        }
+                    }
+                    
+                    VStack(spacing: 12) {
+                        // 地点打卡
+                        Button {
+                            Task {
+                                await self.onRecord()
+                            }
+                        } label: {
+                            KFImage(recordBanner)
+                                .placeholder {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(skeletonBackground)
+                                        .frame(width: 170, height: 130)
+                                }
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 170, height: 130)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .overlay {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("打卡")
+                                                .font(.headline)
+                                                .bold()
+                                                .foregroundColor(.white)
+                                            
+                                            Text("Record location")
+                                                .font(.subheadline)
+                                                .foregroundColor(.white)
+                                            
+                                            Spacer()
+                                        }
+                                        
+                                        Spacer()
+                                    }
+                                    .padding(.top, 14)
+                                    .padding(.leading, 16)
+                                }
+                        }
+                        
+                        // 排行榜
+                        NavigationLink(destination: RankingView()) {
+                            KFImage(rankingBanner)
+                                .placeholder {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(skeletonBackground)
+                                        .frame(width: 170, height: 76)
+                                }
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 170, height: 76)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .overlay {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("排行榜")
+                                                .font(.headline)
+                                                .bold()
+                                                .foregroundColor(.white)
+                                                    
+                                            Text("Ranking")
+                                                .font(.subheadline)
+                                                .foregroundColor(.white)
+                                                    
+                                            Spacer()
+                                        }
+                                                
+                                        Spacer()
+                                    }
+                                    .padding(.top, 14)
+                                    .padding(.leading, 16)
+                                }
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .padding(.bottom, bottomSafeAreaInsets)
+        }
+    }
+    
+    /// 打开 app 的天气软件
+    private func openWeatherApp() {
+        if let url = URL(string: "weather://") {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            } else {
+                print("无法打开天气应用")
+            }
+        }
+    }
 }

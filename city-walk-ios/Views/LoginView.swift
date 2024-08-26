@@ -44,7 +44,9 @@ struct LoginView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     /// loading 数据
-    @EnvironmentObject var loadingData: LoadingData
+    @EnvironmentObject private var loadingData: LoadingData
+    /// 缓存数据
+    @EnvironmentObject private var storageData: StorageData
     
     /// 操作步骤
     @State private var step = 0
@@ -265,16 +267,10 @@ struct LoginView: View {
                 return
             }
             
-            UserCache.shared.saveInfo(info: data.user_info)
-            UserCache.shared.saveToken(token: data.token)
-                
-//            if data.is_new_user {
-//                withAnimation {
-//                    step = 2
-//                }
-//            } else {
+            storageData.saveUserInfo(info: data.user_info)
+            storageData.saveToken(token: data.token)
             isToHomeView = true
-//            }
+
         } catch {
             print("邮箱登录错误")
             loadingData.hiddenLoading()
@@ -295,4 +291,5 @@ struct LoginView: View {
 #Preview {
     LoginView()
         .environmentObject(LoadingData())
+        .environmentObject(StorageData())
 }

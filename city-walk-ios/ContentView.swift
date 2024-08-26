@@ -10,22 +10,21 @@ import SwiftUI
 struct ContentView: View {
     /// 启动页面数据
     @EnvironmentObject private var launchScreenData: LaunchScreenData
-    /// 用户数据
-    @EnvironmentObject private var userInfoData: UserInfoData
+    /// 缓存数据
+    @EnvironmentObject private var storageData: StorageData
 
     var body: some View {
-        Group {
-            if launchScreenData.states == .leave {
-                if userInfoData.cacheInfo != nil {
-                    homeViewGroup
-                } else {
-                    LoginView()
-                }
+        if launchScreenData.states == .leave {
+            if storageData.token != nil && storageData.token != "" {
+                homeViewGroup
             } else {
-                LaunchView()
+                LoginView()
+                    .environmentObject(StorageData())
+                    .environmentObject(LoadingData())
             }
+        } else {
+            LaunchView()
         }
-        .environmentObject(UserInfoData())
     }
 
     private var homeViewGroup: some View {
@@ -35,11 +34,12 @@ struct ContentView: View {
             .environmentObject(MainData())
             .environmentObject(LoadingData())
             .environmentObject(HomeData())
+            .environmentObject(StorageData())
     }
 }
 
 #Preview {
     ContentView()
         .environmentObject(LaunchScreenData())
-        .environmentObject(UserInfoData())
+        .environmentObject(StorageData())
 }

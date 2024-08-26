@@ -10,10 +10,10 @@ import SwiftUI
 
 struct LaunchView: View {
     /// 缓存信息
-    private let cacheInfo = UserCache.shared.getInfo()
+//    private let cacheInfo = UserCache.shared.getInfo()
 
     /// 用户信息数据
-    @EnvironmentObject private var userInfoDataModel: UserInfoData
+//    @EnvironmentObject private var userInfoDataModel: UserInfoData
     // 启动页数据
     @EnvironmentObject private var launchScreenData: LaunchScreenData
 
@@ -83,6 +83,6 @@ struct LaunchView: View {
 
 #Preview {
     LaunchView()
-        .environmentObject(UserInfoData())
+//        .environmentObject(StorageData())
         .environmentObject(LaunchScreenData())
 }

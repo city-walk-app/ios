@@ -25,6 +25,8 @@ class Request {
     private let decoder = JSONDecoder()
     private let session = URLSession.shared
 
+    private let storageData = StorageData()
+
     /// 发送请求
     /// - Parameters:
     ///   - url: 请求路径
@@ -50,7 +52,7 @@ class Request {
                 throw URLError(.cannotParseResponse)
             }
             // 6. 设置请求头字段
-            let token = UserCache.shared.getToken()
+            let token = storageData.token
 
 //            if let token = token {
             request.setValue(token, forHTTPHeaderField: "token")
@@ -79,7 +81,7 @@ class Request {
         print("请求响应", data)
 
         do {
-            let decodedData = try self.decoder.decode(type, from: data)
+            let decodedData = try decoder.decode(type, from: data)
 
             return decodedData
         } catch {
