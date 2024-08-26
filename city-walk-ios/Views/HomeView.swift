@@ -442,18 +442,15 @@ struct HomeView: View {
                             Color.clear
                                 .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
                                 .background(
-                                    AsyncImage(url: URL(string: province_url)) { phase in
-                                        if let image = phase.image {
-                                            Color(hex: recordDetail.background_color ?? "#F3943F")
-                                                .mask {
-                                                    image
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fill)
+                                    Color(hex: recordDetail.background_color ?? "#F3943F")
+                                        .mask {
+                                            KFImage(URL(string: province_url))
+                                                .placeholder {
+                                                    Color.clear
                                                 }
-                                        } else {
-                                            Color.clear
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
                                         }
-                                    }
                                 )
                         }
                         
@@ -468,20 +465,16 @@ struct HomeView: View {
                         Color.clear
                             .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
                             .background(
-                                AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/330000.png")) { phase in
-                                    if let image = phase.image {
-                                        Color(hex: "#F3943F")
-                                            .mask {
-                                                image
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .frame(width: 154, height: 154)
+                                Color(hex: "#F3943F")
+                                    .mask {
+                                        KFImage(URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/330000.png"))
+                                            .placeholder {
+                                                Color.clear
                                             }
-                                        
-                                    } else {
-                                        Color.clear
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 154, height: 154)
                                     }
-                                }
                             )
                         
                         // 文案

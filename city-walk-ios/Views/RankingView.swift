@@ -77,29 +77,26 @@ struct RankingView: View {
 
                                     // 头像
                                     NavigationLink(destination: MainView(user_id: item.user_id)) {
-                                        AsyncImage(url: URL(string: item.avatar ?? defaultAvatar)) { image in
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 46, height: 46)
-                                                .clipShape(Circle())
-                                                .overlay {
-                                                    if index == 0 && item.experiences != nil && item.experiences ?? 0 > 0 {
-                                                        // 皇冠
-                                                        AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-crown.png")) { image in
-                                                            image
-                                                                .resizable()
-                                                                .aspectRatio(contentMode: .fill)
-                                                                .frame(width: 25, height: 25)
-                                                                .offset(x: 15, y: -22)
-                                                        } placeholder: {}
-                                                    }
+                                        KFImage(URL(string: item.avatar ?? defaultAvatar))
+                                            .placeholder {
+                                                Circle()
+                                                    .fill(skeletonBackground)
+                                                    .frame(width: 46, height: 46)
+                                            }
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 46, height: 46)
+                                            .clipShape(Circle())
+                                            .overlay {
+                                                if index == 0 && item.experiences != nil && item.experiences ?? 0 > 0 {
+                                                    // 皇冠
+                                                    KFImage(URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/ranking-crown.png"))
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fill)
+                                                        .frame(width: 25, height: 25)
+                                                        .offset(x: 15, y: -22)
                                                 }
-                                        } placeholder: {
-                                            Circle()
-                                                .fill(skeletonBackground)
-                                                .frame(width: 46, height: 46)
-                                        }
+                                            }
                                     }
 
                                     HStack(alignment: .top) {

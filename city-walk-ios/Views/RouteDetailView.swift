@@ -5,6 +5,7 @@
 //  Created by Tyh2001 on 2024/4/4.
 //
 
+import Kingfisher
 import MapKit
 import SwiftUI
 
@@ -33,12 +34,14 @@ struct RouteDetailView: View {
         Map(coordinateRegion: $region, annotationItems: landmarks) { landmark in
             MapAnnotation(coordinate: landmark.coordinate) {
                 VStack {
-                    AsyncImage(url: URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-markers.png")) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 50, height: 64)
-                    } placeholder: {}
+                    KFImage(homeMarkers)
+                        .placeholder {
+                            Color.clear
+                                .frame(width: 50, height: 64)
+                        }
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 50, height: 64)
 
                     Text("地点")
                         .font(.system(size: 20))
