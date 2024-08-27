@@ -29,9 +29,6 @@ struct HomeView: View {
         case picture, location
     }
     
-    /// 缓存信息
-//    private let cacheInfo = UserCache.shared.getInfo()
-//    @StateObject private var userInfoData = UserInfoData()
     /// 心情颜色
     private let moodColorList = moodColors
     /// 最多选择的照片数量
@@ -631,12 +628,52 @@ struct HomeView: View {
                 keyboardHeight = 0
             }
             
+            self.readClipboard() // 读取剪贴板
+            
             Task {
+                await self.getUserInfo() // 获取用户信息
                 await homeData.getTodayRecord() // 获取今天的打卡记录
             }
         }
         .onDisappear {
             NotificationCenter.default.removeObserver(self)
+        }
+        // 退出到桌面返回执行
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            self.readClipboard() // 读取剪贴板
+            
+            Task {
+                await self.getUserInfo() // 获取用户信息
+                await homeData.getTodayRecord() // 获取今天的打卡记录
+            }
+        }
+    }
+    
+    /// 读取剪贴板
+    private func readClipboard() {
+        // 读取剪贴板中的文本内容
+        if let clipboardText = UIPasteboard.general.string {
+            print("剪贴板内容: \(clipboardText)")
+            Task {
+                await getFriendInviteInfo(invite_id: clipboardText)
+            }
+        } else {
+            print("剪贴板中没有文本内容")
+        }
+    }
+    
+    /// 获取邀请详情
+    func getFriendInviteInfo(invite_id: String) async {
+        do {
+            let res = try await Api.shared.getFriendInviteInfo(params: ["invite_id": invite_id])
+            
+            print("邀请详情", res)
+            
+            guard res.code == 200, let data = res.data else {
+                return
+            }
+        } catch {
+            print("获取邀请详情异常")
         }
     }
     
@@ -761,6 +798,7 @@ struct HomeView: View {
             }
 
             userInfo = data
+            storageData.saveUserInfo(info: data)
         } catch {
             print("获取用户信息异常")
         }

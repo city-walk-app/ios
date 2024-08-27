@@ -279,6 +279,7 @@ struct SettingView: View {
     /// 获取缓存的用户信息
     private func loadCacheInfo() {
         guard let info = storageData.userInfo else {
+            isGoLoginView = true
             return
         }
         

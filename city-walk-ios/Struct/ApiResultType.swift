@@ -374,3 +374,22 @@ struct GetTodayRecordType: Decodable {
     var code: Int
     var data: [GetTodayRecordData]?
 }
+
+/// 邀请朋友
+struct FriendInviteType: Decodable {
+    var message: String
+    var code: Int
+    var data: String?
+}
+
+/// 获取邀请详情
+struct GetFriendInviteInfoType: Decodable {
+    struct GetFriendInviteInfoData: Codable {
+        var name: String?
+        var nick_name: String?
+    }
+
+    var message: String
+    var code: Int
+    var data: GetFriendInviteInfoData?
+}

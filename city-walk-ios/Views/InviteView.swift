@@ -21,7 +21,9 @@ struct InviteView: View {
                         // 按钮操作组
                         HStack(spacing: 23) {
                             Button {
-                                loadingData.showLoading(options: LoadingParams(title: "处理中..."))
+                                Task {
+                                    await self.friendInvite()
+                                }
                             } label: {
                                 Text("复制邀请链接")
                                     .frame(width: 160, height: 48)
@@ -36,21 +38,19 @@ struct InviteView: View {
                                     )
                             }
 
-                            Button {
-//                                loadingData.showLoading(options: LoadingParams(title: "处理中..."))
-                            } label: {
-                                Text("分享")
-                                    .frame(width: 160, height: 48)
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(.white)
-                                    .background(Color(hex: "#F3943F"))
-                                    .border(Color(hex: "#F3943F"))
-                                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
-                                    )
-                            }
+//                            Button {} label: {
+//                                Text("分享")
+//                                    .frame(width: 160, height: 48)
+//                                    .font(.system(size: 16))
+//                                    .foregroundStyle(.white)
+//                                    .background(Color(hex: "#F3943F"))
+//                                    .border(Color(hex: "#F3943F"))
+//                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+//                                    .overlay(
+//                                        RoundedRectangle(cornerRadius: 14)
+//                                            .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+//                                    )
+//                            }
                         }
                         .padding(.top, 34)
                     }
@@ -80,6 +80,26 @@ struct InviteView: View {
         .navigationBarItems(leading: BackButton(action: {
             self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
         })) // 自定义返回按钮
+    }
+
+    /// 邀请朋友
+    func friendInvite() async {
+        do {
+            loadingData.showLoading(options: LoadingParams(title: "处理中..."))
+
+            let res = try await Api.shared.friendInvite(params: [:])
+
+            loadingData.hiddenLoading()
+
+            guard res.code == 200, let data = res.data else {
+                return
+            }
+
+            UIPasteboard.general.string = data
+        } catch {
+            print("邀请朋友异常")
+            loadingData.hiddenLoading()
+        }
     }
 }
 

@@ -170,4 +170,24 @@ class Api {
             type: GetTodayRecordType.self
         )
     }
+    
+    /// 邀请朋友
+    func friendInvite(params: [String: Any]) async throws -> FriendInviteType {
+        return try await Request.shared.request(
+            url: "/friend/invite",
+            params: params,
+            method: .post,
+            type: FriendInviteType.self
+        )
+    }
+    
+    /// 获取邀请详情
+    func getFriendInviteInfo(params: [String: Any]) async throws -> GetFriendInviteInfoType {
+        return try await Request.shared.request(
+            url: "/friend/get/invite/info",
+            params: params,
+            method: .post,
+            type: GetFriendInviteInfoType.self
+        )
+    }
 }
