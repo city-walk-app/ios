@@ -80,12 +80,14 @@ struct HomeView: View {
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
+    /// 用户位置
+    @State private var location = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     
     var body: some View {
         NavigationStack {
             ZStack {
                 // 地图
-                Map(coordinateRegion: $homeData.region, annotationItems: homeData.landmarks ?? []) { landmark in
+                Map(coordinateRegion: $homeData.region, showsUserLocation: true, annotationItems: homeData.landmarks ?? []) { landmark in
                     MapAnnotation(coordinate: landmark.coordinate) {
                         VStack(spacing: 3) {
                             KFImage(homeMarkers)
@@ -109,7 +111,22 @@ struct HomeView: View {
                     }
                 }
                 .ignoresSafeArea(.all) // 忽略安全区域边缘
-             
+                .onAppear {
+                    if let currentLocation = locationManager.location?.coordinate {
+                        homeData.region.center = currentLocation
+                        location = currentLocation // 更新 location 为当前用户位置
+                    }
+                }
+//                .overlay {
+//                    MapAnnotation(coordinate: location) {
+//                        KFImage(URL(string: storageData.userInfo?.avatar ?? defaultAvatar))
+//                            .resizable()
+//                            .frame(width: 42, height: 42)
+//                            .clipShape(Circle())
+//                            .zIndex(300)
+//                    }
+//                }
+                
                 // 头部和底部操作视图
                 VStack {
                     // 头部操作栏
@@ -707,8 +724,8 @@ struct HomeView: View {
                 "mood_color": routeDetailForm.mood_color,
                 "address": routeDetailForm.address,
                 "picture": routeDetailForm.picture,
-                "longitude": routeDetailForm.longitude,
-                "latitude": routeDetailForm.latitude,
+                "longitude": routeDetailForm.longitude ?? "",
+                "latitude": routeDetailForm.latitude ?? "",
             ])
             
             loadingData.hiddenLoading()

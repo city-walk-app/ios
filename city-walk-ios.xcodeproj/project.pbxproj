@@ -32,6 +32,7 @@
 		2670A68F2BD403290004E3A1 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2670A68E2BD403290004E3A1 /* SettingView.swift */; };
 		2672F1272C7B31E9006A4375 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 2672F1262C7B31E9006A4375 /* Kingfisher */; };
 		2672F12B2C7B3894006A4375 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2672F12A2C7B3894006A4375 /* Images.swift */; };
+		2672F1392C7D5899006A4375 /* Genders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2672F1382C7D5899006A4375 /* Genders.swift */; };
 		2685D0262C6B9E1600892F5B /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2685D0252C6B9E1600892F5B /* Color.swift */; };
 		26A3CD5F2C709ACD00635D6D /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A3CD5E2C709ACD00635D6D /* Colors.swift */; };
 		26A3CD612C70E1EB00635D6D /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A3CD602C70E1EB00635D6D /* UINavigationController.swift */; };
@@ -77,6 +78,7 @@
 		265ED69D2C4501D1009142A7 /* FriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsView.swift; sourceTree = "<group>"; };
 		2670A68E2BD403290004E3A1 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		2672F12A2C7B3894006A4375 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
+		2672F1382C7D5899006A4375 /* Genders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genders.swift; sourceTree = "<group>"; };
 		2685D0252C6B9E1600892F5B /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		26A3CD5E2C709ACD00635D6D /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		26A3CD602C70E1EB00635D6D /* UINavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				2628877B2C720A1E006BBE1E /* MoodColors.swift */,
+				2672F1382C7D5899006A4375 /* Genders.swift */,
 			);
 			path = Enum;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 				26B998752BBD982A000D1E88 /* RankingView.swift in Sources */,
 				265201772C6F9F9D00222C9A /* BackButton.swift in Sources */,
 				2617B7E42C7581FB00E3BD82 /* VariableBlur.swift in Sources */,
+				2672F1392C7D5899006A4375 /* Genders.swift in Sources */,
 				265ED69E2C4501D1009142A7 /* FriendsView.swift in Sources */,
 				26AB72512BC8086000F12616 /* Path.swift in Sources */,
 				26A624012BDFCFF10074352D /* ImagePickerView.swift in Sources */,

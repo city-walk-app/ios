@@ -17,7 +17,7 @@ enum SheetKey {
 struct UserInfo {
     var avatar: String
     var nick_name: String
-    var gender: String
+    var gender: Genders
     var mobile: String
     var signature: String
 }
@@ -38,7 +38,7 @@ struct SettingView: View {
         InfoItemBar(icon: "smartphone", key: .mobile, title: "手机", color: "#FF323E"),
         InfoItemBar(icon: "lightbulb", key: .signature, title: "签名", color: "#0348F2"),
     ]
-    
+   
     @EnvironmentObject private var storageData: StorageData
 
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -47,8 +47,6 @@ struct SettingView: View {
     @State private var sheetKey: SheetKey = .nick_name
     /// 是否显示编辑信息的弹窗
     @State private var isShowSetInfo = false
-    /// token
-//    private let token = UserCache.shared.getToken()
     /// 是否跳转到登录页面
     @State private var isGoLoginView = false
     /// 是否显示退出登录的按钮确认框
@@ -61,7 +59,7 @@ struct SettingView: View {
     @State private var userInfo = UserInfo(
         avatar: "",
         nick_name: "",
-        gender: "",
+        gender: .male,
         mobile: "",
         signature: ""
     )
@@ -222,7 +220,6 @@ struct SettingView: View {
                             }
                         }
                         .alert(isPresented: $showingLogoutAlert) {
-                            // 当 showingLogoutAlert 为 true 时，显示确认框
                             Alert(
                                 title: Text("提示"),
                                 message: Text("确定退出当前账号吗?"),
@@ -266,7 +263,9 @@ struct SettingView: View {
             self.loadCacheInfo() // 获取缓存的用户信息
         }
         // 修改信息的弹出层
-        .sheet(isPresented: $visibleSheet) {
+        .sheet(isPresented: $visibleSheet, onDismiss: {
+            self.loadCacheInfo() // 获取缓存的用户信息
+        }) {
             SettingSheetView(
                 storageData: storageData,
                 sheetKey: $sheetKey,
@@ -284,43 +283,20 @@ struct SettingView: View {
         }
         
         userInfo.avatar = info.avatar ?? defaultAvatar
-        userInfo.gender = info.gender ?? ""
+        userInfo.gender = Genders.from(value: info.gender ?? "")
         userInfo.nick_name = info.nick_name
         userInfo.signature = info.signature ?? ""
         userInfo.mobile = info.mobile ?? ""
-    }
-    
-    /// 设置用户信息
-    private func setUserInfo() async {
-        do {
-            let res = try await Api.shared.setUserInfo(params: [
-                "avatar": userInfo.avatar,
-                "nick_name": userInfo.nick_name,
-                "gender": userInfo.gender,
-                "mobile": userInfo.mobile,
-                "signature": userInfo.signature,
-            ])
-            
-            print("设置用户信息结果", res)
-            
-            if let data = res.data, res.code == 200 {
-                print("设置成功", data)
-            }
-        }
-        catch {
-            print("设置用户信息异常")
-        }
     }
 }
 
 /// 设置 sheet 弹窗内容
 struct SettingSheetView: View {
+    /// 缓存数据
     var storageData: StorageData
     
     /// 最多选择的照片数量
     private let pictureMaxCount = 1
-    
-//    @StateObject private var userInfoData = UserInfoData()
     
     /// 显示的内容 key
     @Binding var sheetKey: SheetKey
@@ -335,6 +311,9 @@ struct SettingSheetView: View {
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
+    
+    /// 性别列表
+    private let genders: [Genders] = Genders.allCases
    
     var body: some View {
         NavigationStack {
@@ -346,7 +325,7 @@ struct SettingSheetView: View {
                     } label: {
                         VStack {
                             if self.selectedImages.isEmpty {
-                                KFImage(URL(string: userInfo.avatar ?? defaultAvatar))
+                                KFImage(URL(string: userInfo.avatar))
                                     .placeholder {
                                         Circle()
                                             .fill(skeletonBackground)
@@ -367,7 +346,7 @@ struct SettingSheetView: View {
                                 
                             Text("上传头像")
                                 .font(.system(size: 17))
-                                .foregroundStyle(Color(hex: "#333333"))
+                                .foregroundStyle(Color("text-1"))
                         }
                     }
                     // 选择照片的全屏弹出对话框
@@ -391,7 +370,51 @@ struct SettingSheetView: View {
                 }
                 // 性别
                 else if sheetKey == .gender {
-                    Text("性别")
+                    VStack {
+                        LazyVGrid(columns: [
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                        ]) {
+                            Button {
+                                withAnimation {
+                                    self.userInfo.gender = .male
+                                }
+                            } label: {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(userInfo.gender == .male ? Color(hex: "#F3943F") : Color("text-2"))
+                                    .frame(height: 160)
+                                    .overlay {
+                                        Text("\(genders[0].sex)")
+                                    }
+                            }
+                                
+                            Button {
+                                withAnimation {
+                                    self.userInfo.gender = .female
+                                }
+                            } label: {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(userInfo.gender == .female ? Color(hex: "#F3943F") : Color("text-2"))
+                                    .frame(height: 160)
+                                    .overlay {
+                                        Text("\(genders[1].sex)")
+                                    }
+                            }
+                        }
+                        
+                        Button {
+                            withAnimation {
+                                self.userInfo.gender = .privacy
+                            }
+                        } label: {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(userInfo.gender == .privacy ? Color(hex: "#F3943F") : Color("text-2"))
+                                .frame(width: .infinity, height: 90)
+                                .overlay {
+                                    Text("\(genders[2].sex)")
+                                }
+                        }
+                    }
                 }
                 // 手机
                 else if sheetKey == .mobile {
@@ -482,7 +505,7 @@ struct SettingSheetView: View {
             let res = try await Api.shared.setUserInfo(params: [
                 "nick_name": userInfo.nick_name,
                 "avatar": userInfo.avatar,
-                "gender": userInfo.gender,
+                "gender": userInfo.gender.rawValue,
                 "mobile": userInfo.mobile,
                 "signature": userInfo.signature,
             ])
@@ -496,10 +519,6 @@ struct SettingSheetView: View {
             storageData.saveUserInfo(info: data)
                 
             visibleSheet.toggle()
-                
-            if let avatar = data.avatar {
-                userInfo.avatar = avatar
-            }
         }
         catch {
             print("设置用户信息异常")
