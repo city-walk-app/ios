@@ -489,8 +489,6 @@ struct SettingSheetView: View {
     
     /// 提交用户信息
     private func submitUserInfo() async {
-//        var params = [:]
-        
         if sheetKey == .avatar {
             // 有选择照片
             if !selectedImages.isEmpty {

@@ -393,3 +393,9 @@ struct GetFriendInviteInfoType: Decodable {
     var code: Int
     var data: GetFriendInviteInfoData?
 }
+
+/// 同意好友申请
+struct FriendConfirmInviteType: Decodable {
+    var message: String
+    var code: Int
+}

@@ -79,6 +79,12 @@ struct HomeView: View {
     @State private var selectedImages: [UIImage] = []
     /// 用户位置
     @State private var location = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    /// 是否显示朋友邀请确认框
+    @State private var isShowFriendInviteAlert = false
+    /// 朋友申请信息
+    @State private var friendInviteDetail: GetFriendInviteInfoType.GetFriendInviteInfoData?
+    /// 朋友邀请 id
+    @State private var invite_id: String?
     
     var body: some View {
         NavigationStack {
@@ -98,10 +104,18 @@ struct HomeView: View {
 
                             if let picture = landmark.picure, !picture.isEmpty {
                                 ForEach(picture, id: \.self) { item in
-                                    KFImage(URL(string: item))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 30, height: 30)
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color("background-1"))
+                                        .frame(width: 90, height: 90)
+                                        .overlay {
+                                            KFImage(URL(string: item))
+                                                .resizable()
+                                                .frame(width: 82, height: 82)
+                                                .aspectRatio(contentMode: .fill)
+                                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                                                .clipped()
+                                        }
+                                        .shadow(radius: 5)
                                 }
                             }
                         }
@@ -609,6 +623,18 @@ struct HomeView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
+        .alert(isPresented: $isShowFriendInviteAlert) {
+            Alert(
+                title: Text("提示"),
+                message: Text("\(friendInviteDetail?.name ?? "")申请加你为好友，你同意吗？"),
+                primaryButton: .destructive(Text("确定"), action: {
+                    Task {
+                        await self.friendConfirmInvite()
+                    }
+                }),
+                secondaryButton: .cancel(Text("取消"))
+            )
+        }
         .onAppear {
             NotificationCenter.default.addObserver(
                 forName: UIResponder.keyboardWillShowNotification,
@@ -649,13 +675,29 @@ struct HomeView: View {
         }
     }
     
+    /// 同意好友申请
+    private func friendConfirmInvite() async {
+        do {
+            let res = try await Api.shared.friendConfirmInvite(params: ["invite_id": invite_id])
+            
+            print("同意好友请求返回值", res)
+            
+            if res.code == 200 {
+                print("同意成功")
+            }
+        } catch {
+            print("同意好友申请异常")
+        }
+    }
+    
     /// 读取剪贴板
     private func readClipboard() {
         // 读取剪贴板中的文本内容
         if let clipboardText = UIPasteboard.general.string {
             print("剪贴板内容: \(clipboardText)")
+            invite_id = clipboardText
             Task {
-                await getFriendInviteInfo(invite_id: clipboardText)
+                await getFriendInviteInfo()
             }
         } else {
             print("剪贴板中没有文本内容")
@@ -663,7 +705,7 @@ struct HomeView: View {
     }
     
     /// 获取邀请详情
-    func getFriendInviteInfo(invite_id: String) async {
+    func getFriendInviteInfo() async {
         do {
             let res = try await Api.shared.getFriendInviteInfo(params: ["invite_id": invite_id])
             
@@ -672,6 +714,9 @@ struct HomeView: View {
             guard res.code == 200, let data = res.data else {
                 return
             }
+            
+            friendInviteDetail = data
+            isShowFriendInviteAlert.toggle()
         } catch {
             print("获取邀请详情异常")
         }
@@ -702,6 +747,7 @@ struct HomeView: View {
         )
         
         recordDetail = nil
+        moodColorActive = nil
         selectedImages = []
     }
     
@@ -854,8 +900,8 @@ struct HomeView: View {
 
             print("当前经纬度", longitude, latitude)
 
-            await locationCreateRecord(longitude: longitude, latitude: latitude) // 打卡当前地点
-//            await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
+//            await locationCreateRecord(longitude: longitude, latitude: latitude) // 打卡当前地点
+            await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
       
         case .restricted, .denied:
             print("当前位置数据被限制或拒绝")

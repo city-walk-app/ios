@@ -190,4 +190,14 @@ class Api {
             type: GetFriendInviteInfoType.self
         )
     }
+    
+    /// 同意好友申请
+    func friendConfirmInvite(params: [String: Any]) async throws -> FriendConfirmInviteType {
+        return try await Request.shared.request(
+            url: "/friend/confirm/invite",
+            params: params,
+            method: .post,
+            type: FriendConfirmInviteType.self
+        )
+    }
 }

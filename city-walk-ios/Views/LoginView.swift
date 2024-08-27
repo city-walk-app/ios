@@ -23,7 +23,7 @@ struct LoginHeaderView: View {
             Text(title)
                 .font(.system(size: 28))
                 .bold()
-                .foregroundStyle(Color(hex: "#333333"))
+                .foregroundStyle(Color("text-1"))
         
             Spacer()
         }

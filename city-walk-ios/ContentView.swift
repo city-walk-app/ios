@@ -21,6 +21,7 @@ struct ContentView: View {
                 LoginView()
                     .environmentObject(StorageData())
                     .environmentObject(LoadingData())
+                    .environmentObject(HomeData())
             }
         } else {
             LaunchView()

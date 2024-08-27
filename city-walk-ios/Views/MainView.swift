@@ -382,6 +382,7 @@ struct MainView: View {
                                                 Text("\(item.city ?? "")")
                                                     .padding(.horizontal, 24)
                                                     .frame(maxHeight: .infinity)
+                                                    .foregroundStyle(Color("text-1"))
                                                     .background(
                                                         LinearGradient(
                                                             gradient: Gradient(
@@ -401,7 +402,7 @@ struct MainView: View {
                                                 HStack {
                                                     Text("\(item.content!)")
                                                         .font(.system(size: 14))
-                                                        .foregroundStyle(Color(hex: "#666666"))
+                                                        .foregroundStyle(Color("text-2"))
                                                         .padding(.horizontal, 24)
                                                         .padding(.top, 14)
                                                         .padding(.bottom, 12)
@@ -433,7 +434,7 @@ struct MainView: View {
                                             }
                                         }
                                         .frame(maxWidth: .infinity)
-                                        .background(.white)
+//                                        .background(.white)
                                         .clipShape(RoundedRectangle(cornerRadius: 10))
                                         .shadow(color: Color(hex: "#656565").opacity(0.1), radius: 5.4, x: 0, y: 1)
                                     }
@@ -465,33 +466,47 @@ struct MainView: View {
                                 LazyVGrid(columns: columns, alignment: .center) {
                                     ForEach(mainData.routeList, id: \.list_id) { item in
                                         NavigationLink(destination: RouteDetailView(list_id: item.list_id, user_id: self.user_id)) {
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(Color(hex: item.mood_color ?? "#FFCC94"))
-                                                .frame(height: 116)
-                                                .frame(maxWidth: .infinity)
-                                                .overlay {
-                                                    HStack {
-                                                        Spacer()
-                                                        
-                                                        VStack {
-                                                            // 地点数量
-                                                            Text("地点×\(item.count)")
-                                                                .foregroundStyle(.white)
-                                                                .font(.system(size: 16))
-                                                                .padding(.top, 28)
-                                                                .padding(.trailing, 16)
-                                                            
-                                                            Spacer()
-                                                            
-                                                            // 时间
-                                                            Text("\(convertToDateOnly(from: item.create_at)!)")
-                                                                .foregroundStyle(.white)
-                                                                .font(.system(size: 14))
-                                                                .padding(.bottom, 10)
-                                                                .padding(.trailing, 16)
-                                                        }
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(Color(hex: item.mood_color ?? "#FFCC94"))
+                                                    .frame(height: 116)
+                                                    .frame(maxWidth: .infinity)
+                                                    .overlay {
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .fill(.white.opacity(0.3))
+                                                            .overlay {
+                                                                RoundedRectangle(cornerRadius: 200)
+                                                                    .fill(Color(hex: item.mood_color ?? "#FFCC94"))
+                                                                    .frame(width: 400, height: 370)
+                                                                    .offset(y: -170)
+                                                                    .rotationEffect(.degrees(13))
+                                                            }
+                                                            .clipped()
                                                     }
+                                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                                
+                                                HStack {
+                                                    Spacer()
+                                           
+                                                    VStack(alignment: .trailing) {
+                                                        // 地点数量
+                                                        Text("地点×\(item.count)")
+                                                            .foregroundStyle(.white)
+                                                            .font(.system(size: 16))
+                                                            .padding(.top, 28)
+                                                            .bold()
+                                           
+                                                        Spacer()
+                                           
+                                                        // 时间
+                                                        Text("\(convertToDateOnly(from: item.create_at)!)")
+                                                            .foregroundStyle(.white)
+                                                            .font(.system(size: 14))
+                                                            .padding(.bottom, 10)
+                                                    }
+                                                    .padding(.trailing, 16)
                                                 }
+                                            }
                                         }
                                     }
                                 }
