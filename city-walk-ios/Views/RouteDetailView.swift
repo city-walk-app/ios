@@ -48,11 +48,10 @@ struct RouteDetailView: View {
                 }
             }
         }
-        .ignoresSafeArea(.all) // 忽略安全区域边缘
+        .ignoresSafeArea(.all)
         .navigationBarBackButtonHidden(true)
-//        .toolbar(.hidden)
         .navigationBarItems(leading: BackButton {
-            self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
+            self.presentationMode.wrappedValue.dismiss()
         }) // 自定义返回按钮
         .onAppear {
             Task {

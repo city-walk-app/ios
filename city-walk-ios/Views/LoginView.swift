@@ -9,44 +9,22 @@ import Combine
 import Foundation
 import SwiftUI
 
-struct LoginHeaderView: View {
-    var title: String
-    
-    var body: some View {
-        HStack(alignment: .bottom, spacing: 20) {
-            Image("logo")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 56, height: 56)
-                .mask(Circle())
-        
-            Text(title)
-                .font(.system(size: 28))
-                .bold()
-                .foregroundStyle(Color("text-1"))
-        
-            Spacer()
-        }
-    }
-}
+/// 卡片数量
+private let cardCount: CGFloat = 2
 
 struct LoginView: View {
-    /// 聚焦的输入框枚举
-    enum FocusedField: Hashable {
-        case email, code
-    }
-
     /// 创建一个每秒触发一次的定时器
     private let timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
-    /// 卡片数量
-    private let cardCount: CGFloat = 2
-    
+  
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     /// loading 数据
     @EnvironmentObject private var loadingData: LoadingData
     /// 缓存数据
     @EnvironmentObject private var storageData: StorageData
+    
+    /// 输入框是否获取焦点
+    @FocusState private var focus: FocusedField?
     
     /// 操作步骤
     @State private var step = 0
@@ -60,8 +38,6 @@ struct LoginView: View {
     @State private var isLoginButtonDisabled = false
     /// 是否跳转到首页
     @State private var isToHomeView = false
-    /// 输入框是否获取焦点
-    @FocusState var focus: FocusedField?
     /// 是否在倒计时中
     @State private var isCountingDown = false
     /// 设置倒计时秒数
@@ -287,6 +263,34 @@ struct LoginView: View {
             content = String(content.prefix(maxLength))
         }
     }
+}
+
+/// 登录头部
+private struct LoginHeaderView: View {
+    /// 标题
+    var title: String
+    
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 20) {
+            Image("logo")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 56, height: 56)
+                .mask(Circle())
+        
+            Text(title)
+                .font(.system(size: 28))
+                .bold()
+                .foregroundStyle(Color("text-1"))
+        
+            Spacer()
+        }
+    }
+}
+
+/// 聚焦的输入框枚举
+private enum FocusedField: Hashable {
+    case email, code
 }
 
 #Preview {

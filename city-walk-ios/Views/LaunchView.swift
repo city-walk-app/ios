@@ -83,6 +83,5 @@ struct LaunchView: View {
 
 #Preview {
     LaunchView()
-//        .environmentObject(StorageData())
         .environmentObject(LaunchScreenData())
 }

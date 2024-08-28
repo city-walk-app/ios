@@ -8,34 +8,29 @@
 import Kingfisher
 import SwiftUI
 
+let mainHeatmap1 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-1.png")
+let mainHeatmap2 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")
+let mainHeatmap3 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")
+
+/// 月份选择
+private let monthSelectList = [
+    MonthSelectItem(title: "一", key: 1, active: false),
+    MonthSelectItem(title: "二", key: 2, active: false),
+    MonthSelectItem(title: "三", key: 3, active: false),
+    MonthSelectItem(title: "四", key: 4, active: false),
+    MonthSelectItem(title: "五", key: 5, active: false),
+    MonthSelectItem(title: "六", key: 6, active: false),
+    MonthSelectItem(title: "七", key: 7, active: false),
+    MonthSelectItem(title: "八", key: 8, active: false),
+    MonthSelectItem(title: "九", key: 9, active: false),
+    MonthSelectItem(title: "十", key: 10, active: false),
+    MonthSelectItem(title: "十一", key: 11, active: false),
+    MonthSelectItem(title: "十二", key: 12, active: false),
+]
+
 struct MainView: View {
     /// 用户 id
     var user_id: String
-    
-    let mainHeatmap1 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-1.png")
-    let mainHeatmap2 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")
-    let mainHeatmap3 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")
-
-    struct MonthSelectItem {
-        var title: String
-        var key: Int
-        var active: Bool
-    }
-    
-    private let monthSelectList = [
-        MonthSelectItem(title: "一", key: 1, active: false),
-        MonthSelectItem(title: "二", key: 2, active: false),
-        MonthSelectItem(title: "三", key: 3, active: false),
-        MonthSelectItem(title: "四", key: 4, active: false),
-        MonthSelectItem(title: "五", key: 5, active: false),
-        MonthSelectItem(title: "六", key: 6, active: false),
-        MonthSelectItem(title: "七", key: 7, active: false),
-        MonthSelectItem(title: "八", key: 8, active: false),
-        MonthSelectItem(title: "九", key: 9, active: false),
-        MonthSelectItem(title: "十", key: 10, active: false),
-        MonthSelectItem(title: "十一", key: 11, active: false),
-        MonthSelectItem(title: "十二", key: 12, active: false),
-    ]
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
@@ -609,6 +604,13 @@ struct MainView: View {
             mainData.onDisappear() // 清除数据
         }
     }
+}
+
+/// 月份选择
+private struct MonthSelectItem {
+    var title: String
+    var key: Int
+    var active: Bool
 }
 
 #Preview {

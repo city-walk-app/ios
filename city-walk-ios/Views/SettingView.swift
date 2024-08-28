@@ -8,29 +8,7 @@
 import Kingfisher
 import SwiftUI
 
-/// 用户信息编辑键
-enum SheetKey {
-    case avatar, nick_name, gender, mobile, signature
-}
-
-/// 用户信息
-struct UserInfo {
-    var avatar: String
-    var nick_name: String
-    var gender: Genders
-    var mobile: String
-    var signature: String
-}
-
 struct SettingView: View {
-    /// 信息每一项度菜单
-    struct InfoItemBar {
-        var icon: String
-        var key: SheetKey
-        var title: String
-        var color: String
-    }
-    
     /// 信息设置的每一项
     private let infoItems = [
         InfoItemBar(icon: "person", key: .nick_name, title: "名字", color: "#EF7708"),
@@ -292,9 +270,9 @@ struct SettingView: View {
 }
 
 /// 设置 sheet 弹窗内容
-struct SettingSheetView: View {
+private struct SettingSheetView: View {
     /// 缓存数据
-    var storageData: StorageData
+    let storageData: StorageData
     
     /// 最多选择的照片数量
     private let pictureMaxCount = 1
@@ -523,6 +501,28 @@ struct SettingSheetView: View {
             print("设置用户信息异常")
         }
     }
+}
+
+/// 用户信息编辑键
+private enum SheetKey {
+    case avatar, nick_name, gender, mobile, signature
+}
+
+/// 用户信息
+private struct UserInfo {
+    var avatar: String
+    var nick_name: String
+    var gender: Genders
+    var mobile: String
+    var signature: String
+}
+
+/// 信息每一项度菜单
+private struct InfoItemBar {
+    var icon: String
+    var key: SheetKey
+    var title: String
+    var color: String
 }
 
 #Preview {
