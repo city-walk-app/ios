@@ -83,12 +83,14 @@ struct HomeView: View {
                 .ignoresSafeArea(.all) // 忽略安全区域边缘
                 .onAppear {
                     if var currentLocation = locationManager.location?.coordinate {
-                        homeData.region.center = currentLocation
-                        
                         currentLocation.latitude = currentLocation.latitude + latitudeOffset
                         currentLocation.longitude = currentLocation.longitude + longitudeOffset
                         
-                        location = currentLocation // 更新 location 为当前用户位置
+                        // SwiftUI 期望这些变化是在主线程上完成的
+                        DispatchQueue.main.async {
+                            homeData.region.center = currentLocation
+                            location = currentLocation // 更新 location 为当前用户位置
+                        }
                     }
                 }
                 
