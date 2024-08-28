@@ -386,8 +386,8 @@ struct HomeView: View {
 
             print("当前经纬度", longitude, latitude)
 
-//            await locationCreateRecord(longitude: longitude, latitude: latitude) // 打卡当前地点
-            await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
+            await locationCreateRecord(longitude: longitude, latitude: latitude) // 打卡当前地点
+//            await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
       
         case .restricted, .denied:
             print("当前位置数据被限制或拒绝")
@@ -613,8 +613,6 @@ private struct HomeRecordSheetView: View {
                         Task {
                             await self.getAroundAddress()
                         }
-                        self.fullScreenCoverType = .location
-                        self.visibleFullScreenCover.toggle()
                     } label: {
                         Text("\(routeDetailForm.address == "" ? "选择当前位置" : routeDetailForm.address)")
                             .frame(maxWidth: .infinity)
@@ -735,13 +733,15 @@ private struct HomeRecordSheetView: View {
                 "page_num": 1,
             ])
 
-            print("获取周边地址", res)
+            print("获取周边地址", res, longitude, latitude)
 
             guard res.code == 200, let data = res.data else {
                 return
             }
 
             addressList = data
+            fullScreenCoverType = .location
+            visibleFullScreenCover.toggle()
         } catch {
             print("获取周边地址异常")
         }
