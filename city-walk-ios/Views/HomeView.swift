@@ -70,6 +70,8 @@ struct HomeView: View {
     @State private var friendInviteDetail: GetFriendInviteInfoType.GetFriendInviteInfoData?
     /// 朋友邀请 id
     @State private var invite_id: String?
+    /// 是否显示卫星地图
+    @State private var isSatelliteMap = false
     
     var body: some View {
         NavigationStack {
@@ -81,6 +83,7 @@ struct HomeView: View {
                     }
                 }
                 .ignoresSafeArea(.all) // 忽略安全区域边缘
+                .mapStyle(isSatelliteMap ? .hybrid : .standard)
                 .onAppear {
                     if var currentLocation = locationManager.location?.coordinate {
                         currentLocation.latitude = currentLocation.latitude + latitudeOffset
@@ -97,7 +100,7 @@ struct HomeView: View {
                 // 头部和底部操作视图
                 VStack {
                     // 头部操作栏
-                    HomeHeaderView(storageData: storageData)
+                    HomeHeaderView(storageData: storageData, isSatelliteMap: $isSatelliteMap)
                 
                     Spacer()
                     
@@ -860,6 +863,7 @@ private struct HomeRecordSheetFullScreenCoverView: View {
 /// 首页头部
 private struct HomeHeaderView: View {
     var storageData: StorageData
+    @Binding var isSatelliteMap: Bool
     
     var body: some View {
         HStack(alignment: .top) {
@@ -920,7 +924,9 @@ private struct HomeHeaderView: View {
                 
                 VStack(spacing: 0) {
                     // 切换主题按钮
-                    Button {} label: {
+                    Button {
+                        self.isSatelliteMap.toggle()
+                    } label: {
                         Rectangle()
                             .fill(.ultraThinMaterial)
                             .frame(width: 42, height: 42)

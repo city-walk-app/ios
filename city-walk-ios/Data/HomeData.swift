@@ -49,10 +49,10 @@ class HomeData: NSObject, ObservableObject {
             // SwiftUI 期望这些变化是在主线程上完成的
             DispatchQueue.main.async {
                 withAnimation {
-                    self.region = MKCoordinateRegion(
-                        center: CLLocationCoordinate2D(latitude: Double(data[0].latitude) ?? 0, longitude: Double(data[0].longitude) ?? 0),
-                        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-                    )
+//                    self.region = MKCoordinateRegion(
+//                        center: CLLocationCoordinate2D(latitude: Double(data[0].latitude) ?? 0, longitude: Double(data[0].longitude) ?? 0),
+//                        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+//                    )
                     self.landmarks = data.map { item in
                         Landmark(
                             coordinate: CLLocationCoordinate2D(
