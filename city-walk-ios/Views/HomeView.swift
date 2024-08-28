@@ -11,13 +11,13 @@ import Kingfisher
 import MapKit
 import SwiftUI
 
+/// 心情颜色
+private let moodColorList = moodColors
+/// 最多选择的照片数量
+private let pictureMaxCount = 2
+
 /// 主视图，用于显示地图和操作选项
 struct HomeView: View {
-    /// 心情颜色
-    private let moodColorList = moodColors
-    /// 最多选择的照片数量
-    private let pictureMaxCount = 2
- 
     /// loading 数据
     @EnvironmentObject private var loadingData: LoadingData
     /// 首页数据
@@ -28,8 +28,6 @@ struct HomeView: View {
     /// 定位数据管理对象
     @StateObject private var locationDataManager = LocationDataManager()
 
-    /// 全屏弹窗显示的类型
-    @State private var fullScreenCoverType: FullScreenCoverType = .picture
     /// 打卡弹窗是否显示
     @State private var visibleSheet = false
     /// 是否显示选择的菜单
@@ -49,8 +47,6 @@ struct HomeView: View {
         address: "",
         picture: []
     )
-    /// 推荐的地址列表
-    @State private var addressList: [GetAroundAddressType.GetAroundAddressData] = []
     /// 心情颜色选中的配置
     @State private var moodColorActive: MoodColor?
     /// 打卡信息详情
@@ -116,7 +112,7 @@ struct HomeView: View {
                 // 头部和底部操作视图
                 VStack {
                     // 头部操作栏
-                    HomeHeader(storageData: storageData)
+                    HomeHeaderView(storageData: storageData)
                 
                     Spacer()
                     
@@ -125,11 +121,6 @@ struct HomeView: View {
                 }
                 .ignoresSafeArea(.all, edges: .bottom)
                 
-                /// https://stackoverflow.com/questions/64551580/swiftui-sheet-doesnt-access-the-latest-value-of-state-variables-on-first-appear
-                Text("\(String(describing: recordDetail))\(fullScreenCoverType)")
-                    .font(.system(size: 0))
-                    .foregroundStyle(Color.clear)
-             
                 // loading 组件
                 Loading()
             }
@@ -141,373 +132,19 @@ struct HomeView: View {
             }
         }
         // 打卡的对话框
-        .sheet(isPresented: $visibleSheet, onDismiss: {
-            self.clearStepFormData()
-        }) {
-            ZStack {
-                VStack {
-                    if let recordDetail = self.recordDetail {
-                        // 省份图
-                        if let province_url = recordDetail.province_url {
-                            // 省份图
-                            Color.clear
-                                .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
-                                .background(
-                                    Color(hex: recordDetail.background_color ?? "#F3943F")
-                                        .mask {
-                                            KFImage(URL(string: province_url))
-                                                .placeholder {
-                                                    Color.clear
-                                                }
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                        }
-                                )
-                        }
-                        
-                        // 文案
-                        Text("\(recordDetail.content ?? "当前地点打卡成功")")
-                            .foregroundStyle(Color(hex: recordDetail.background_color ?? "#F3943F"))
-                            .padding(.top, 9)
-                            .font(.system(size: 16))
-                            .bold()
-                    } else {
-                        // 省份图
-                        Color.clear
-                            .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
-                            .background(
-                                Color(hex: "#F3943F")
-                                    .mask {
-                                        KFImage(URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/330000.png"))
-                                            .placeholder {
-                                                Color.clear
-                                            }
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 154, height: 154)
-                                    }
-                            )
-                        
-                        // 文案
-                        Text("当前地点打卡成功")
-                            .foregroundStyle(Color(hex: "#F3943F"))
-                            .padding(.top, 9)
-                            .font(.system(size: 16))
-                            .bold()
-                    }
-                    
-                    VStack(spacing: 0) {
-                        HStack {
-                            // 一张照片都没选择
-                            if selectedImages.count == 0 || selectedImages.isEmpty {
-                                // 发布瞬间
-                                Button {
-                                    self.fullScreenCoverType = .picture
-                                    self.visibleFullScreenCover.toggle()
-                                } label: {
-                                    VStack {
-                                        KFImage(recordSucceseCamera)
-                                            .placeholder {
-                                                Color.clear
-                                                    .frame(width: 69, height: 64)
-                                            }
-                                            .resizable()
-                                            .frame(width: 69, height: 64)
-                                        
-                                        Text("发布瞬间")
-                                            .padding(.vertical, 9)
-                                            .padding(.horizontal, 48)
-                                            .foregroundStyle(.white)
-                                            .background(Color(hex: "#F3943F"))
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                                    }
-                                }
-                            }
-                            // 选择了一张照片
-                            else if selectedImages.count == 1 {
-                                let columns = [
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible()),
-                                ]
-                            
-                                LazyVGrid(columns: columns) {
-                                    Image(uiImage: selectedImages[0])
-                                        .resizable()
-                                        .frame(height: 134)
-                                        .frame(maxWidth: .infinity)
-                                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                                        .onLongPressGesture {
-                                            visibleActionSheet.toggle()
-                                        }
-                                    
-                                    Button {
-                                        self.fullScreenCoverType = .picture
-                                        self.visibleFullScreenCover.toggle()
-                                    } label: {
-                                        KFImage(recordSucceseCamera)
-                                            .placeholder {
-                                                Color.clear
-                                                    .frame(width: 69, height: 64)
-                                            }
-                                            .resizable()
-                                            .frame(width: 69, height: 64)
-                                    }
-                                }
-                            }
-                            // 选择了两张照片
-                            else if selectedImages.count == 2 {
-                                let columns = [
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible()),
-                                ]
-                            
-                                LazyVGrid(columns: columns) {
-                                    ForEach(selectedImages, id: \.self) { item in
-                                        Image(uiImage: item)
-                                            .resizable()
-                                            .frame(height: 134)
-                                            .frame(maxWidth: .infinity)
-                                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                                            .onLongPressGesture {
-                                                visibleActionSheet.toggle()
-                                            }
-                                    }
-                                }
-                            }
-                        }
-                        .padding(12)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            LinearGradient(
-                                gradient: Gradient(
-                                    colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
-                                ),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
-                        // 选择照片的全屏弹出对话框
-                        .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
-                            if self.fullScreenCoverType == .picture {
-                                ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount - selectedImages.count)
-                            } else if self.fullScreenCoverType == .location {
-                                NavigationStack {
-                                    VStack {
-                                        ScrollView {
-                                            ForEach(addressList, id: \.name) { item in
-                                                Button {
-                                                    self.selectAddress(longitude: item.longitude, latitude: item.latitude, address: item.address)
-                                                } label: {
-                                                    VStack(alignment: .leading) {
-                                                        Text("\(item.name ?? "")")
-                                                            .bold()
-                                                            .font(.system(size: 16))
-                                                            .foregroundStyle(Color("text-1"))
-                                                    
-                                                        Text("\(item.address ?? "")")
-                                                            .font(.system(size: 11))
-                                                            .foregroundStyle(Color("text-2"))
-                                                            .padding(.top, 2)
-                                                        
-                                                        Rectangle()
-                                                            .fill(Color.gray.opacity(0.2))
-                                                            .frame(height: 1)
-                                                    }
-                                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                                    .padding(.vertical, 3)
-                                                    .padding(.horizontal, 4)
-                                                }
-                                            }
-                                        }
-                                    }
-                                    .toolbar {
-                                        ToolbarItem(placement: .principal) {
-                                            Text("所在位置")
-                                                .font(.headline)
-                                                .foregroundStyle(Color("text-1"))
-                                        }
-                                        ToolbarItem(placement: .navigationBarTrailing) {
-                                            Button {
-                                                visibleFullScreenCover.toggle()
-                                            } label: {
-                                                Image(systemName: "xmark.circle.fill")
-                                                    .frame(width: 20, height: 20)
-                                                    .foregroundStyle(Color("text-2"))
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        })
-                        .actionSheet(isPresented: $visibleActionSheet) {
-                            ActionSheet(
-                                title: Text("选择操作"),
-                                message: Text("请选择你要执行的操作"),
-                                buttons: [
-                                    .default(Text("重新选择")) {},
-                                    .default(Text("删除")) {},
-                                    .cancel(),
-                                ]
-                            )
-                        }
-                        
-                        // 选择心情颜色
-                        HStack {
-                            if let moodColorActive = moodColorActive {
-                                Button {
-                                    withAnimation {
-                                        self.moodColorActive = nil
-                                        self.routeDetailForm.mood_color = ""
-                                    }
-                                } label: {
-                                    Circle()
-                                        .fill(Color(hex: moodColorActive.color))
-                                        .frame(width: 37, height: 37)
-                                        .overlay(
-                                            Circle()
-                                                .stroke(Color(hex: moodColorActive.borderColor), lineWidth: 1) // 圆形边框
-                                        )
-                                    
-                                    Text(moodColorActive.type)
-                                        .foregroundStyle(Color(hex: moodColorActive.color))
-                                        .font(.system(size: 18))
-                                        .bold()
-                                }
-                                
-                            } else {
-                                ForEach(self.moodColorList, id: \.key) { item in
-                                    Button {
-                                        withAnimation {
-                                            self.moodColorActive = item
-                                            self.routeDetailForm.mood_color = item.key
-                                        }
-                                    } label: {
-                                        Circle()
-                                            .fill(Color(hex: item.color))
-                                            .frame(width: 37, height: 37)
-                                            .overlay(
-                                                Circle()
-                                                    .stroke(Color(hex: item.borderColor), lineWidth: 1) // 圆形边框
-                                            )
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.top, 16)
-                        
-                        // 选择当前位置
-                        Button {
-                            Task {
-                                await self.getAroundAddress()
-                            }
-                            self.fullScreenCoverType = .location
-                            self.visibleFullScreenCover.toggle()
-                        } label: {
-                            Text("\(routeDetailForm.address == "" ? "选择当前位置" : routeDetailForm.address)")
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 13)
-                                .background(LinearGradient(gradient: Gradient(
-                                        colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
-                                    ),
-                                    startPoint: .leading, endPoint: .trailing))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .padding(.top, 25)
-                                .font(.system(size: 16))
-                                .foregroundStyle(Color(hex: "#666666"))
-                                .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
-                        }
-                        
-                        // 说点什么
-                        VStack {
-                            TextField("Comment", text: $routeDetailForm.content, prompt: Text("说点什么？"), axis: .vertical)
-                                .lineLimit(4 ... 8)
-                                .submitLabel(.done)
-                                .autocapitalization(.none) // 禁止任何自动大写
-                                .disableAutocorrection(true) // 禁止自动更正
-                                .foregroundStyle(Color(hex: "#666666"))
-                                .onChange(of: routeDetailForm.content) {
-                                    // 当内容变化时执行的代码
-                                    if routeDetailForm.content.contains("\n") {
-                                        routeDetailForm.content = routeDetailForm.content.replacingOccurrences(of: "\n", with: "")
-                                    }
-                                }
-                        }
-                        .padding(16)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            LinearGradient(
-                                gradient: Gradient(
-                                    colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
-                                ),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
-                        .padding(.top, 25)
-                        .onTapGesture {
-                            self.hideKeyboard()
-                        }
-                    
-                        // 按钮操作组
-                        HStack(spacing: 23) {
-                            Button {
-                                self.visibleSheet.toggle()
-                            } label: {
-                                Text("取消")
-                                    .frame(width: 160, height: 48)
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(Color(hex: "#F3943F"))
-                                    .background(Color(hex: "#ffffff"))
-                                    .border(Color(hex: "#F3943F"))
-                                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
-                                    )
-                            }
-                            
-                            Button {
-                                Task {
-                                    await self.updateRouteDetail() // 完善步行打卡记录详情
-                                }
-                            } label: {
-                                Text("就这样")
-                                    .frame(width: 160, height: 48)
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(.white)
-                                    .background(Color(hex: "#F3943F"))
-                                    .border(Color(hex: "#F3943F"))
-                                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
-                                    )
-                            }
-                        }
-                        .padding(.top, 34)
-                        
-                        // 防止键盘挡住输入框
-                        Spacer()
-                            .frame(height: keyboardHeight)
-                    }
-                    .padding(16)
-                    .frame(maxWidth: .infinity)
-                    .clipShape(RoundedRectangle(cornerRadius: 22))
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 61)
-                // 点击空白处隐藏输入框
-                .onTapGesture {
-                    self.hideKeyboard()
-                }
-                    
-                // loading 组件
-                Loading()
-            }
+        .sheet(isPresented: $visibleSheet, onDismiss: { clearStepFormData() }) {
+            HomeRecordSheetView(
+                recordDetail: $recordDetail,
+                selectedImages: $selectedImages,
+                visibleActionSheet: $visibleActionSheet,
+                visibleFullScreenCover: $visibleFullScreenCover,
+                visibleSheet: $visibleSheet,
+                routeDetailForm: $routeDetailForm,
+                moodColorActive: $moodColorActive,
+                keyboardHeight: $keyboardHeight,
+                homeData: homeData,
+                updateRouteDetail: updateRouteDetail
+            )
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
@@ -610,19 +247,6 @@ struct HomeView: View {
         }
     }
     
-    /// 选择地址
-    /// - Parameters:
-    ///   - longitude: 经度
-    ///   - latitude: 纬度
-    ///   - address: 地址信息
-    private func selectAddress(longitude: Double?, latitude: Double?, address: String?) {
-        routeDetailForm.address = address ?? ""
-        routeDetailForm.longitude = "\(longitude)"
-        routeDetailForm.latitude = "\(latitude)"
-        
-        visibleFullScreenCover.toggle()
-    }
-    
     /// 清除打卡对话框内容
     private func clearStepFormData() {
         routeDetailForm = RouteDetailForm(
@@ -644,32 +268,6 @@ struct HomeView: View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     
-    /// 获取周边地址
-    private func getAroundAddress() async {
-        let longitude = "\(homeData.region.center.longitude)"
-        let latitude = "\(homeData.region.center.latitude)"
-        
-        do {
-            let res = try await Api.shared.getAroundAddress(params: [
-                "longitude": longitude,
-                "latitude": latitude,
-                //                "longitude": "120.298501",
-                //                "latitude": "30.41875",
-                "page_num": 1,
-            ])
-
-            print("获取周边地址", res)
-
-            guard res.code == 200, let data = res.data else {
-                return
-            }
-
-            addressList = data
-        } catch {
-            print("获取周边地址异常")
-        }
-    }
-  
     /// 完善步行打卡记录详情
     private func updateRouteDetail() async {
         if routeDetailForm.route_id.isEmpty {
@@ -801,18 +399,439 @@ struct HomeView: View {
     }
 }
 
-#Preview {
-    HomeView()
-        .environmentObject(FriendsData())
-        .environmentObject(RankingData())
-        .environmentObject(MainData())
-        .environmentObject(LoadingData())
-        .environmentObject(HomeData())
-        .environmentObject(StorageData())
+// 打卡 sheet 对话框内容
+private struct HomeRecordSheetView: View {
+    /// 打卡信息详情
+    @Binding var recordDetail: LocationCreateRecordType.LocationCreateRecordData?
+    /// 选择的图片文件列表
+    @Binding var selectedImages: [UIImage]
+    @Binding var visibleActionSheet: Bool
+    @Binding var visibleFullScreenCover: Bool
+    @Binding var visibleSheet: Bool
+    @Binding var routeDetailForm: RouteDetailForm
+    @Binding var moodColorActive: MoodColor?
+    @Binding var keyboardHeight: CGFloat
+    var homeData: HomeData
+    var updateRouteDetail: () async -> Void
+
+    /// 推荐的地址列表
+    @State private var addressList: [GetAroundAddressType.GetAroundAddressData] = []
+    /// 全屏弹窗显示的类型
+    @State private var fullScreenCoverType: FullScreenCoverType = .picture
+    
+    var body: some View {
+        ZStack {
+            VStack {
+                // 省份图
+                if let recordDetail = self.recordDetail {
+                    // 省份图
+                    if let province_url = recordDetail.province_url {
+                        // 省份图
+                        Color.clear
+                            .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
+                            .background(
+                                Color(hex: recordDetail.background_color ?? "#F3943F")
+                                    .mask {
+                                        KFImage(URL(string: province_url))
+                                            .placeholder {
+                                                Color.clear
+                                            }
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                    }
+                            )
+                    }
+                    
+                    // 文案
+                    Text("\(recordDetail.content ?? "当前地点打卡成功")")
+                        .foregroundStyle(Color(hex: recordDetail.background_color ?? "#F3943F"))
+                        .padding(.top, 9)
+                        .font(.system(size: 16))
+                        .bold()
+                }
+                
+                VStack(spacing: 0) {
+                    HStack {
+                        // 一张照片都没选择
+                        if selectedImages.count == 0 || selectedImages.isEmpty {
+                            // 发布瞬间
+                            Button {
+                                self.fullScreenCoverType = .picture
+                                self.visibleFullScreenCover.toggle()
+                            } label: {
+                                VStack {
+                                    KFImage(recordSucceseCamera)
+                                        .placeholder {
+                                            Color.clear
+                                                .frame(width: 69, height: 64)
+                                        }
+                                        .resizable()
+                                        .frame(width: 69, height: 64)
+
+                                    Text("发布瞬间")
+                                        .padding(.vertical, 9)
+                                        .padding(.horizontal, 48)
+                                        .foregroundStyle(.white)
+                                        .background(Color(hex: "#F3943F"))
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                }
+                            }
+                        }
+                        // 选择了一张照片
+                        else if selectedImages.count == 1 {
+                            let columns = [
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                            ]
+
+                            LazyVGrid(columns: columns) {
+                                Image(uiImage: selectedImages[0])
+                                    .resizable()
+                                    .frame(height: 134)
+                                    .frame(maxWidth: .infinity)
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                                    .onLongPressGesture {
+                                        visibleActionSheet.toggle()
+                                    }
+
+                                Button {
+                                    self.fullScreenCoverType = .picture
+                                    self.visibleFullScreenCover.toggle()
+                                } label: {
+                                    KFImage(recordSucceseCamera)
+                                        .placeholder {
+                                            Color.clear
+                                                .frame(width: 69, height: 64)
+                                        }
+                                        .resizable()
+                                        .frame(width: 69, height: 64)
+                                }
+                            }
+                        }
+                        // 选择了两张照片
+                        else if selectedImages.count == 2 {
+                            let columns = [
+                                GridItem(.flexible()),
+                                GridItem(.flexible()),
+                            ]
+
+                            LazyVGrid(columns: columns) {
+                                ForEach(selectedImages, id: \.self) { item in
+                                    Image(uiImage: item)
+                                        .resizable()
+                                        .frame(height: 134)
+                                        .frame(maxWidth: .infinity)
+                                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                                        .onLongPressGesture {
+                                            visibleActionSheet.toggle()
+                                        }
+                                }
+                            }
+                        }
+                    }
+                    .padding(12)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(
+                                colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                            ),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
+                    // 选择照片的全屏弹出对话框
+                    .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
+                        HomeRecordSheetFullScreenCoverView(
+                            fullScreenCoverType: $fullScreenCoverType,
+                            selectedImages: $selectedImages,
+                            addressList: $addressList,
+                            visibleFullScreenCover: $visibleFullScreenCover,
+                            routeDetailForm: $routeDetailForm
+                        )
+                    })
+                    .actionSheet(isPresented: $visibleActionSheet) {
+                        ActionSheet(
+                            title: Text("选择操作"),
+                            message: Text("请选择你要执行的操作"),
+                            buttons: [
+                                .default(Text("重新选择")) {},
+                                .default(Text("删除")) {},
+                                .cancel(),
+                            ]
+                        )
+                    }
+
+                    // 选择心情颜色
+                    HStack {
+                        if let moodColorActive = moodColorActive {
+                            Button {
+                                withAnimation {
+                                    self.moodColorActive = nil
+                                    self.routeDetailForm.mood_color = ""
+                                }
+                            } label: {
+                                Circle()
+                                    .fill(Color(hex: moodColorActive.color))
+                                    .frame(width: 37, height: 37)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color(hex: moodColorActive.borderColor), lineWidth: 1) // 圆形边框
+                                    )
+
+                                Text(moodColorActive.type)
+                                    .foregroundStyle(Color(hex: moodColorActive.color))
+                                    .font(.system(size: 18))
+                                    .bold()
+                            }
+
+                        } else {
+                            ForEach(moodColorList, id: \.key) { item in
+                                Button {
+                                    withAnimation {
+                                        self.moodColorActive = item
+                                        self.routeDetailForm.mood_color = item.key
+                                    }
+                                } label: {
+                                    Circle()
+                                        .fill(Color(hex: item.color))
+                                        .frame(width: 37, height: 37)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color(hex: item.borderColor), lineWidth: 1) // 圆形边框
+                                        )
+                                }
+                            }
+                        }
+                    }
+                    .padding(.top, 16)
+
+                    // 选择当前位置
+                    Button {
+                        Task {
+                            await self.getAroundAddress()
+                        }
+                        self.fullScreenCoverType = .location
+                        self.visibleFullScreenCover.toggle()
+                    } label: {
+                        Text("\(routeDetailForm.address == "" ? "选择当前位置" : routeDetailForm.address)")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 13)
+                            .background(LinearGradient(gradient: Gradient(
+                                    colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                                ),
+                                startPoint: .leading, endPoint: .trailing))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .padding(.top, 25)
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color(hex: "#666666"))
+                            .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
+                    }
+
+                    // 说点什么
+                    VStack {
+                        TextField("Comment", text: $routeDetailForm.content, prompt: Text("说点什么？"), axis: .vertical)
+                            .lineLimit(4 ... 8)
+                            .submitLabel(.done)
+                            .autocapitalization(.none) // 禁止任何自动大写
+                            .disableAutocorrection(true) // 禁止自动更正
+                            .foregroundStyle(Color(hex: "#666666"))
+                            .onChange(of: routeDetailForm.content) {
+                                // 当内容变化时执行的代码
+                                if routeDetailForm.content.contains("\n") {
+                                    routeDetailForm.content = routeDetailForm.content.replacingOccurrences(of: "\n", with: "")
+                                }
+                            }
+                    }
+                    .padding(16)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(
+                                colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                            ),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
+                    .padding(.top, 25)
+                    .onTapGesture {
+//                        self.hideKeyboard()
+                    }
+
+                    // 按钮操作组
+                    HStack(spacing: 23) {
+                        Button {
+                            self.visibleSheet.toggle()
+                        } label: {
+                            Text("取消")
+                                .frame(width: 160, height: 48)
+                                .font(.system(size: 16))
+                                .foregroundStyle(Color(hex: "#F3943F"))
+                                .background(Color(hex: "#ffffff"))
+                                .border(Color(hex: "#F3943F"))
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                )
+                        }
+
+                        Button {
+                            Task {
+                                await self.updateRouteDetail() // 完善步行打卡记录详情
+                            }
+                        } label: {
+                            Text("就这样")
+                                .frame(width: 160, height: 48)
+                                .font(.system(size: 16))
+                                .foregroundStyle(.white)
+                                .background(Color(hex: "#F3943F"))
+                                .border(Color(hex: "#F3943F"))
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                )
+                        }
+                    }
+                    .padding(.top, 34)
+
+                    // 防止键盘挡住输入框
+                    Spacer()
+                        .frame(height: keyboardHeight)
+                }
+                .padding(16)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 22))
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 61)
+            // 点击空白处隐藏输入框
+            .onTapGesture {
+//                self.hideKeyboard()
+            }
+                
+            // loading 组件
+            Loading()
+        }
+    }
+    
+    /// 获取周边地址
+    private func getAroundAddress() async {
+        let longitude = "\(homeData.region.center.longitude)"
+        let latitude = "\(homeData.region.center.latitude)"
+        
+        do {
+            let res = try await Api.shared.getAroundAddress(params: [
+                "longitude": longitude,
+                "latitude": latitude,
+                //                "longitude": "120.298501",
+                //                "latitude": "30.41875",
+                "page_num": 1,
+            ])
+
+            print("获取周边地址", res)
+
+            guard res.code == 200, let data = res.data else {
+                return
+            }
+
+            addressList = data
+        } catch {
+            print("获取周边地址异常")
+        }
+    }
+}
+
+// 打卡 sheet 对话框内部全屏弹出，用于选择照片和地址
+private struct HomeRecordSheetFullScreenCoverView: View {
+    @Binding var fullScreenCoverType: FullScreenCoverType
+    /// 选择的图片文件列表
+    @Binding var selectedImages: [UIImage]
+    @Binding var addressList: [GetAroundAddressType.GetAroundAddressData]
+    @Binding var visibleFullScreenCover: Bool
+    @Binding var routeDetailForm: RouteDetailForm
+    
+    var body: some View {
+        if fullScreenCoverType == .picture {
+            ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount - selectedImages.count)
+        } else if fullScreenCoverType == .location {
+            NavigationStack {
+                VStack {
+                    ScrollView {
+                        ForEach(addressList, id: \.name) { item in
+                            Button {
+                                self.selectAddress(longitude: item.longitude, latitude: item.latitude, address: item.address)
+                            } label: {
+                                VStack(alignment: .leading) {
+                                    Text("\(item.name ?? "")")
+                                        .bold()
+                                        .font(.system(size: 16))
+                                        .foregroundStyle(Color("text-1"))
+        
+                                    Text("\(item.address ?? "")")
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(Color("text-2"))
+                                        .padding(.top, 2)
+        
+                                    Rectangle()
+                                        .fill(Color.gray.opacity(0.2))
+                                        .frame(height: 1)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.vertical, 3)
+                                .padding(.horizontal, 4)
+                            }
+                        }
+                    }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("所在位置")
+                            .font(.headline)
+                            .foregroundStyle(Color("text-1"))
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            visibleFullScreenCover.toggle()
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(Color("text-2"))
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /// 选择地址
+    /// - Parameters:
+    ///   - longitude: 经度
+    ///   - latitude: 纬度
+    ///   - address: 地址信息
+    private func selectAddress(longitude: Double?, latitude: Double?, address: String?) {
+        routeDetailForm.address = address ?? ""
+        
+        if let longitude = longitude {
+            routeDetailForm.longitude = "\(longitude)"
+        }
+        
+        if let latitude = latitude {
+            routeDetailForm.longitude = "\(latitude)"
+        }
+        
+        visibleFullScreenCover.toggle()
+    }
 }
 
 /// 首页头部
-private struct HomeHeader: View {
+private struct HomeHeaderView: View {
     var storageData: StorageData
     
     var body: some View {
@@ -1153,4 +1172,14 @@ private struct RouteDetailForm {
 /// FullScreenCover 对话框打开类型
 private enum FullScreenCoverType {
     case picture, location
+}
+
+#Preview {
+    HomeView()
+        .environmentObject(FriendsData())
+        .environmentObject(RankingData())
+        .environmentObject(MainData())
+        .environmentObject(LoadingData())
+        .environmentObject(HomeData())
+        .environmentObject(StorageData())
 }
