@@ -14,17 +14,19 @@ struct ContentView: View {
     @EnvironmentObject private var storageData: StorageData
 
     var body: some View {
-        if launchScreenData.states == .leave {
-            if storageData.token != nil && storageData.token != "" {
-                homeViewGroup
+        Group {
+            if launchScreenData.states == .leave {
+                if storageData.token != nil && storageData.token != "" {
+                    homeViewGroup
+                } else {
+                    LoginView()
+                        .environmentObject(StorageData())
+                        .environmentObject(LoadingData())
+                        .environmentObject(HomeData())
+                }
             } else {
-                LoginView()
-                    .environmentObject(StorageData())
-                    .environmentObject(LoadingData())
-                    .environmentObject(HomeData())
+                LaunchView()
             }
-        } else {
-            LaunchView()
         }
     }
 

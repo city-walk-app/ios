@@ -15,6 +15,10 @@ import SwiftUI
 private let moodColorList = moodColors
 /// 最多选择的照片数量
 private let pictureMaxCount = 2
+/// 经度偏移量
+private let longitudeOffset = 0.00428
+/// 纬度偏移量
+private let latitudeOffset = -0.00294
 
 /// 主视图，用于显示地图和操作选项
 struct HomeView: View {
@@ -27,13 +31,14 @@ struct HomeView: View {
     
     /// 定位数据管理对象
     @StateObject private var locationDataManager = LocationDataManager()
+    /// 定位服务管理对象
+    private var locationManager = CLLocationManager()
 
     /// 打卡弹窗是否显示
     @State private var visibleSheet = false
     /// 是否显示选择的菜单
     @State private var visibleActionSheet = false
-    /// 定位服务管理对象
-    @State private var locationManager = CLLocationManager()
+ 
     /// 位置权限状态
     @State private var authorizationStatus: CLAuthorizationStatus = .notDetermined
     /// 用户的身份信息
@@ -72,39 +77,17 @@ struct HomeView: View {
                 // 地图
                 Map(coordinateRegion: $homeData.region, showsUserLocation: true, annotationItems: homeData.landmarks ?? []) { landmark in
                     MapAnnotation(coordinate: landmark.coordinate) {
-                        VStack(spacing: 3) {
-                            KFImage(homeMarkers)
-                                .placeholder {
-                                    Color.clear
-                                        .frame(width: 50, height: 64)
-                                }
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 50, height: 64)
-
-                            if let picture = landmark.picure, !picture.isEmpty {
-                                ForEach(picture, id: \.self) { item in
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color("background-1"))
-                                        .frame(width: 90, height: 90)
-                                        .overlay {
-                                            KFImage(URL(string: item))
-                                                .resizable()
-                                                .frame(width: 82, height: 82)
-                                                .aspectRatio(contentMode: .fill)
-                                                .clipShape(RoundedRectangle(cornerRadius: 6))
-                                                .clipped()
-                                        }
-                                        .shadow(radius: 5)
-                                }
-                            }
-                        }
+                        HomeLandmarkView(landmark: landmark)
                     }
                 }
                 .ignoresSafeArea(.all) // 忽略安全区域边缘
                 .onAppear {
-                    if let currentLocation = locationManager.location?.coordinate {
+                    if var currentLocation = locationManager.location?.coordinate {
                         homeData.region.center = currentLocation
+                        
+                        currentLocation.latitude = currentLocation.latitude + latitudeOffset
+                        currentLocation.longitude = currentLocation.longitude + longitudeOffset
+                        
                         location = currentLocation // 更新 location 为当前用户位置
                     }
                 }
@@ -178,30 +161,34 @@ struct HomeView: View {
             ) { _ in
                 keyboardHeight = 0
             }
-            
-            self.readClipboard() // 读取剪贴板
-            
+
             Task {
                 await self.getUserInfo() // 获取用户信息
                 await homeData.getTodayRecord() // 获取今天的打卡记录
             }
+
+            self.readClipboard() // 读取剪贴板
         }
         .onDisappear {
             NotificationCenter.default.removeObserver(self)
         }
-        // 退出到桌面返回执行
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-            self.readClipboard() // 读取剪贴板
-            
-            Task {
-                await self.getUserInfo() // 获取用户信息
-                await homeData.getTodayRecord() // 获取今天的打卡记录
-            }
-        }
+//        // 退出到桌面返回执行
+//        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+//            self.readClipboard() // 读取剪贴板
+//
+//            Task {
+//                await self.getUserInfo() // 获取用户信息
+//                await homeData.getTodayRecord() // 获取今天的打卡记录
+//            }
+//        }
     }
     
     /// 同意好友申请
     private func friendConfirmInvite() async {
+        guard let invite_id = invite_id else {
+            return
+        }
+        
         do {
             let res = try await Api.shared.friendConfirmInvite(params: ["invite_id": invite_id])
             
@@ -231,6 +218,10 @@ struct HomeView: View {
     
     /// 获取邀请详情
     func getFriendInviteInfo() async {
+        guard let invite_id = invite_id else {
+            return
+        }
+
         do {
             let res = try await Api.shared.getFriendInviteInfo(params: ["invite_id": invite_id])
             
@@ -370,31 +361,65 @@ struct HomeView: View {
         }
     }
     
-    /// 请求获取位置权限
-    private func requestLocationAuthorization() {
-        locationManager.requestWhenInUseAuthorization()
-    }
-    
     /// 获取当前位置并打卡
     private func onRecord() async {
-        requestLocationAuthorization() // 请求获取位置权限
+        locationDataManager.checkLocationAuthorization()
+        
+        // 获取经纬度的字符串描述
+        if let location = locationDataManager.locationManager.location {
+            let longitudeString = location.coordinate.longitude.description
+            let latitudeString = location.coordinate.latitude.description
+            
+            // 安全地将字符串转换为 Double
+            if let longitude = Double(longitudeString),
+               let latitude = Double(latitudeString)
+            {
+                let lon = longitude + longitudeOffset
+                let lat = latitude + latitudeOffset
+                
+                print("打卡当前经纬度", lon, lat)
+                
+                await locationCreateRecord(longitude: "\(lon)", latitude: "\(lat)") // 打卡当前地点
+            } else {
+                print("经度或纬度转换失败")
+            }
+        } else {
+            print("无法获取位置数据")
+        }
+    }
+}
 
-        switch locationDataManager.locationManager.authorizationStatus {
-        case .authorizedWhenInUse:
-            let longitude = "\(locationDataManager.locationManager.location?.coordinate.longitude.description ?? "")"
-            let latitude = "\(locationDataManager.locationManager.location?.coordinate.latitude.description ?? "")"
-
-            print("当前经纬度", longitude, latitude)
-
-            await locationCreateRecord(longitude: longitude, latitude: latitude) // 打卡当前地点
-//            await locationCreateRecord(longitude: "82.455646", latitude: "30.709778")
-      
-        case .restricted, .denied:
-            print("当前位置数据被限制或拒绝")
-        case .notDetermined:
-            print("正在获取位置信息...")
-        default:
-            print("未知错误")
+/// 首页地图标点
+private struct HomeLandmarkView: View {
+    var landmark: Landmark
+    
+    var body: some View {
+        VStack(spacing: 3) {
+            KFImage(homeMarkers)
+                .placeholder {
+                    Color.clear
+                        .frame(width: 50, height: 64)
+                }
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 50, height: 64)
+        
+            if let picture = landmark.picure, !picture.isEmpty {
+                ForEach(picture, id: \.self) { item in
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color("background-1"))
+                        .frame(width: 90, height: 90)
+                        .overlay {
+                            KFImage(URL(string: item))
+                                .resizable()
+                                .frame(width: 82, height: 82)
+                                .aspectRatio(contentMode: .fill)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                                .clipped()
+                        }
+                        .shadow(radius: 5)
+                }
+            }
         }
     }
 }

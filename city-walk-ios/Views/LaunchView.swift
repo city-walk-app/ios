@@ -74,10 +74,10 @@ struct LaunchView: View {
 
     /// 开始跳转首页
     private func goHome() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            print("准备跳转首页")
-            launchScreenData.change()
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        print("准备跳转首页")
+        launchScreenData.change()
+//        }
     }
 }
 
