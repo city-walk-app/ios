@@ -13,22 +13,6 @@ import SwiftUI
 
 /// 主视图，用于显示地图和操作选项
 struct HomeView: View {
-    /// 完善步行记录详情表单
-    struct RouteDetailForm {
-        var route_id: String
-        var content: String
-        var travel_type: String
-        var mood_color: String
-        var address: String
-        var picture: [String]
-        var latitude: String?
-        var longitude: String?
-    }
-    
-    enum FullScreenCoverType {
-        case picture, location
-    }
-    
     /// 心情颜色
     private let moodColorList = moodColors
     /// 最多选择的照片数量
@@ -128,119 +112,23 @@ struct HomeView: View {
                         location = currentLocation // 更新 location 为当前用户位置
                     }
                 }
-//                .overlay {
-//                    MapAnnotation(coordinate: location) {
-//                        KFImage(URL(string: storageData.userInfo?.avatar ?? defaultAvatar))
-//                            .resizable()
-//                            .frame(width: 42, height: 42)
-//                            .clipShape(Circle())
-//                            .zIndex(300)
-//                    }
-//                }
                 
                 // 头部和底部操作视图
                 VStack {
                     // 头部操作栏
-                    HStack(alignment: .top) {
-                        if let userInfo = storageData.userInfo {
-                            NavigationLink(destination: MainView(user_id: userInfo.user_id)) {
-                                if let avatar = userInfo.avatar,
-                                   let url = URL(string: avatar)
-                                {
-                                    KFImage(url)
-                                        .placeholder {
-                                            Circle()
-                                                .fill(skeletonBackground)
-                                                .frame(width: 53, height: 53)
-                                                .shadow(radius: 10)
-                                        }
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 53, height: 53)
-                                        .clipShape(
-                                            Circle()
-                                        )
-                                        .shadow(radius: 10)
-                                } else {
-                                    Circle()
-                                        .fill(skeletonBackground)
-                                        .frame(width: 53, height: 53)
-                                        .shadow(radius: 10)
-                                }
-                            }
-                        } else {
-                            NavigationLink(destination: storageData.token != nil && storageData.token != "" ? LoginView() : LoginView()) {
-                                Circle()
-                                    .fill(skeletonBackground)
-                                    .frame(width: 48, height: 48)
-                                    .overlay {
-                                        Image(systemName: "person")
-                                            .foregroundStyle(Color(hex: "#333333"))
-                                            .font(.system(size: 22))
-                                    }
-                            }
-                        }
-                        
-                        /// https://stackoverflow.com/questions/64551580/swiftui-sheet-doesnt-access-the-latest-value-of-state-variables-on-first-appear
-                        Text("\(String(describing: recordDetail))\(fullScreenCoverType)")
-                            .font(.system(size: 0))
-                            .foregroundStyle(Color.clear)
-                            
-                        Spacer()
-                        
-                        VStack {
-                            // 设置按钮
-                            NavigationLink(destination: SettingView()) {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(.ultraThinMaterial) // 将毛玻璃效果作为填充色
-                                    .frame(width: 42, height: 42)
-                                    .overlay {
-                                        Image(systemName: "gearshape")
-                                            .resizable()
-                                            .frame(width: 23, height: 23)
-                                            .foregroundColor(Color("text-1"))
-                                    }
-                            }
-                            
-                            VStack(spacing: 0) {
-                                // 切换主题按钮
-                                Button {} label: {
-                                    Rectangle()
-                                        .fill(.ultraThinMaterial)
-                                        .frame(width: 42, height: 42)
-                                        .overlay {
-                                            Image(systemName: "map")
-                                                .resizable()
-                                                .foregroundStyle(Color("text-1"))
-                                                .frame(width: 23, height: 23)
-                                        }
-                                }
-                               
-                                // 回到当前位置按钮
-                                Button {} label: {
-                                    Rectangle()
-                                        .fill(.ultraThinMaterial)
-                                        .frame(width: 42, height: 42)
-                                        .overlay {
-                                            Image(systemName: "paperplane")
-                                                .resizable()
-                                                .foregroundStyle(Color("text-1"))
-                                                .frame(width: 23, height: 23)
-                                        }
-                                }
-                            }
-                            .clipped()
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 20)
-                  
+                    HomeHeader(storageData: storageData)
+                
                     Spacer()
                     
+                    // 底部卡片
                     HomeBottomCardsView(onRecord: self.onRecord)
                 }
                 .ignoresSafeArea(.all, edges: .bottom)
+                
+                /// https://stackoverflow.com/questions/64551580/swiftui-sheet-doesnt-access-the-latest-value-of-state-variables-on-first-appear
+                Text("\(String(describing: recordDetail))\(fullScreenCoverType)")
+                    .font(.system(size: 0))
+                    .foregroundStyle(Color.clear)
              
                 // loading 组件
                 Loading()
@@ -923,7 +811,106 @@ struct HomeView: View {
         .environmentObject(StorageData())
 }
 
-struct HomeBottomCardsView: View {
+/// 首页头部
+private struct HomeHeader: View {
+    var storageData: StorageData
+    
+    var body: some View {
+        HStack(alignment: .top) {
+            if let userInfo = storageData.userInfo {
+                NavigationLink(destination: MainView(user_id: userInfo.user_id)) {
+                    if let avatar = userInfo.avatar,
+                       let url = URL(string: avatar)
+                    {
+                        KFImage(url)
+                            .placeholder {
+                                Circle()
+                                    .fill(skeletonBackground)
+                                    .frame(width: 53, height: 53)
+                                    .shadow(radius: 10)
+                            }
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 53, height: 53)
+                            .clipShape(
+                                Circle()
+                            )
+                            .shadow(radius: 10)
+                    } else {
+                        Circle()
+                            .fill(skeletonBackground)
+                            .frame(width: 53, height: 53)
+                            .shadow(radius: 10)
+                    }
+                }
+            } else {
+                NavigationLink(destination: storageData.token != nil && storageData.token != "" ? LoginView() : LoginView()) {
+                    Circle()
+                        .fill(skeletonBackground)
+                        .frame(width: 48, height: 48)
+                        .overlay {
+                            Image(systemName: "person")
+                                .foregroundStyle(Color(hex: "#333333"))
+                                .font(.system(size: 22))
+                        }
+                }
+            }
+            
+            Spacer()
+            
+            VStack {
+                // 设置按钮
+                NavigationLink(destination: SettingView()) {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(.ultraThinMaterial) // 将毛玻璃效果作为填充色
+                        .frame(width: 42, height: 42)
+                        .overlay {
+                            Image(systemName: "gearshape")
+                                .resizable()
+                                .frame(width: 23, height: 23)
+                                .foregroundColor(Color("text-1"))
+                        }
+                }
+                
+                VStack(spacing: 0) {
+                    // 切换主题按钮
+                    Button {} label: {
+                        Rectangle()
+                            .fill(.ultraThinMaterial)
+                            .frame(width: 42, height: 42)
+                            .overlay {
+                                Image(systemName: "map")
+                                    .resizable()
+                                    .foregroundStyle(Color("text-1"))
+                                    .frame(width: 23, height: 23)
+                            }
+                    }
+                   
+                    // 回到当前位置按钮
+                    Button {} label: {
+                        Rectangle()
+                            .fill(.ultraThinMaterial)
+                            .frame(width: 42, height: 42)
+                            .overlay {
+                                Image(systemName: "paperplane")
+                                    .resizable()
+                                    .foregroundStyle(Color("text-1"))
+                                    .frame(width: 23, height: 23)
+                            }
+                    }
+                }
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 20)
+    }
+}
+
+/// 首页底部卡片
+private struct HomeBottomCardsView: View {
+    /// 点击打卡的回调
     var onRecord: () async -> Void
     
     private let friendsBanner = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/home-friends.png")
@@ -1149,4 +1136,21 @@ struct HomeBottomCardsView: View {
             }
         }
     }
+}
+
+/// 完善步行记录详情表单
+private struct RouteDetailForm {
+    var route_id: String
+    var content: String
+    var travel_type: String
+    var mood_color: String
+    var address: String
+    var picture: [String]
+    var latitude: String?
+    var longitude: String?
+}
+
+/// FullScreenCover 对话框打开类型
+private enum FullScreenCoverType {
+    case picture, location
 }

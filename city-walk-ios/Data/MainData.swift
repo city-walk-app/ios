@@ -23,6 +23,8 @@ class MainData: ObservableObject {
     @Published var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes]?
     /// 步行记录详情列表是否在加载中
     @Published var isRouteDetailListLoading = true
+    /// 省份版图是否在加载中
+    @Published var isProvinceListLoading = true
     /// 用户 id
     @Published var user_id: String = ""
 
@@ -75,7 +77,15 @@ class MainData: ObservableObject {
     /// 获取用户解锁的省份版图列表
     func getUserProvinceJigsaw() async {
         do {
+            withAnimation {
+                isProvinceListLoading = true
+            }
+
             let res = try await Api.shared.getUserProvinceJigsaw(params: ["user_id": user_id])
+
+            withAnimation {
+                isProvinceListLoading = false
+            }
 
             guard res.code == 200, let data = res.data else {
                 return
@@ -86,6 +96,7 @@ class MainData: ObservableObject {
             }
         } catch {
             print("获取用户解锁的省份版图列表异常")
+            isProvinceListLoading = false
         }
     }
 
@@ -121,5 +132,13 @@ class MainData: ObservableObject {
         } catch {
             print("取用户指定月份打卡热力图异常")
         }
+    }
+
+    /// 页面隐藏
+    func onDisappear() {
+        routeDetailList = nil
+        routeDetailActiveIndex = nil
+        isRouteDetailListLoading = true
+        isProvinceListLoading = true
     }
 }

@@ -94,34 +94,7 @@ struct MainView: View {
                     }
                     
                     // 省份版图
-                    if !mainData.provinceList.isEmpty {
-                        ScrollView(.horizontal) {
-                            HStack {
-                                ForEach(mainData.provinceList, id: \.vis_id) { item in
-                                    Button {} label: {
-                                        Color.clear
-                                            .frame(width: 107, height: 107)
-                                            .background {
-                                                Color(hex: item.background_color)
-                                                    .mask {
-                                                        KFImage(URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png"))
-                                                            .placeholder {
-                                                                Circle()
-                                                                    .fill(skeletonBackground)
-                                                                    .frame(width: 107, height: 107)
-                                                            }
-                                                            .resizable()
-                                                            .aspectRatio(contentMode: .fill)
-                                                    }
-                                            }
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, 17)
-                        }
-                        .scrollIndicators(.hidden)
-                        .padding(.vertical, 24)
-                    } else {
+                    if mainData.isProvinceListLoading {
                         ScrollView(.horizontal) {
                             HStack {
                                 ForEach(0 ..< 4) { _ in
@@ -135,6 +108,35 @@ struct MainView: View {
                         }
                         .scrollIndicators(.hidden)
                         .padding(.vertical, 24)
+                    } else {
+                        if !mainData.provinceList.isEmpty {
+                            ScrollView(.horizontal) {
+                                HStack {
+                                    ForEach(mainData.provinceList, id: \.vis_id) { item in
+                                        Button {} label: {
+                                            Color.clear
+                                                .frame(width: 107, height: 107)
+                                                .background {
+                                                    Color(hex: item.background_color)
+                                                        .mask {
+                                                            KFImage(URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png"))
+                                                                .placeholder {
+                                                                    Circle()
+                                                                        .fill(skeletonBackground)
+                                                                        .frame(width: 107, height: 107)
+                                                                }
+                                                                .resizable()
+                                                                .aspectRatio(contentMode: .fill)
+                                                        }
+                                                }
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal, 17)
+                            }
+                            .scrollIndicators(.hidden)
+                            .padding(.vertical, 24)
+                        }
                     }
                     
                     let heatmapColumns = [
@@ -512,7 +514,7 @@ struct MainView: View {
                                 }
                             } else {
                                 EmptyState(title: "暂无打卡记录")
-                                    .padding(.top, 100)
+                                    .padding(.vertical, 70)
                             }
                         }
                     }
@@ -604,8 +606,7 @@ struct MainView: View {
             }
         }
         .onDisappear {
-            mainData.routeDetailList = nil
-            mainData.routeDetailActiveIndex = nil
+            mainData.onDisappear() // 清除数据
         }
     }
 }
