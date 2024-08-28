@@ -62,8 +62,6 @@ struct HomeView: View {
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
-    /// 用户位置
-    @State private var location = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     /// 是否显示朋友邀请确认框
     @State private var isShowFriendInviteAlert = false
     /// 朋友申请信息
@@ -79,7 +77,7 @@ struct HomeView: View {
                 // 地图
                 Map(coordinateRegion: $homeData.region, showsUserLocation: true, annotationItems: homeData.landmarks ?? []) { landmark in
                     MapAnnotation(coordinate: landmark.coordinate) {
-                        HomeLandmarkView(landmark: landmark)
+                        HomeLandmarkView(landmark: landmark, storageData: storageData)
                     }
                 }
                 .ignoresSafeArea(.all) // 忽略安全区域边缘
@@ -92,7 +90,7 @@ struct HomeView: View {
                         // SwiftUI 期望这些变化是在主线程上完成的
                         DispatchQueue.main.async {
                             homeData.region.center = currentLocation
-                            location = currentLocation // 更新 location 为当前用户位置
+                            homeData.userLocation = currentLocation // 更新 location 为当前用户位置
                         }
                     }
                 }
@@ -396,33 +394,61 @@ struct HomeView: View {
 
 /// 首页地图标点
 private struct HomeLandmarkView: View {
+    /// 地图标点
     var landmark: Landmark
+    /// 缓存数据
+    var storageData: StorageData
     
     var body: some View {
-        VStack(spacing: 3) {
-            KFImage(homeMarkers)
-                .placeholder {
-                    Color.clear
-                        .frame(width: 50, height: 64)
-                }
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 50, height: 64)
+        // 标点
+        if landmark.type == .record {
+            VStack(spacing: 3) {
+                KFImage(homeMarkers)
+                    .placeholder {
+                        Color.clear
+                            .frame(width: 50, height: 64)
+                    }
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 50, height: 64)
         
-            if let picture = landmark.picure, !picture.isEmpty {
-                ForEach(picture, id: \.self) { item in
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color("background-1"))
-                        .frame(width: 90, height: 90)
-                        .overlay {
-                            KFImage(URL(string: item))
-                                .resizable()
-                                .frame(width: 82, height: 82)
-                                .aspectRatio(contentMode: .fill)
-                                .clipShape(RoundedRectangle(cornerRadius: 6))
-                                .clipped()
+                if let picture = landmark.picure, !picture.isEmpty {
+                    ForEach(picture, id: \.self) { item in
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color("background-1"))
+                            .frame(width: 90, height: 90)
+                            .overlay {
+                                KFImage(URL(string: item))
+                                    .resizable()
+                                    .frame(width: 82, height: 82)
+                                    .aspectRatio(contentMode: .fill)
+                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                                    .clipped()
+                            }
+                            .shadow(radius: 5)
+                    }
+                }
+            }
+        }
+        // 用户位置
+        else if landmark.type == .user {
+            if let userInfo = storageData.userInfo {
+                if let avatar = userInfo.avatar,
+                   let url = URL(string: avatar)
+                {
+                    KFImage(url)
+                        .placeholder {
+                            Circle()
+                                .fill(skeletonBackground)
+                                .frame(width: 53, height: 53)
+                                .shadow(radius: 10)
                         }
-                        .shadow(radius: 5)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 53, height: 53)
+                        .clipShape(
+                            Circle()
+                        )
                 }
             }
         }
@@ -435,13 +461,21 @@ private struct HomeRecordSheetView: View {
     @Binding var recordDetail: LocationCreateRecordType.LocationCreateRecordData?
     /// 选择的图片文件列表
     @Binding var selectedImages: [UIImage]
+    /// 是否显示选择的菜单
     @Binding var visibleActionSheet: Bool
+    /// 是否显示全屏对话框
     @Binding var visibleFullScreenCover: Bool
+    /// 打卡弹窗是否显示
     @Binding var visibleSheet: Bool
+    /// 打卡详情
     @Binding var routeDetailForm: RouteDetailForm
+    /// 心情颜色选中的配置
     @Binding var moodColorActive: MoodColor?
+    /// 键盘高度
     @Binding var keyboardHeight: CGFloat
+    /// 首页数据
     var homeData: HomeData
+    /// 完善步行打卡记录详情
     var updateRouteDetail: () async -> Void
 
     /// 推荐的地址列表
@@ -783,8 +817,11 @@ private struct HomeRecordSheetFullScreenCoverView: View {
     @Binding var fullScreenCoverType: FullScreenCoverType
     /// 选择的图片文件列表
     @Binding var selectedImages: [UIImage]
+    /// 推荐的地址列表
     @Binding var addressList: [GetAroundAddressType.GetAroundAddressData]
+    /// 是否显示全屏对话框
     @Binding var visibleFullScreenCover: Bool
+    /// 打卡详情
     @Binding var routeDetailForm: RouteDetailForm
     
     var body: some View {
@@ -862,7 +899,9 @@ private struct HomeRecordSheetFullScreenCoverView: View {
 
 /// 首页头部
 private struct HomeHeaderView: View {
+    /// 缓存数据
     var storageData: StorageData
+    /// 是否显示卫星地图
     @Binding var isSatelliteMap: Bool
     
     var body: some View {

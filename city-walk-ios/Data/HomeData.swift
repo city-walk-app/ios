@@ -9,29 +9,36 @@ import Foundation
 import MapKit
 import SwiftUI
 
+enum LandmarkType {
+    case record, user
+}
+
 struct Landmark: Identifiable {
     let id = UUID()
 
     var coordinate: CLLocationCoordinate2D
     var picure: [String]?
     var name: String?
+    var type: LandmarkType
 }
 
 class HomeData: NSObject, ObservableObject {
     /// 地图区域
-    @Published var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
-        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-    )
+    @Published var region: MKCoordinateRegion
     /// 标注列表
-    @Published var landmarks: [Landmark]?
+    @Published var landmarks: [Landmark] = []
 
-    init(region: MKCoordinateRegion = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
-        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-    ), landmarks: [Landmark]? = nil) {
+    @Published var userLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+
+    init(
+        region: MKCoordinateRegion = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
+            span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+        )
+//        landmarks: [Landmark]? = nil
+    ) {
         self.region = region
-        self.landmarks = landmarks
+//        self.landmarks = landmarks
     }
 
     /// 获取今天的打卡记录
@@ -42,7 +49,6 @@ class HomeData: NSObject, ObservableObject {
             print("今日打卡记录", res)
 
             guard res.code == 200, let data = res.data else {
-                landmarks = nil
                 return
             }
 
@@ -53,15 +59,29 @@ class HomeData: NSObject, ObservableObject {
 //                        center: CLLocationCoordinate2D(latitude: Double(data[0].latitude) ?? 0, longitude: Double(data[0].longitude) ?? 0),
 //                        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
 //                    )
-                    self.landmarks = data.map { item in
+//                    self.landmarks
+
+                    // 打卡记录
+                    let records = data.map { item in
                         Landmark(
                             coordinate: CLLocationCoordinate2D(
                                 latitude: Double(item.latitude) ?? 0,
                                 longitude: Double(item.longitude) ?? 0
                             ),
-                            picure: item.picture
+                            picure: item.picture,
+                            type: .record
                         )
                     }
+
+                    let user = Landmark(
+                        coordinate: CLLocationCoordinate2D(latitude: self.userLocation.latitude, longitude: self.userLocation.longitude),
+                        type: .user
+                    )
+
+                    self.landmarks.append(contentsOf: records)
+                    self.landmarks.append(user)
+
+                    print("打卡地点列表", self.landmarks)
                 }
             }
 

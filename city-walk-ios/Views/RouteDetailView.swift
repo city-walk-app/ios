@@ -75,7 +75,14 @@ struct RouteDetailView: View {
                     span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
                 )
                 self.landmarks = data.map { item in
-                    Landmark(coordinate: CLLocationCoordinate2D(latitude: Double(item.latitude) ?? 0, longitude: Double(item.longitude) ?? 0), name: item.address ?? "")
+                    Landmark(
+                        coordinate: CLLocationCoordinate2D(
+                            latitude: Double(item.latitude) ?? 0,
+                            longitude: Double(item.longitude) ?? 0
+                        ),
+                        name: item.address ?? "",
+                        type: .record
+                    )
                 }
             }
         } catch {
