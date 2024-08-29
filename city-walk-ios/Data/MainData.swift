@@ -27,6 +27,10 @@ class MainData: ObservableObject {
     @Published var isProvinceListLoading = true
     /// 用户 id
     @Published var user_id: String = ""
+    /// 当前的年份
+    @Published var year = Calendar.current.component(.year, from: Date())
+    /// 当前的月份
+    @Published var month = Calendar.current.component(.month, from: Date())
 
     /// 设置当前用户 id
     /// - Parameter user_id: 用户 id
@@ -120,7 +124,11 @@ class MainData: ObservableObject {
     /// 获取用户指定月份打卡热力图
     func getLocationUserHeatmap() async {
         do {
-            let res = try await Api.shared.getLocationUserHeatmap(params: ["user_id": user_id])
+            let res = try await Api.shared.getLocationUserHeatmap(params: [
+                "user_id": user_id,
+                "year": year,
+                "month": month,
+            ])
 
             guard res.code == 200, let data = res.data else {
                 return
@@ -138,6 +146,8 @@ class MainData: ObservableObject {
     func onDisappear() {
         routeDetailList = nil
         routeDetailActiveIndex = nil
+        year = Calendar.current.component(.year, from: Date())
+        month = Calendar.current.component(.month, from: Date())
 //        isRouteDetailListLoading = true
 //        isProvinceListLoading = true
     }

@@ -8,25 +8,31 @@
 import Kingfisher
 import SwiftUI
 
-let mainHeatmap1 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-1.png")
-let mainHeatmap2 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")
-let mainHeatmap3 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")
+private let mainHeatmap1 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-1.png")
+private let mainHeatmap2 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")
+private let mainHeatmap3 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")
 
 /// 月份选择
-private let monthSelectList = [
-    MonthSelectItem(title: "一", key: 1, active: false),
-    MonthSelectItem(title: "二", key: 2, active: false),
-    MonthSelectItem(title: "三", key: 3, active: false),
-    MonthSelectItem(title: "四", key: 4, active: false),
-    MonthSelectItem(title: "五", key: 5, active: false),
-    MonthSelectItem(title: "六", key: 6, active: false),
-    MonthSelectItem(title: "七", key: 7, active: false),
-    MonthSelectItem(title: "八", key: 8, active: false),
-    MonthSelectItem(title: "九", key: 9, active: false),
-    MonthSelectItem(title: "十", key: 10, active: false),
-    MonthSelectItem(title: "十一", key: 11, active: false),
-    MonthSelectItem(title: "十二", key: 12, active: false),
+private let selectmonths = [
+    SelectmonthItem(title: "一", key: 1),
+    SelectmonthItem(title: "二", key: 2),
+    SelectmonthItem(title: "三", key: 3),
+    SelectmonthItem(title: "四", key: 4),
+    SelectmonthItem(title: "五", key: 5),
+    SelectmonthItem(title: "六", key: 6),
+    SelectmonthItem(title: "七", key: 7),
+    SelectmonthItem(title: "八", key: 8),
+    SelectmonthItem(title: "九", key: 9),
+    SelectmonthItem(title: "十", key: 10),
+    SelectmonthItem(title: "十一", key: 11),
+    SelectmonthItem(title: "十二", key: 12),
 ]
+/// 开始的年份（项目从 2024 年开始，不允许选择 2024 之前的年份）
+private let startYear = 2024
+/// 结束的年份，就是当前的年份
+private let endYear = Calendar.current.component(.year, from: Date())
+/// 年份选择
+private let selectYears = Array(startYear ... endYear)
 
 struct MainView: View {
     /// 用户 id
@@ -154,9 +160,9 @@ struct MainView: View {
                                 self.showDatePicker.toggle()
                             } label: {
                                 HStack {
-                                    Text("2024年08月")
+                                    Text("\(mainData.year)年\(mainData.month)月")
                                         .foregroundStyle(Color("text-3"))
-                                        .font(.system(size: 12))
+                                        .font(.system(size: 14))
                                     
                                     Image(systemName: "chevron.down")
                                         .foregroundStyle(Color("text-3"))
@@ -534,15 +540,19 @@ struct MainView: View {
                     // 选择年份
                     ScrollView(.horizontal) {
                         HStack {
-                            ForEach(monthSelectList, id: \.key) { item in
-                                Button {} label: {
+                            ForEach(selectYears, id: \.self) { item in
+                                Button {
+                                    mainData.year = item
+                                } label: {
                                     RoundedRectangle(cornerRadius: 10)
-                                        .fill(Color(hex: "#eeeeee"))
+                                        .fill(mainData.year == item ? Color("theme-1") : Color(hex: "#eeeeee"))
                                         .frame(width: 110, height: 110)
                                         .overlay(alignment: .bottomTrailing) {
-                                            Text("\(item.title)月")
+                                            Text("\(item)年")
                                                 .padding()
-                                                .foregroundStyle(Color(hex: "#333333"))
+                                                .font(.system(size: 17))
+                                                .bold()
+                                                .foregroundStyle(mainData.year == item ? Color.white : Color(hex: "#333333"))
                                         }
                                 }
                             }
@@ -552,35 +562,52 @@ struct MainView: View {
                     .scrollIndicators(.hidden)
                     
                     // 选择月份
-                    ScrollView(.horizontal) {
-                        HStack {
-                            ForEach(monthSelectList, id: \.key) { item in
-                                Button {} label: {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(Color(hex: "#eeeeee"))
-                                        .frame(width: 110, height: 110)
-                                        .overlay(alignment: .bottomTrailing) {
-                                            Text("\(item.title)月")
-                                                .padding()
-                                                .foregroundStyle(Color(hex: "#333333"))
-                                        }
+                    ScrollViewReader { scrollViewProxy in
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach(selectmonths, id: \.key) { item in
+                                    Button {
+                                        mainData.month = item.key
+                                    } label: {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(mainData.month == item.key ? Color("theme-1") : Color(hex: "#eeeeee"))
+                                            .frame(width: 110, height: 110)
+                                            .overlay(alignment: .bottomTrailing) {
+                                                Text("\(item.title)月")
+                                                    .padding()
+                                                    .font(.system(size: 17))
+                                                    .bold()
+                                                    .foregroundStyle(mainData.month == item.key ? Color.white : Color(hex: "#333333"))
+                                            }
+                                    }
+                                    .id(item.key)
                                 }
                             }
+                            .padding(.horizontal, 16)
                         }
-                        .padding(.horizontal, 16)
+                        .scrollIndicators(.hidden)
+                        .onAppear {
+                            // 滚动到默认选择的月份
+                            withAnimation(.easeInOut(duration: 1.0)) {
+                                scrollViewProxy.scrollTo(mainData.month, anchor: .center)
+                            }
+                        }
                     }
-                    .scrollIndicators(.hidden)
                 }
                 
                 Spacer()
 
                 Button {
+                    Task {
+                        await mainData.getLocationUserHeatmap()
+                    }
+                    
                     self.showDatePicker.toggle()
                 } label: {
                     Text("确定")
                         .padding()
                         .frame(width: 100)
-                        .background(Color(hex: "#F3943F"))
+                        .background(Color("theme-1"))
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
@@ -607,10 +634,9 @@ struct MainView: View {
 }
 
 /// 月份选择
-private struct MonthSelectItem {
+private struct SelectmonthItem {
     var title: String
     var key: Int
-    var active: Bool
 }
 
 #Preview {
