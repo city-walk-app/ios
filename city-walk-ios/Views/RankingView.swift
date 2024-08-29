@@ -24,7 +24,7 @@ struct RankingView: View {
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 20) {
+                LazyVStack(spacing: 20) {
                     if rankingData.isRankingListLoading {
                         ForEach(1 ..< 4) { _ in
                             RoundedRectangle(cornerRadius: 8)
@@ -128,6 +128,24 @@ struct RankingView: View {
                                 .padding(.leading, 16)
                                 .background(Color("background-1"))
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
+                                .visualEffect { content, proxy in
+                                    // https://github.com/abdulrahimiliasu/swiftystuff/blob/main/swiftystuff/scrollingstackview/ScollingStackView.swift
+                                    let frame = proxy.frame(in: .scrollView(axis: .vertical))
+                                    let _ = proxy
+                                        .bounds(of: .scrollView(axis: .vertical)) ??
+                                        .infinite
+
+                                    // 视图延伸到底部边缘的距离
+                                    // 滚动视图
+                                    let distance = min(0, frame.minY)
+
+                                    return content
+                                        .hueRotation(.degrees(frame.origin.y / 20))
+                                        .scaleEffect(1 + distance / 800)
+                                        .offset(y: -distance / 1.25)
+                                        .brightness(-distance / 400)
+                                        .blur(radius: -distance / 50)
+                                }
                             }
                         } else {
                             EmptyState(title: "暂无数据")
