@@ -13,6 +13,8 @@ import SwiftUI
 
 /// 心情颜色
 private let moodColorList = moodColors
+/// 出行方式
+private let travelTypeList = travelTypes
 /// 最多选择的照片数量
 private let pictureMaxCount = 2
 /// 经度偏移量
@@ -47,7 +49,7 @@ struct HomeView: View {
     @State private var routeDetailForm = RouteDetailForm(
         route_id: "",
         content: "",
-        travel_type: "",
+        travel_type: nil,
         mood_color: "",
         address: "",
         picture: []
@@ -248,7 +250,7 @@ struct HomeView: View {
         routeDetailForm = RouteDetailForm(
             route_id: "",
             content: "",
-            travel_type: "",
+            travel_type: nil,
             mood_color: "",
             address: "",
             picture: []
@@ -285,7 +287,7 @@ struct HomeView: View {
             let res = try await Api.shared.updateRouteDetail(params: [
                 "route_id": routeDetailForm.route_id,
                 "content": routeDetailForm.content,
-                "travel_type": routeDetailForm.travel_type,
+                "travel_type": routeDetailForm.travel_type?.rawValue ?? "",
                 "mood_color": routeDetailForm.mood_color,
                 "address": routeDetailForm.address,
                 "picture": routeDetailForm.picture,
@@ -680,6 +682,24 @@ private struct HomeRecordSheetView: View {
                                                 .stroke(Color(hex: item.borderColor), lineWidth: 1) // 圆形边框
                                         )
                                 }
+                            }
+                        }
+                    }
+                    .padding(.top, 16)
+                    
+                    // 选择出行方式
+                    HStack {
+                        ForEach(travelTypeList, id: \.key) { item in
+                            Button {
+                                self.routeDetailForm.travel_type = item.key
+                            } label: {
+                                Circle()
+                                    .fill(self.routeDetailForm.travel_type == item.key ? Color("theme-1") : Color(hex: "#eeeeee"))
+                                    .frame(width: 37, height: 37)
+                                    .overlay {
+                                        Image(systemName: item.icon)
+                                            .frame(width: 41, height: 41)
+                                    }
                             }
                         }
                     }
@@ -1255,7 +1275,7 @@ private struct HomeBottomCardsView: View {
 private struct RouteDetailForm {
     var route_id: String
     var content: String
-    var travel_type: String
+    var travel_type: TravelTypeKey?
     var mood_color: String
     var address: String
     var picture: [String]

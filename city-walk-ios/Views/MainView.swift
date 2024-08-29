@@ -506,14 +506,14 @@ struct MainView: View {
                                                     }
                                                     .clipShape(RoundedRectangle(cornerRadius: 8))
                                                 
-                                                HStack {
+                                                HStack(alignment: .top) {
                                                     Spacer()
                                            
                                                     VStack(alignment: .trailing) {
                                                         // 地点数量
                                                         Text("地点×\(item.count)")
                                                             .foregroundStyle(.white)
-                                                            .font(.system(size: 16))
+                                                            .font(.system(size: 18))
                                                             .padding(.top, 28)
                                                             .bold()
                                            
@@ -522,11 +522,24 @@ struct MainView: View {
                                                         // 时间
                                                         Text("\(convertToDateOnly(from: item.create_at)!)")
                                                             .foregroundStyle(.white)
-                                                            .font(.system(size: 14))
+                                                            .font(.system(size: 15))
                                                             .padding(.bottom, 10)
                                                     }
                                                     .padding(.trailing, 16)
                                                 }
+                                                .overlay(alignment: .topLeading) {
+                                                    if let travel_type = item.travel_type {
+                                                        // 火车
+                                                        if travel_type == "TRAIN" {
+                                                            Image(systemName: "tram.fill")
+                                                                .font(.system(size: 75))
+                                                                .foregroundStyle(.white.opacity(0.5))
+                                                                .padding(.top, 6)
+                                                                .offset(x: -16)
+                                                        }
+                                                    }
+                                                }
+                                                .clipped()
                                             }
                                         }
                                     }
