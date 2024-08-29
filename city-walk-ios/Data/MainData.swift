@@ -138,7 +138,7 @@ class MainData: ObservableObject {
     func onDisappear() {
         routeDetailList = nil
         routeDetailActiveIndex = nil
-        isRouteDetailListLoading = true
-        isProvinceListLoading = true
+//        isRouteDetailListLoading = true
+//        isProvinceListLoading = true
     }
 }

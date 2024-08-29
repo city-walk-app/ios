@@ -62,6 +62,8 @@ struct HomeView: View {
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
+    /// 用户位置
+//    @State private var userLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     /// 是否显示朋友邀请确认框
     @State private var isShowFriendInviteAlert = false
     /// 朋友申请信息
