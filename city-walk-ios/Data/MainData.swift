@@ -52,8 +52,10 @@ class MainData: ObservableObject {
     func getUserRouteHistory() async {
         print("获取历史记录")
         do {
-            withAnimation {
-                isRouteHistoryLoading = true
+            if routeList.isEmpty {
+                withAnimation {
+                    isRouteHistoryLoading = true
+                }
             }
 
             let res = try await Api.shared.getUserRouteHistory(params: [
@@ -73,8 +75,8 @@ class MainData: ObservableObject {
             }
 
             withAnimation {
-                self.routeList = data.routes
-                self.heatmap = data.heatmaps
+                routeList = data.routes
+                heatmap = data.heatmaps
             }
         } catch {
             print("获取用户步行历史记录异常")
@@ -87,8 +89,10 @@ class MainData: ObservableObject {
     /// 获取用户解锁的省份版图列表
     func getUserProvinceJigsaw() async {
         do {
-            withAnimation {
-                isProvinceListLoading = true
+            if provinceList.isEmpty {
+                withAnimation {
+                    isProvinceListLoading = true
+                }
             }
 
             let res = try await Api.shared.getUserProvinceJigsaw(params: ["user_id": user_id])
