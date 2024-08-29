@@ -184,7 +184,14 @@ struct SettingView: View {
                                 UIApplication.shared.open(url)
                             }
                         } label: {
-                            Text("加入CityWalk开发者")
+                            HStack {
+                                Text("加入CityWalk开发者")
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(Color(hex: "#B5B5B5"))
+                            }
                         }
                     }
                     
