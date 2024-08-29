@@ -484,6 +484,8 @@ private struct HomeRecordSheetView: View {
     @State private var addressList: [GetAroundAddressType.GetAroundAddressData] = []
     /// 全屏弹窗显示的类型
     @State private var fullScreenCoverType: FullScreenCoverType = .picture
+    /// 获取地址到页码
+    @State private var getAroundAddressPageNum = 1
     
     var body: some View {
         ZStack {
@@ -623,7 +625,8 @@ private struct HomeRecordSheetView: View {
                             selectedImages: $selectedImages,
                             addressList: $addressList,
                             visibleFullScreenCover: $visibleFullScreenCover,
-                            routeDetailForm: $routeDetailForm
+                            routeDetailForm: $routeDetailForm,
+                            getAroundAddressPageNum: $getAroundAddressPageNum
                         )
                     })
                     .actionSheet(isPresented: $visibleActionSheet) {
@@ -802,11 +805,11 @@ private struct HomeRecordSheetView: View {
             let res = try await Api.shared.getAroundAddress(params: [
                 "longitude": longitude,
                 "latitude": latitude,
-                //                "longitude": "120.298501",
-                //                "latitude": "30.41875",
-                "page_num": 1,
+                // "longitude": "120.298501",
+                // "latitude": "30.41875",
+                "page_num": getAroundAddressPageNum,
             ])
-
+            
             print("获取周边地址", res, longitude, latitude)
 
             guard res.code == 200, let data = res.data else {
@@ -814,6 +817,7 @@ private struct HomeRecordSheetView: View {
             }
 
             addressList = data
+          
             fullScreenCoverType = .location
             visibleFullScreenCover.toggle()
         } catch {
@@ -833,6 +837,8 @@ private struct HomeRecordSheetFullScreenCoverView: View {
     @Binding var visibleFullScreenCover: Bool
     /// 打卡详情
     @Binding var routeDetailForm: RouteDetailForm
+    /// 获取地址到页码
+    @Binding var getAroundAddressPageNum: Int
     
     var body: some View {
         if fullScreenCoverType == .picture {
@@ -841,28 +847,34 @@ private struct HomeRecordSheetFullScreenCoverView: View {
             NavigationStack {
                 VStack {
                     ScrollView {
-                        ForEach(addressList, id: \.name) { item in
-                            Button {
-                                self.selectAddress(longitude: item.longitude, latitude: item.latitude, address: item.address)
-                            } label: {
-                                VStack(alignment: .leading) {
-                                    Text("\(item.name ?? "")")
-                                        .bold()
-                                        .font(.system(size: 16))
-                                        .foregroundStyle(Color("text-1"))
+                        if addressList.isEmpty {
+                            EmptyState(title: "暂无可选地点")
+                        } else {
+                            ForEach(addressList, id: \.name) { item in
+                                Button {
+                                    self.selectAddress(longitude: item.longitude, latitude: item.latitude, address: item.address)
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("\(item.name ?? "")")
+                                            .bold()
+                                            .font(.system(size: 16))
+                                            .foregroundStyle(Color("text-1"))
         
-                                    Text("\(item.address ?? "")")
-                                        .font(.system(size: 11))
-                                        .foregroundStyle(Color("text-2"))
-                                        .padding(.top, 2)
-        
-                                    Rectangle()
-                                        .fill(Color.gray.opacity(0.2))
-                                        .frame(height: 1)
+                                        Text("\(item.address ?? "")")
+                                            .font(.system(size: 11))
+                                            .foregroundStyle(Color("text-2"))
+                                            .padding(.top, 2)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.vertical, 10)
+                                    .background(
+                                        Rectangle()
+                                            .frame(height: 0.6) // 下边框的高度
+                                            .foregroundColor(.gray.opacity(0.2)), // 边框的颜色
+                                        alignment: .bottom
+                                    )
+                                    .padding(.horizontal, 16)
                                 }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 3)
-                                .padding(.horizontal, 4)
                             }
                         }
                     }

@@ -110,6 +110,7 @@ struct MainView: View {
                         .scrollIndicators(.hidden)
                         .padding(.vertical, 24)
                     } else {
+                        // 有数据
                         if !mainData.provinceList.isEmpty {
                             ScrollView(.horizontal) {
                                 HStack {
@@ -132,6 +133,23 @@ struct MainView: View {
                                                 }
                                         }
                                     }
+                                }
+                                .padding(.horizontal, 17)
+                            }
+                            .scrollIndicators(.hidden)
+                            .padding(.vertical, 24)
+                        } else {
+                            ScrollView(.horizontal) {
+                                HStack {
+                                    Circle()
+                                        .fill(skeletonBackground)
+                                        .frame(width: 107, height: 107)
+                                        .redacted(reason: .placeholder)
+                                        .overlay {
+                                            Text("暂无版图")
+                                                .font(.system(size: 13))
+                                                .foregroundStyle(.gray)
+                                        }
                                 }
                                 .padding(.horizontal, 17)
                             }

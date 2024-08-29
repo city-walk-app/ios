@@ -48,12 +48,12 @@ class HomeData: NSObject, ObservableObject {
 
             print("今日打卡记录", res)
 
-            let user = Landmark(
-                coordinate: CLLocationCoordinate2D(latitude: self.userLocation.latitude, longitude: self.userLocation.longitude),
-                type: .user
-            )
-
-            self.landmarks.append(user)
+//            let user = Landmark(
+//                coordinate: CLLocationCoordinate2D(latitude: self.userLocation.latitude, longitude: self.userLocation.longitude),
+//                type: .user
+//            )
+//
+//            self.landmarks.append(user)
 
             guard res.code == 200, let data = res.data else {
                 return
