@@ -8,15 +8,15 @@
 import Kingfisher
 import SwiftUI
 
+/// 信息设置的每一项
+private let infoItems = [
+    InfoItemBar(icon: "person", key: .nick_name, title: "名字", color: "#EF7708"),
+    InfoItemBar(icon: "circlebadge.2", key: .gender, title: "性别", color: "#0043E6"),
+    InfoItemBar(icon: "smartphone", key: .mobile, title: "手机", color: "#FF323E"),
+    InfoItemBar(icon: "lightbulb", key: .signature, title: "签名", color: "#0348F2"),
+]
+
 struct SettingView: View {
-    /// 信息设置的每一项
-    private let infoItems = [
-        InfoItemBar(icon: "person", key: .nick_name, title: "名字", color: "#EF7708"),
-        InfoItemBar(icon: "circlebadge.2", key: .gender, title: "性别", color: "#0043E6"),
-        InfoItemBar(icon: "smartphone", key: .mobile, title: "手机", color: "#FF323E"),
-        InfoItemBar(icon: "lightbulb", key: .signature, title: "签名", color: "#0348F2"),
-    ]
-   
     /// 缓存数据
     @EnvironmentObject private var storageData: StorageData
 
@@ -94,7 +94,7 @@ struct SettingView: View {
                                 HStack {
                                     RoundedRectangle(cornerRadius: 10)
                                         .frame(width: 36, height: 36)
-                                        .foregroundColor(Color(hex: item.color)) // 修改为指定的颜色
+                                        .foregroundColor(Color(hex: item.color))
                                         .overlay {
                                             Image(systemName: item.icon)
                                                 .foregroundColor(.white)
@@ -127,11 +127,7 @@ struct SettingView: View {
                     
                     // 作者
                     Section(header: Text("作者")) {
-                        Button {
-                            if let url = URL(string: "https://github.com/Tyh2001/images/blob/master/my/we-chat.jpg") {
-                                UIApplication.shared.open(url)
-                            }
-                        } label: {
+                        Button {} label: {
                             HStack {
                                 Text("微信")
                                 
@@ -175,15 +171,19 @@ struct SettingView: View {
                     
                     // 应用服务
                     Section {
-                        Button {} label: {
-                            Text("给个好评")
-                        }
+//                        Button {} label: {
+//                            Text("给个好评")
+//                        }
+//
+//                        Button {} label: {
+//                            Text("分享给好友")
+//                        }
                         
-                        Button {} label: {
-                            Text("分享给好友")
-                        }
-                        
-                        Button {} label: {
+                        Button {
+                            if let url = URL(string: "https://github.com/city-walk-app") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
                             Text("加入CityWalk开发者")
                         }
                     }
@@ -520,21 +520,6 @@ private struct SettingSheetView: View {
 /// 用户信息编辑键
 private enum SheetKey {
     case avatar, nick_name, gender, mobile, signature
-    
-    var title: String {
-        switch self {
-        case .avatar:
-            return "头像"
-        case .nick_name:
-            return "名字"
-        case .gender:
-            return "性别"
-        case .mobile:
-            return "手机"
-        case .signature:
-            return "签名"
-        }
-    }
 }
 
 /// 用户信息
