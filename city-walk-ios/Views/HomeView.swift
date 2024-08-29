@@ -496,21 +496,29 @@ private struct HomeRecordSheetView: View {
                         Color.clear
                             .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
                             .background(
-                                Color(hex: recordDetail.background_color ?? "#F3943F")
-                                    .mask {
-                                        KFImage(URL(string: province_url))
-                                            .placeholder {
-                                                Color.clear
-                                            }
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                    }
+                                Group {
+                                    recordDetail.background_color != nil
+                                        ? Color(hex: recordDetail.background_color!)
+                                        : Color("theme-1")
+                                }
+                                .mask {
+                                    KFImage(URL(string: province_url))
+                                        .placeholder {
+                                            Color.clear
+                                        }
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                }
                             )
                     }
                     
                     // 文案
                     Text("\(recordDetail.content ?? "当前地点打卡成功")")
-                        .foregroundStyle(Color(hex: recordDetail.background_color ?? "#F3943F"))
+                        .foregroundStyle(
+                            recordDetail.background_color != nil
+                                ? Color(hex: recordDetail.background_color!)
+                                : Color("theme-1")
+                        )
                         .padding(.top, 9)
                         .font(.system(size: 16))
                         .bold()
@@ -735,13 +743,13 @@ private struct HomeRecordSheetView: View {
                             Text("取消")
                                 .frame(width: 160, height: 48)
                                 .font(.system(size: 16))
-                                .foregroundStyle(Color(hex: "#F3943F"))
+                                .foregroundStyle(Color("theme-1"))
                                 .background(Color(hex: "#ffffff"))
-                                .border(Color(hex: "#F3943F"))
+                                .border(Color("theme-1"))
                                 .clipShape(RoundedRectangle(cornerRadius: 14))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 14)
-                                        .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                        .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
                                 )
                         }
 
@@ -754,12 +762,12 @@ private struct HomeRecordSheetView: View {
                                 .frame(width: 160, height: 48)
                                 .font(.system(size: 16))
                                 .foregroundStyle(.white)
-                                .background(Color(hex: "#F3943F"))
-                                .border(Color(hex: "#F3943F"))
+                                .background(Color("theme-1"))
+                                .border(Color("theme-1"))
                                 .clipShape(RoundedRectangle(cornerRadius: 14))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 14)
-                                        .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                        .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
                                 )
                         }
                     }

@@ -79,7 +79,7 @@ struct LoginView: View {
                                         }
                                     } label: {
                                         Circle()
-                                            .fill(Color(hex: "#F3943F"))
+                                            .fill(Color("theme-1"))
                                             .frame(width: 90, height: 90)
                                             .overlay {
                                                 Image(systemName: "chevron.right")
@@ -128,7 +128,7 @@ struct LoginView: View {
                                         }
                                     } label: {
                                         Circle()
-                                            .fill(Color(hex: "#F3943F"))
+                                            .fill(Color("theme-1"))
                                             .frame(width: 90, height: 90)
                                             .overlay {
                                                 Image(systemName: "chevron.right")

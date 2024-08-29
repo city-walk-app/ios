@@ -17,6 +17,7 @@ struct SettingView: View {
         InfoItemBar(icon: "lightbulb", key: .signature, title: "签名", color: "#0348F2"),
     ]
    
+    /// 缓存数据
     @EnvironmentObject private var storageData: StorageData
 
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -53,8 +54,9 @@ struct SettingView: View {
                     Section {
                         // 头像设置
                         Button {
-                            self.visibleSheet.toggle()
                             self.sheetKey = .avatar
+                            self.title = "头像"
+                            self.visibleSheet.toggle()
                         } label: {
                             HStack {
                                 // 头像
@@ -85,8 +87,9 @@ struct SettingView: View {
                     Section {
                         ForEach(infoItems, id: \.key) { item in
                             Button {
-                                self.visibleSheet.toggle()
+                                self.title = item.title
                                 self.sheetKey = item.key
+                                self.visibleSheet.toggle()
                             } label: {
                                 HStack {
                                     RoundedRectangle(cornerRadius: 10)
@@ -344,7 +347,6 @@ private struct SettingSheetView: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
                         )
-                        .padding(.horizontal, 16)
                         .font(.system(size: 16))
                 }
                 // 性别
@@ -360,10 +362,14 @@ private struct SettingSheetView: View {
                                 }
                             } label: {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(userInfo.gender == .male ? Color(hex: "#F3943F") : Color("text-2"))
+                                    .fill(userInfo.gender == .male ? Color("theme-1") : Color(hex: "#eeeeee"))
                                     .frame(height: 160)
-                                    .overlay {
+                                    .overlay(alignment: .bottomTrailing) {
                                         Text("\(genders[0].sex)")
+                                            .padding(20)
+                                            .font(.system(size: 21))
+                                            .bold()
+                                            .foregroundStyle(userInfo.gender == .male ? Color.white : Color(hex: "#333333"))
                                     }
                             }
                                 
@@ -373,10 +379,14 @@ private struct SettingSheetView: View {
                                 }
                             } label: {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(userInfo.gender == .female ? Color(hex: "#F3943F") : Color("text-2"))
+                                    .fill(userInfo.gender == .female ? Color("theme-1") : Color(hex: "#eeeeee"))
                                     .frame(height: 160)
-                                    .overlay {
+                                    .overlay(alignment: .bottomTrailing) {
                                         Text("\(genders[1].sex)")
+                                            .padding(20)
+                                            .font(.system(size: 21))
+                                            .bold()
+                                            .foregroundStyle(userInfo.gender == .female ? Color.white : Color(hex: "#333333"))
                                     }
                             }
                         }
@@ -387,10 +397,14 @@ private struct SettingSheetView: View {
                             }
                         } label: {
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(userInfo.gender == .privacy ? Color(hex: "#F3943F") : Color("text-2"))
+                                .fill(userInfo.gender == .privacy ? Color("theme-1") : Color(hex: "#eeeeee"))
                                 .frame(width: .infinity, height: 90)
-                                .overlay {
+                                .overlay(alignment: .center) {
                                     Text("\(genders[2].sex)")
+                                        .padding()
+                                        .font(.system(size: 21))
+                                        .bold()
+                                        .foregroundStyle(userInfo.gender == .privacy ? Color.white : Color(hex: "#333333"))
                                 }
                         }
                     }
@@ -406,46 +420,46 @@ private struct SettingSheetView: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
                         )
-                        .padding(.horizontal, 16)
                         .font(.system(size: 16))
                 }
                 // 签名
                 else if sheetKey == .signature {
-                    TextField("请输入签名", text: $userInfo.signature)
-                        .padding(12)
-                        .frame(height: 50)
-                        .background(Color(hex: "#F0F0F0"))
-                        .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
-                        )
-                        .padding(.horizontal, 16)
-                        .font(.system(size: 16))
+                    TextField("Comment", text: $userInfo.signature, prompt: Text("请输入签名"), axis: .vertical)
+                        .lineLimit(4 ... 8)
+                        .submitLabel(.done)
+                        .autocapitalization(.none) // 禁止任何自动大写
+                        .disableAutocorrection(true) // 禁止自动更正
+                        .foregroundStyle(Color(hex: "#333333"))
+                        .border(Color(hex: "#eeeeee"), width: 2)
+                        .onChange(of: userInfo.signature) {
+                            // 当内容变化时执行的代码
+                            if userInfo.signature.contains("\n") {
+                                userInfo.signature = userInfo.signature.replacingOccurrences(of: "\n", with: "")
+                            }
+                        }
                 }
                 
                 Spacer()
                 
                 Button {
                     Task {
-                        await self.submitUserInfo()
+                        await self.submitUserInfo() // 提交用户信息
                     }
                 } label: {
                     Text("就这样")
                         .frame(width: 160, height: 48)
                         .font(.system(size: 16))
                         .foregroundStyle(.white)
-                        .background(Color(hex: "#F3943F"))
-                        .border(Color(hex: "#F3943F"))
+                        .background(Color("theme-1"))
+                        .border(Color("theme-1"))
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                         .overlay(
                             RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
                         )
                 }
             }
-            .padding(.top, 30)
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 18)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(title)
@@ -506,6 +520,21 @@ private struct SettingSheetView: View {
 /// 用户信息编辑键
 private enum SheetKey {
     case avatar, nick_name, gender, mobile, signature
+    
+    var title: String {
+        switch self {
+        case .avatar:
+            return "头像"
+        case .nick_name:
+            return "名字"
+        case .gender:
+            return "性别"
+        case .mobile:
+            return "手机"
+        case .signature:
+            return "签名"
+        }
+    }
 }
 
 /// 用户信息

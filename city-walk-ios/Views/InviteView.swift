@@ -28,13 +28,13 @@ struct InviteView: View {
                                 Text("复制邀请链接")
                                     .frame(width: 160, height: 48)
                                     .font(.system(size: 16))
-                                    .foregroundStyle(Color(hex: "#F3943F"))
+                                    .foregroundStyle(Color("theme-1"))
                                     .background(Color(hex: "#ffffff"))
-                                    .border(Color(hex: "#F3943F"))
+                                    .border(Color("theme-1"))
                                     .clipShape(RoundedRectangle(cornerRadius: 14))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 14)
-                                            .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                            .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
                                     )
                             }
 
@@ -43,12 +43,12 @@ struct InviteView: View {
 //                                    .frame(width: 160, height: 48)
 //                                    .font(.system(size: 16))
 //                                    .foregroundStyle(.white)
-//                                    .background(Color(hex: "#F3943F"))
-//                                    .border(Color(hex: "#F3943F"))
+//                                    .background(Color("theme-1"))
+//                                    .border(Color("theme-1"))
 //                                    .clipShape(RoundedRectangle(cornerRadius: 14))
 //                                    .overlay(
 //                                        RoundedRectangle(cornerRadius: 14)
-//                                            .stroke(Color(hex: "#F3943F"), lineWidth: 1) // 使用 overlay 添加圆角边框
+//                                            .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
 //                                    )
 //                            }
                         }

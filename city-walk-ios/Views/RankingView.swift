@@ -109,7 +109,7 @@ struct RankingView: View {
                                             HStack {
                                                 Text("今日共打卡")
                                                 Text("\(item.count)")
-                                                    .foregroundStyle(Color(hex: "#F3943F"))
+                                                    .foregroundStyle(Color("theme-1"))
                                                 Text("个地点")
                                             }
                                             .font(.system(size: 14))
