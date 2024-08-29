@@ -112,31 +112,31 @@ struct SettingView: View {
                     }
                     
                     // 赞助
-                    Section {
-                        HStack {
-                            Button {} label: {
-                                Text("赞助")
-                            }
-                            
-                            Spacer()
-                            
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(Color(hex: "#B5B5B5"))
-                        }
-                    }
+//                    Section {
+//                        HStack {
+//                            Button {} label: {
+//                                Text("赞助")
+//                            }
+//
+//                            Spacer()
+//
+//                            Image(systemName: "chevron.right")
+//                                .foregroundColor(Color(hex: "#B5B5B5"))
+//                        }
+//                    }
                     
                     // 作者
                     Section(header: Text("作者")) {
-                        Button {} label: {
-                            HStack {
-                                Text("微信")
-                                
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(Color(hex: "#B5B5B5"))
-                            }
-                        }
+//                        Button {} label: {
+//                            HStack {
+//                                Text("微信")
+//
+//                                Spacer()
+//
+//                                Image(systemName: "chevron.right")
+//                                    .foregroundColor(Color(hex: "#B5B5B5"))
+//                            }
+//                        }
                         
                         Button {
                             if let url = URL(string: "https://x.com/tyh20011") {
