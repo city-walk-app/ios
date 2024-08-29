@@ -599,7 +599,8 @@ struct MainView: View {
 
                 Button {
                     Task {
-                        await mainData.getLocationUserHeatmap()
+                        await mainData.getLocationUserHeatmap() // 获取用户指定月份打卡热力图
+                        await mainData.getUserRouteList() // 获取用户步行记录列表
                     }
                     
                     self.showDatePicker.toggle()

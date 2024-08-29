@@ -57,7 +57,11 @@ class MainData: ObservableObject {
                 }
             }
 
-            let res = try await Api.shared.getUserRouteList(params: ["user_id": user_id])
+            let res = try await Api.shared.getUserRouteList(params: [
+                "user_id": user_id,
+                "year": year,
+                "month": month,
+            ])
 
             withAnimation {
                 self.isRouteDetailListLoading = false
