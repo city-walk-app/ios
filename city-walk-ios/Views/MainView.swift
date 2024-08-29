@@ -473,7 +473,7 @@ struct MainView: View {
                             GridItem(.flexible()),
                         ]
                         
-                        if mainData.isRouteDetailListLoading {
+                        if mainData.isRouteHistoryLoading {
                             LazyVGrid(columns: columns, alignment: .center) {
                                 ForEach(0 ..< 5) { _ in
                                     RoundedRectangle(cornerRadius: 8)
@@ -630,8 +630,7 @@ struct MainView: View {
 
                 Button {
                     Task {
-                        await mainData.getLocationUserHeatmap() // 获取用户指定月份打卡热力图
-                        await mainData.getUserRouteList() // 获取用户步行记录列表
+                        await mainData.getUserRouteHistory() // 获取用户步行历史记录
                     }
                     
                     self.showDatePicker.toggle()
@@ -654,9 +653,8 @@ struct MainView: View {
             
             Task {
                 await mainData.getUserInfo() // 获取用户信息
-                await mainData.getLocationUserHeatmap() // 获取用户指定月份打卡热力图
+                await mainData.getUserRouteHistory() // 获取用户步行历史记录
                 await mainData.getUserProvinceJigsaw() // 获取用户解锁的省份版图列表
-                await mainData.getUserRouteList() // 获取用户步行记录列表
             }
         }
         .onDisappear {

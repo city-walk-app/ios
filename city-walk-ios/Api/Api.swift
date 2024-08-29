@@ -30,17 +30,7 @@ class Api {
             type: UserLoginEmailType.self
         )
     }
-    
-    /// 获取用户指定月份打卡热力图
-    func getLocationUserHeatmap(params: [String: Any]) async throws -> GetLocationUserHeatmapType {
-        return try await Request.shared.request(
-            url: "/location/get/user/heatmap",
-            params: params,
-            method: .post,
-            type: GetLocationUserHeatmapType.self
-        )
-    }
-    
+
     /// 获取邮箱验证码
     func emailSend(params: [String: Any]) async throws -> EmailSendType {
         return try await Request.shared.request(
@@ -58,16 +48,6 @@ class Api {
             params: params,
             method: .post,
             type: GetUserProvinceJigsawType.self
-        )
-    }
-    
-    /// 获取用户步行记录列表
-    func getUserRouteList(params: [String: Any]) async throws -> GetUserRouteListType {
-        return try await Request.shared.request(
-            url: "/location/get/user/route/list",
-            params: params,
-            method: .post,
-            type: GetUserRouteListType.self
         )
     }
     
@@ -198,6 +178,16 @@ class Api {
             params: params,
             method: .post,
             type: FriendConfirmInviteType.self
+        )
+    }
+    
+    /// 获取用户步行历史记录
+    func getUserRouteHistory(params: [String: Any]) async throws -> GetUserRouteHistoryType {
+        return try await Request.shared.request(
+            url: "/location/get/user/route/history",
+            params: params,
+            method: .post,
+            type: GetUserRouteHistoryType.self
         )
     }
 }

@@ -16,13 +16,13 @@ class MainData: ObservableObject {
     /// 省份列表
     @Published var provinceList: [GetUserProvinceJigsawType.GetUserProvinceJigsawData] = []
     /// 热力图
-    @Published var heatmap: [GetLocationUserHeatmapType.GetLocationUserHeatmapData] = []
+    @Published var heatmap: [GetUserRouteHistoryType.GetUserRouteHistoryDataHeatmap] = []
     /// 步行记录列表
-    @Published var routeList: [GetUserRouteListType.GetUserRouteListData] = []
+    @Published var routeList: [GetUserRouteHistoryType.GetUserRouteHistoryRoute] = []
     /// 步行记录详情列表
-    @Published var routeDetailList: [GetLocationUserHeatmapType.GetLocationUserHeatmapDataRoutes]?
+    @Published var routeDetailList: [GetUserRouteHistoryType.GetUserRouteHistoryDataHeatmapRoute]?
     /// 步行记录详情列表是否在加载中
-    @Published var isRouteDetailListLoading = true
+    @Published var isRouteHistoryLoading = true
     /// 省份版图是否在加载中
     @Published var isProvinceListLoading = true
     /// 用户 id
@@ -42,29 +42,30 @@ class MainData: ObservableObject {
             heatmap = []
             routeList = []
             routeDetailList = nil
-            isRouteDetailListLoading = true
+            isRouteHistoryLoading = true
         }
 
         self.user_id = user_id
     }
 
-    /// 获取用户步行记录列表
-    func getUserRouteList() async {
+    /// 获取用户步行历史记录
+    func getUserRouteHistory() async {
+        print("获取历史记录")
         do {
-            if routeList.isEmpty {
-                withAnimation {
-                    self.isRouteDetailListLoading = true
-                }
+            withAnimation {
+                isRouteHistoryLoading = true
             }
 
-            let res = try await Api.shared.getUserRouteList(params: [
+            let res = try await Api.shared.getUserRouteHistory(params: [
                 "user_id": user_id,
                 "year": year,
                 "month": month,
             ])
 
+            print("获取用户步行历史记录", res)
+
             withAnimation {
-                self.isRouteDetailListLoading = false
+                isRouteHistoryLoading = false
             }
 
             guard res.code == 200, let data = res.data else {
@@ -72,12 +73,13 @@ class MainData: ObservableObject {
             }
 
             withAnimation {
-                self.routeList = data
+                self.routeList = data.routes
+                self.heatmap = data.heatmaps
             }
         } catch {
-            print("获取用户步行记录列表异常")
+            print("获取用户步行历史记录异常")
             withAnimation {
-                self.isRouteDetailListLoading = false
+                isRouteHistoryLoading = false
             }
         }
     }
@@ -125,34 +127,11 @@ class MainData: ObservableObject {
         }
     }
 
-    /// 获取用户指定月份打卡热力图
-    func getLocationUserHeatmap() async {
-        do {
-            let res = try await Api.shared.getLocationUserHeatmap(params: [
-                "user_id": user_id,
-                "year": year,
-                "month": month,
-            ])
-
-            guard res.code == 200, let data = res.data else {
-                return
-            }
-
-            withAnimation {
-                self.heatmap = data
-            }
-        } catch {
-            print("取用户指定月份打卡热力图异常")
-        }
-    }
-
     /// 页面隐藏
     func onDisappear() {
         routeDetailList = nil
         routeDetailActiveIndex = nil
         year = Calendar.current.component(.year, from: Date())
         month = Calendar.current.component(.month, from: Date())
-//        isRouteDetailListLoading = true
-//        isProvinceListLoading = true
     }
 }

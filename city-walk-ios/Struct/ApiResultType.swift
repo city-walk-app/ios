@@ -19,32 +19,6 @@ struct UserInfoType: Codable {
     var gender: String?
 }
 
-// 获取用户指定月份打卡热力图
-struct GetLocationUserHeatmapType: Decodable {
-    struct GetLocationUserHeatmapDataRoutes: Codable {
-        var create_at: String?
-        var city: String?
-        var province: String?
-        var content: String?
-        var address: String?
-        var picture: [String]?
-        var travel_type: String?
-        var mood_color: String?
-    }
-
-    struct GetLocationUserHeatmapData: Codable {
-        var date: String
-        var background_color: String?
-        var list_id: String?
-        var route_count: Int?
-        var routes: [GetLocationUserHeatmapDataRoutes]
-    }
-
-    var message: String
-    var code: Int
-    var data: [GetLocationUserHeatmapData]?
-}
-
 /// 获取用户解锁的省份版图列表
 struct GetUserProvinceJigsawType: Decodable {
     struct GetUserProvinceJigsawData: Codable, Hashable {
@@ -58,21 +32,6 @@ struct GetUserProvinceJigsawType: Decodable {
     var message: String
     var code: Int
     var data: [GetUserProvinceJigsawData]?
-}
-
-/// 获取用户步行记录列表
-struct GetUserRouteListType: Decodable {
-    struct GetUserRouteListData: Codable {
-        var list_id: String
-        var create_at: String
-        var mood_color: String?
-        var travel_type: String?
-        var count: Int
-    }
-
-    var message: String
-    var code: Int
-    var data: [GetUserRouteListData]?
 }
 
 /// 获取用户信息
@@ -398,4 +357,47 @@ struct GetFriendInviteInfoType: Decodable {
 struct FriendConfirmInviteType: Decodable {
     var message: String
     var code: Int
+}
+
+/// 获取用户步行历史记录
+struct GetUserRouteHistoryType: Decodable {
+    /// 获取用户步行历史记录-热力图-步行记录
+    struct GetUserRouteHistoryDataHeatmapRoute: Codable {
+        var create_at: String?
+        var city: String?
+        var province: String?
+        var content: String?
+        var address: String?
+        var picture: [String]?
+        var travel_type: String?
+        var mood_color: String?
+    }
+
+    /// 获取用户步行历史记录-热力图
+    struct GetUserRouteHistoryDataHeatmap: Codable {
+        var date: String
+        var background_color: String?
+        var list_id: String?
+        var route_count: Int?
+        var routes: [GetUserRouteHistoryDataHeatmapRoute]
+    }
+
+    /// 获取用户步行历史记录-步行记录
+    struct GetUserRouteHistoryRoute: Codable {
+        var list_id: String
+        var create_at: String
+        var mood_color: String?
+        var travel_type: String?
+        var count: Int
+    }
+
+    /// 获取用户步行历史记录-数据
+    struct GetUserRouteHistoryData: Codable {
+        var routes: [GetUserRouteHistoryRoute]
+        var heatmaps: [GetUserRouteHistoryDataHeatmap]
+    }
+
+    var message: String
+    var code: Int
+    var data: GetUserRouteHistoryData?
 }
