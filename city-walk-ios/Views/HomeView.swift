@@ -472,7 +472,10 @@ private struct HomeRecordSheetView: View {
                             // 发布瞬间
                             Menu {
                                 Section {
-                                    Button {} label: {
+                                    Button {
+                                        self.fullScreenCoverType = .camera
+                                        self.visibleFullScreenCover.toggle()
+                                    } label: {
                                         Label("拍照", systemImage: "camera")
                                     }
                                     
@@ -520,7 +523,10 @@ private struct HomeRecordSheetView: View {
                                     }
 
                                 Menu {
-                                    Button {} label: {
+                                    Button {
+                                        self.fullScreenCoverType = .camera
+                                        self.visibleFullScreenCover.toggle()
+                                    } label: {
                                         Label("拍照", systemImage: "camera")
                                     }
                                     
@@ -816,9 +822,19 @@ private struct HomeRecordSheetFullScreenCoverView: View {
     @Binding var getAroundAddressPageNum: Int
     
     var body: some View {
+        // 选择照片
         if fullScreenCoverType == .picture {
             ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount - selectedImages.count)
-        } else if fullScreenCoverType == .location {
+        }
+        // 打开相机
+        else if fullScreenCoverType == .camera {
+            CameraView(
+                isPresented: $visibleFullScreenCover,
+                selectedImage: $selectedImages
+            )
+        }
+        // 选择位置
+        else if fullScreenCoverType == .location {
             NavigationStack {
                 VStack {
                     ScrollView {
@@ -1240,7 +1256,7 @@ private struct RouteDetailForm {
 
 /// FullScreenCover 对话框打开类型
 private enum FullScreenCoverType {
-    case picture, location
+    case picture, location, camera
 }
 
 #Preview {
