@@ -12,6 +12,17 @@ private let mainHeatmap1 = URL(string: "https://city-walk.oss-cn-beijing.aliyunc
 private let mainHeatmap2 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")
 private let mainHeatmap3 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")
 
+/// 热力图布局
+private let heatmapColumns = [
+    GridItem(.flexible()),
+    GridItem(.flexible()),
+    GridItem(.flexible()),
+    GridItem(.flexible()),
+    GridItem(.flexible()),
+    GridItem(.flexible()),
+    GridItem(.flexible()),
+]
+
 /// 月份选择
 private let selectmonths = [
     SelectmonthItem(title: "一", key: 1),
@@ -158,18 +169,8 @@ struct MainView: View {
                         }
                     }
                     
-                    let heatmapColumns = [
-                        GridItem(.flexible()),
-                        GridItem(.flexible()),
-                        GridItem(.flexible()),
-                        GridItem(.flexible()),
-                        GridItem(.flexible()),
-                        GridItem(.flexible()),
-                        GridItem(.flexible()),
-                    ]
-                    
                     // 热力图
-                    if !mainData.heatmap.isEmpty {
+                    if !mainData.isRouteHistoryLoading {
                         // 日期选择
                         HStack {
                             Spacer()
@@ -194,128 +195,134 @@ struct MainView: View {
                         }
                         .padding(.horizontal, 16)
                         
-                        // 热力图
-                        HStack {
-                            // 图例
-                            VStack(spacing: 30) {
-                                HStack(spacing: 7) {
-                                    KFImage(mainHeatmap1)
-                                        .placeholder {
-                                            Color.clear
-                                                .frame(width: 15, height: 17)
-                                        }
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 15, height: 17)
-                                 
-                                    Text("打卡多")
-                                        .foregroundStyle(Color("text-2"))
-                                        .font(.system(size: 14))
-                                }
-                                
-                                HStack(spacing: 7) {
-                                    KFImage(mainHeatmap2)
-                                        .placeholder {
-                                            Color.clear
-                                                .frame(width: 15, height: 17)
-                                        }
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 15, height: 17)
-                                    
-                                    Text("打卡少")
-                                        .foregroundStyle(Color("text-2"))
-                                        .font(.system(size: 14))
-                                }
-                                
-                                HStack(spacing: 7) {
-                                    KFImage(mainHeatmap3)
-                                        .placeholder {
-                                            Color.clear
-                                                .frame(width: 15, height: 17)
-                                        }
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 15, height: 17)
-                                    
-                                    Text("未打卡")
-                                        .foregroundStyle(Color("text-2"))
-                                        .font(.system(size: 14))
-                                }
-                            }
-                            .frame(width: 98)
-                            
+                        if mainData.heatmap.isEmpty {
+                            MainHeatmapSkeletonView()
+                        } else {
                             // 热力图
                             HStack {
-                                ZStack {
-                                    LazyVGrid(columns: heatmapColumns, spacing: 13) {
-                                        ForEach(Array(mainData.heatmap.enumerated()), id: \.element.date) { index, item in
-                                            let isHaveRoute: Bool = item.route_count != nil
-                                                && item.route_count! > 0
-                                                && item.background_color != nil
-                                            
-                                            Button {
-                                                if isHaveRoute {
-                                                    withAnimation {
-                                                        if mainData.routeDetailActiveIndex == index {
-                                                            mainData.routeDetailActiveIndex = nil
-                                                            mainData.routeDetailList = nil
-                                                        } else {
-                                                            mainData.routeDetailActiveIndex = index
-                                                            mainData.routeDetailList = item.routes
-                                                        }
-                                                    }
-                                                }
-                                                print("点击的索引", index)
-                                            } label: {
-                                                RoundedRectangle(cornerRadius: 4)
-                                                    .fill(Color(hex: isHaveRoute
-                                                            ? "\(item.background_color!)"
-                                                            : "#eeeeee"
-                                                    ))
-                                                    .frame(width: 26, height: 26)
+                                // 图例
+                                VStack(spacing: 30) {
+                                    HStack(spacing: 7) {
+                                        KFImage(mainHeatmap1)
+                                            .placeholder {
+                                                Color.clear
+                                                    .frame(width: 15, height: 17)
                                             }
-                                            .scaleEffect(mainData.routeDetailActiveIndex == index ? 40 : 1)
-                                            .zIndex(mainData.routeDetailActiveIndex == index ? 30 : 1)
-                                            .offset(x: mainData.routeDetailActiveIndex == index ? -13 : 0, y: mainData.routeDetailActiveIndex == index ? -13 : 0) // 根据放大倍数进行偏移
-                                        }
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 15, height: 17)
+                                        
+                                        Text("打卡多")
+                                            .foregroundStyle(Color("text-2"))
+                                            .font(.system(size: 14))
                                     }
                                     
-                                    if let activeIndex = mainData.routeDetailActiveIndex {
-                                        let item = mainData.heatmap[activeIndex]
-                                        
-                                        Button {
-                                            withAnimation {
-                                                mainData.routeDetailActiveIndex = nil
-                                                mainData.routeDetailList = nil
+                                    HStack(spacing: 7) {
+                                        KFImage(mainHeatmap2)
+                                            .placeholder {
+                                                Color.clear
+                                                    .frame(width: 15, height: 17)
                                             }
-                                        } label: {
-                                            RoundedRectangle(cornerRadius: 4)
-                                                .fill(Color(hex: "\(item.background_color!)"))
-                                                .scaleEffect(1)
-                                                .zIndex(3)
-                                                .animation(.easeInOut(duration: 0.3), value: mainData.routeDetailActiveIndex)
-                                                .transition(.identity)
-                                                .buttonStyle(PlainButtonStyle())
-                                                .overlay {
-                                                    VStack(spacing: 4) {
-                                                        Text("\(item.date)")
-                                                        Text("打卡\(item.routes.count)个地方")
-                                                    }
-                                                    .font(.system(size: 22))
-                                                    .foregroundStyle(.white)
-                                                    .bold()
-                                                }
-                                        }
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 15, height: 17)
+                                        
+                                        Text("打卡少")
+                                            .foregroundStyle(Color("text-2"))
+                                            .font(.system(size: 14))
+                                    }
+                                    
+                                    HStack(spacing: 7) {
+                                        KFImage(mainHeatmap3)
+                                            .placeholder {
+                                                Color.clear
+                                                    .frame(width: 15, height: 17)
+                                            }
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 15, height: 17)
+                                        
+                                        Text("未打卡")
+                                            .foregroundStyle(Color("text-2"))
+                                            .font(.system(size: 14))
                                     }
                                 }
-                                .clipped()
-                                .cornerRadius(10)
+                                .frame(width: 98)
+                                
+                                // 热力图
+                                HStack {
+                                    ZStack {
+                                        LazyVGrid(columns: heatmapColumns, spacing: 13) {
+                                            ForEach(Array(mainData.heatmap.enumerated()), id: \.element.date) { index, item in
+                                                let isHaveRoute: Bool = item.route_count != nil
+                                                    && item.route_count! > 0
+                                                    && item.background_color != nil
+                                                
+                                                Button {
+                                                    if isHaveRoute {
+                                                        withAnimation {
+                                                            if mainData.routeDetailActiveIndex == index {
+                                                                mainData.routeDetailActiveIndex = nil
+                                                                mainData.routeDetailList = nil
+                                                            } else {
+                                                                mainData.routeDetailActiveIndex = index
+                                                                mainData.routeDetailList = item.routes
+                                                            }
+                                                        }
+                                                    }
+                                                    print("点击的索引", index)
+                                                } label: {
+                                                    RoundedRectangle(cornerRadius: 4)
+                                                        .fill(Color(hex: isHaveRoute
+                                                                ? "\(item.background_color!)"
+                                                                : "#eeeeee"
+                                                        ))
+                                                        .frame(width: 26, height: 26)
+                                                }
+                                                .scaleEffect(mainData.routeDetailActiveIndex == index ? 40 : 1)
+                                                .zIndex(mainData.routeDetailActiveIndex == index ? 30 : 1)
+                                                .offset(x: mainData.routeDetailActiveIndex == index ? -13 : 0, y: mainData.routeDetailActiveIndex == index ? -13 : 0) // 根据放大倍数进行偏移
+                                            }
+                                        }
+                                        
+                                        if let activeIndex = mainData.routeDetailActiveIndex {
+                                            let item = mainData.heatmap[activeIndex]
+                                            
+                                            Button {
+                                                withAnimation {
+                                                    mainData.routeDetailActiveIndex = nil
+                                                    mainData.routeDetailList = nil
+                                                }
+                                            } label: {
+                                                RoundedRectangle(cornerRadius: 4)
+                                                    .fill(Color(hex: "\(item.background_color!)"))
+                                                    .scaleEffect(1)
+                                                    .zIndex(3)
+                                                    .animation(.easeInOut(duration: 0.3), value: mainData.routeDetailActiveIndex)
+                                                    .transition(.identity)
+                                                    .buttonStyle(PlainButtonStyle())
+                                                    .overlay {
+                                                        VStack(spacing: 4) {
+                                                            Text("\(item.date)")
+                                                            Text("打卡\(item.routes.count)个地方")
+                                                        }
+                                                        .font(.system(size: 22))
+                                                        .foregroundStyle(.white)
+                                                        .bold()
+                                                    }
+                                            }
+                                        }
+                                    }
+                                    .clipped()
+                                    .cornerRadius(10)
+                                }
+                                .frame(maxWidth: .infinity)
                             }
-                            .frame(maxWidth: .infinity)
+                            .padding(16)
                         }
-                        .padding(16)
-                    } else {
+                    }
+                    // 热力图加载中
+                    else {
                         // 日期选择
                         HStack {
                             Spacer()
@@ -326,31 +333,7 @@ struct MainView: View {
                         }
                         .padding(.horizontal, 16)
                         
-                        // 热力图
-                        HStack {
-                            // 图例
-                            VStack(spacing: 30) {
-                                ForEach(0 ..< 3) { _ in
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(skeletonBackground)
-                                        .frame(width: 66, height: 20)
-                                }
-                            }
-                            .frame(width: 98)
-                            
-                            // 热力图
-                            HStack {
-                                LazyVGrid(columns: heatmapColumns, spacing: 13) {
-                                    ForEach(0 ..< 31) { _ in
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .fill(Color(hex: "#eeeeee"))
-                                            .frame(width: 26, height: 26)
-                                    }
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        .padding(16)
+                        MainHeatmapSkeletonView() // 热力图骨架图
                     }
                     
                     // 步行记录详情
@@ -660,6 +643,37 @@ struct MainView: View {
         .onDisappear {
             mainData.onDisappear() // 清除数据
         }
+    }
+}
+
+/// 热力图骨架图
+private struct MainHeatmapSkeletonView: View {
+    var body: some View {
+        // 热力图
+        HStack {
+            // 图例
+            VStack(spacing: 30) {
+                ForEach(0 ..< 3) { _ in
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(skeletonBackground)
+                        .frame(width: 66, height: 20)
+                }
+            }
+            .frame(width: 98)
+            
+            // 热力图
+            HStack {
+                LazyVGrid(columns: heatmapColumns, spacing: 13) {
+                    ForEach(0 ..< 31) { _ in
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color(hex: "#eeeeee"))
+                            .frame(width: 26, height: 26)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(16)
     }
 }
 

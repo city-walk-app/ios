@@ -52,7 +52,7 @@ class MainData: ObservableObject {
     func getUserRouteHistory() async {
         print("获取历史记录")
         do {
-            if routeList.isEmpty {
+            if routeList.isEmpty && heatmap.isEmpty {
                 withAnimation {
                     isRouteHistoryLoading = true
                 }
@@ -74,10 +74,8 @@ class MainData: ObservableObject {
                 return
             }
 
-            withAnimation {
-                routeList = data.routes
-                heatmap = data.heatmaps
-            }
+            routeList = data.routes
+            heatmap = data.heatmaps
         } catch {
             print("获取用户步行历史记录异常")
             withAnimation {
