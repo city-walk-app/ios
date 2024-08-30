@@ -672,15 +672,15 @@ private struct MainRouteListItem: View {
                     .padding(.trailing, 16)
                 }
                 .overlay(alignment: .topLeading) {
-                    if let travel_type = item.travel_type {
-                        // 火车
-                        if travel_type == "TRAIN" {
-                            Image(systemName: "tram.fill")
-                                .font(.system(size: 75))
-                                .foregroundStyle(.white.opacity(0.5))
-                                .padding(.top, 6)
-                                .offset(x: -16)
-                        }
+                    if let travel_type = item.travel_type,
+                       let travelType = TravelTypeKey.getTravelType(from: travel_type),
+                       let trainIcon = travelTypes.first(where: { $0.key == travelType })?.icon
+                    {
+                        Image(systemName: trainIcon)
+                            .font(.system(size: 75))
+                            .foregroundStyle(.white.opacity(0.5))
+                            .padding(.top, 6)
+                            .offset(x: -16)
                     }
                 }
                 .clipped()

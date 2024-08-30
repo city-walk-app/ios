@@ -31,6 +31,10 @@ enum TravelTypeKey: String, CaseIterable {
     
     // 船
     case SHIP
+    
+    static func getTravelType(from value: String) -> TravelTypeKey? {
+        return TravelTypeKey(rawValue: value)
+    }
 }
 
 struct TravelType {
