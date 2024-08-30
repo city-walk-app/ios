@@ -68,7 +68,7 @@ struct MainView: View {
                         KFImage(URL(string: userInfo.avatar ?? defaultAvatar))
                             .placeholder {
                                 Circle()
-                                    .fill(skeletonBackground)
+                                    .fill(Color("skeleton-background"))
                                     .frame(width: 74, height: 74)
                             }
                             .resizable()
@@ -89,18 +89,18 @@ struct MainView: View {
                             .font(.system(size: 14))
                     } else {
                         Circle()
-                            .fill(skeletonBackground)
+                            .fill(Color("skeleton-background"))
                             .frame(width: 74, height: 74)
                         
                         // 昵称
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(skeletonBackground)
+                            .fill(Color("skeleton-background"))
                             .padding(.top, 16)
                             .frame(width: 54, height: 31)
                         
                         // 签名
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(skeletonBackground)
+                            .fill(Color("skeleton-background"))
                             .padding(.top, 16)
                             .frame(width: 280, height: 31)
                     }
@@ -111,7 +111,7 @@ struct MainView: View {
                             HStack {
                                 ForEach(0 ..< 4) { _ in
                                     Circle()
-                                        .fill(skeletonBackground)
+                                        .fill(Color("skeleton-background"))
                                         .frame(width: 107, height: 107)
                                         .redacted(reason: .placeholder)
                                 }
@@ -135,7 +135,7 @@ struct MainView: View {
                                                             KFImage(URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/provinces/\(item.province_code).png"))
                                                                 .placeholder {
                                                                     Circle()
-                                                                        .fill(skeletonBackground)
+                                                                        .fill(Color("skeleton-background"))
                                                                         .frame(width: 107, height: 107)
                                                                 }
                                                                 .resizable()
@@ -153,7 +153,7 @@ struct MainView: View {
                             ScrollView(.horizontal) {
                                 HStack {
                                     Circle()
-                                        .fill(skeletonBackground)
+                                        .fill(Color("skeleton-background"))
                                         .frame(width: 107, height: 107)
                                         .redacted(reason: .placeholder)
                                         .overlay {
@@ -328,7 +328,7 @@ struct MainView: View {
                             Spacer()
                             
                             RoundedRectangle(cornerRadius: 6)
-                                .fill(skeletonBackground)
+                                .fill(Color("skeleton-background"))
                                 .frame(width: 106, height: 26)
                         }
                         .padding(.horizontal, 16)
@@ -421,7 +421,7 @@ struct MainView: View {
                                                             KFImage(URL(string: pictureItem))
                                                                 .placeholder {
                                                                     Rectangle()
-                                                                        .fill(skeletonBackground)
+                                                                        .fill(Color("skeleton-background"))
                                                                         .frame(width: 174, height: 174)
                                                                         .cornerRadius(8)
                                                                 }
@@ -460,7 +460,7 @@ struct MainView: View {
                             LazyVGrid(columns: columns, alignment: .center) {
                                 ForEach(0 ..< 5) { _ in
                                     RoundedRectangle(cornerRadius: 8)
-                                        .fill(skeletonBackground)
+                                        .fill(Color("skeleton-background"))
                                         .frame(height: 116)
                                         .frame(maxWidth: .infinity)
                                 }
@@ -600,7 +600,7 @@ private struct MainHeatmapSkeletonView: View {
             VStack(spacing: 30) {
                 ForEach(0 ..< 3) { _ in
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(skeletonBackground)
+                        .fill(Color("skeleton-background"))
                         .frame(width: 66, height: 20)
                 }
             }

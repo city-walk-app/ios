@@ -28,7 +28,7 @@ struct RankingView: View {
                     if rankingData.isRankingListLoading {
                         ForEach(1 ..< 4) { _ in
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(skeletonBackground)
+                                .fill(Color("skeleton-background"))
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 80)
                         }
@@ -80,7 +80,7 @@ struct RankingView: View {
                                         KFImage(URL(string: item.avatar ?? defaultAvatar))
                                             .placeholder {
                                                 Circle()
-                                                    .fill(skeletonBackground)
+                                                    .fill(Color("skeleton-background"))
                                                     .frame(width: 46, height: 46)
                                             }
                                             .resizable()

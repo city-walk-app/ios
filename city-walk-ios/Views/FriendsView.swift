@@ -28,7 +28,7 @@ struct FriendsView: View {
                         LazyVGrid(columns: columns, spacing: 20) {
                             ForEach(0 ..< 4) { _ in
                                 Rectangle()
-                                    .fill(skeletonBackground)
+                                    .fill(Color("skeleton-background"))
                                     .frame(width: 106, height: 106)
                                     .clipShape(RoundedRectangle(cornerRadius: 20))
                             }
@@ -50,7 +50,7 @@ struct FriendsView: View {
                                             KFImage(URL(string: item.avatar ?? defaultAvatar))
                                                 .placeholder {
                                                     Rectangle()
-                                                        .fill(skeletonBackground)
+                                                        .fill(Color("skeleton-background"))
                                                         .frame(width: 106, height: 106)
                                                         .clipShape(RoundedRectangle(cornerRadius: 20))
                                                 }

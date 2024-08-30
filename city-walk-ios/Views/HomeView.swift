@@ -443,7 +443,7 @@ private struct HomeLandmarkView: View {
                     KFImage(url)
                         .placeholder {
                             Circle()
-                                .fill(skeletonBackground)
+                                .fill(Color("skeleton-background"))
                                 .frame(width: 53, height: 53)
                                 .shadow(radius: 10)
                         }
@@ -956,7 +956,7 @@ private struct HomeHeaderView: View {
                         KFImage(url)
                             .placeholder {
                                 Circle()
-                                    .fill(skeletonBackground)
+                                    .fill(Color("skeleton-background"))
                                     .frame(width: 53, height: 53)
                                     .shadow(radius: 10)
                             }
@@ -969,7 +969,7 @@ private struct HomeHeaderView: View {
                             .shadow(radius: 10)
                     } else {
                         Circle()
-                            .fill(skeletonBackground)
+                            .fill(Color("skeleton-background"))
                             .frame(width: 53, height: 53)
                             .shadow(radius: 10)
                     }
@@ -977,7 +977,7 @@ private struct HomeHeaderView: View {
             } else {
                 NavigationLink(destination: storageData.token != nil && storageData.token != "" ? LoginView() : LoginView()) {
                     Circle()
-                        .fill(skeletonBackground)
+                        .fill(Color("skeleton-background"))
                         .frame(width: 48, height: 48)
                         .overlay {
                             Image(systemName: "person")
@@ -1116,7 +1116,7 @@ private struct HomeBottomCardsView: View {
                             KFImage(friendsBanner)
                                 .placeholder {
                                     RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
+                                        .fill(Color("skeleton-background"))
                                         .frame(width: 170, height: 98)
                                 }
                                 .resizable()
@@ -1149,7 +1149,7 @@ private struct HomeBottomCardsView: View {
                             KFImage(inviteBanner)
                                 .placeholder {
                                     RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
+                                        .fill(Color("skeleton-background"))
                                         .frame(width: 170, height: 98)
                                 }
                                 .resizable()
@@ -1189,7 +1189,7 @@ private struct HomeBottomCardsView: View {
                             KFImage(recordBanner)
                                 .placeholder {
                                     RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
+                                        .fill(Color("skeleton-background"))
                                         .frame(width: 170, height: 130)
                                 }
                                 .resizable()
@@ -1223,7 +1223,7 @@ private struct HomeBottomCardsView: View {
                             KFImage(rankingBanner)
                                 .placeholder {
                                     RoundedRectangle(cornerRadius: 10)
-                                        .fill(skeletonBackground)
+                                        .fill(Color("skeleton-background"))
                                         .frame(width: 170, height: 76)
                                 }
                                 .resizable()

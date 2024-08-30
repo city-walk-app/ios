@@ -63,7 +63,7 @@ struct SettingView: View {
                                 KFImage(URL(string: userInfo.avatar))
                                     .placeholder {
                                         Circle()
-                                            .fill(skeletonBackground)
+                                            .fill(Color("skeleton-background"))
                                             .frame(width: 60, height: 60)
                                     }
                                     .resizable()
@@ -317,7 +317,7 @@ private struct SettingSheetView: View {
                                 KFImage(URL(string: userInfo.avatar))
                                     .placeholder {
                                         Circle()
-                                            .fill(skeletonBackground)
+                                            .fill(Color("skeleton-background"))
                                             .frame(width: 160, height: 160)
                                     }
                                     .resizable()
