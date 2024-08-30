@@ -825,13 +825,12 @@ private struct HomeRecordSheetFullScreenCoverView: View {
         // 选择照片
         if fullScreenCoverType == .picture {
             ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount - selectedImages.count)
+                .ignoresSafeArea()
         }
         // 打开相机
         else if fullScreenCoverType == .camera {
-            CameraView(
-                isPresented: $visibleFullScreenCover,
-                selectedImage: $selectedImages
-            )
+            CameraView(isPresented: $visibleFullScreenCover, selectedImage: $selectedImages)
+                .ignoresSafeArea()
         }
         // 选择位置
         else if fullScreenCoverType == .location {
