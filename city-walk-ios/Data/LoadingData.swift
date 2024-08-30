@@ -12,6 +12,7 @@ struct LoadingParams {
     var title: String?
 }
 
+/// 加载中数据
 class LoadingData: ObservableObject {
     @Published var isLoading = false
     @Published var title = "加载中..."

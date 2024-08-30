@@ -16,10 +16,13 @@ private let infoItems = [
     InfoItemBar(icon: "lightbulb", key: .signature, title: "签名", color: "#0348F2"),
 ]
 
+/// 设置
 struct SettingView: View {
     /// 缓存数据
     @EnvironmentObject private var storageData: StorageData
-
+    /// 全球的数据
+    @EnvironmentObject private var globalData: GlobalData
+    
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     /// 控制弹窗内容的 key
@@ -256,6 +259,7 @@ struct SettingView: View {
         }) {
             SettingSheetView(
                 storageData: storageData,
+                globalData: globalData,
                 sheetKey: $sheetKey,
                 userInfo: $userInfo,
                 visibleSheet: $visibleSheet,
@@ -283,6 +287,8 @@ struct SettingView: View {
 private struct SettingSheetView: View {
     /// 缓存数据
     let storageData: StorageData
+    /// 全球的数据
+    let globalData: GlobalData
     
     /// 最多选择的照片数量
     private let pictureMaxCount = 1
@@ -511,12 +517,14 @@ private struct SettingSheetView: View {
             print("设置结果", res)
             
             guard res.code == 200, let data = res.data else {
+                globalData.showToast(title: "提交异常")
                 return
             }
             
             storageData.saveUserInfo(info: data)
                 
             visibleSheet.toggle()
+            globalData.showToast(title: "修改成功")
         }
         catch {
             print("设置用户信息异常")
@@ -549,4 +557,5 @@ private struct InfoItemBar {
 #Preview {
     SettingView()
         .environmentObject(StorageData())
+        .environmentObject(GlobalData())
 }

@@ -8,6 +8,10 @@
 import Kingfisher
 import SwiftUI
 
+/// 空状态图片
+private let emptyImage = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/empty.png")
+
+/// 空状态
 struct EmptyState: View {
     var title: String = "暂无数据"
 

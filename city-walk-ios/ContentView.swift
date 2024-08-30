@@ -23,6 +23,7 @@ struct ContentView: View {
                         .environmentObject(StorageData())
                         .environmentObject(LoadingData())
                         .environmentObject(HomeData())
+                        .environmentObject(GlobalData())
                 }
             } else {
                 LaunchView()
@@ -38,6 +39,7 @@ struct ContentView: View {
             .environmentObject(LoadingData())
             .environmentObject(HomeData())
             .environmentObject(StorageData())
+            .environmentObject(GlobalData())
     }
 }
 

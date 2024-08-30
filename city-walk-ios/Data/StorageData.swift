@@ -6,6 +6,7 @@
 //
 import Foundation
 
+/// 缓存数据
 class StorageData: ObservableObject {
     /// 用户信息
     @Published var userInfo: UserInfoType? {

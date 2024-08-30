@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 返回按钮
 struct BackButton: View {
     // 用于触发返回操作的闭包
     var action: () -> Void

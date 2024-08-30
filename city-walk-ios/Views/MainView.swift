@@ -45,6 +45,7 @@ private let endYear = Calendar.current.component(.year, from: Date())
 /// 年份选择
 private let selectYears = Array(startYear ... endYear)
 
+/// 我的
 struct MainView: View {
     /// 用户 id
     var user_id: String

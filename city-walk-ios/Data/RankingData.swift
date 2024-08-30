@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// 排行榜数据
 class RankingData: ObservableObject {
     /// 排名列表
     @Published var rankingList: [FriendGetExperienceRankingType.FriendGetExperienceRankingData] = []

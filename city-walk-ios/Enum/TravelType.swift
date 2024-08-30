@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 出行方式
 enum TravelTypeKey: String, CaseIterable {
     // 步行
     case WALKING
@@ -42,6 +43,7 @@ struct TravelType {
     var key: TravelTypeKey
 }
 
+/// 出行方式集合
 let travelTypes = [
     TravelType(icon: "figure.walk", key: .WALKING),
     TravelType(icon: "bicycle", key: .BICYCLE),

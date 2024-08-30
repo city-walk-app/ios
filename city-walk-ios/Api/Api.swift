@@ -9,6 +9,7 @@ import Foundation
 
 /// API 类
 class Api {
+    /// 单例模式
     static let shared = Api()
     
     /// 获取用户信息

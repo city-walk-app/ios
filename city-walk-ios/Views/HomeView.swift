@@ -10,6 +10,7 @@ import CoreLocation
 import Kingfisher
 import MapKit
 import SwiftUI
+import ToastUI
 
 /// 心情颜色
 private let moodColorList = moodColors
@@ -22,7 +23,7 @@ private let longitudeOffset = 0.00428
 /// 纬度偏移量
 private let latitudeOffset = -0.00294
 
-/// 主视图，用于显示地图和操作选项
+/// 首页
 struct HomeView: View {
     /// loading 数据
     @EnvironmentObject private var loadingData: LoadingData
@@ -30,6 +31,8 @@ struct HomeView: View {
     @EnvironmentObject private var homeData: HomeData
     /// 缓存数据
     @EnvironmentObject private var storageData: StorageData
+    /// 全球的数据
+    @EnvironmentObject private var globalData: GlobalData
     
     /// 定位数据管理对象
     @StateObject private var locationDataManager = LocationDataManager()
@@ -150,6 +153,23 @@ struct HomeView: View {
                 secondaryButton: .cancel(Text("取消"))
             )
         }
+        .toast(isPresented: $globalData.isShowToast, dismissAfter: 2.0) {
+            print("Toast dismissed")
+        } content: {
+            VStack {
+                Text(globalData.toastMessage)
+                    .foregroundColor(.white)
+                    .bold()
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color("theme-1"))
+                    .cornerRadius(8.0)
+                    .shadow(radius: 4.0)
+                Spacer()
+            }
+            .padding()
+        }
+        .toastDimmedBackground(false)
         .onAppear {
             NotificationCenter.default.addObserver(
                 forName: UIResponder.keyboardWillShowNotification,
@@ -304,8 +324,11 @@ struct HomeView: View {
                 
                 await homeData.getTodayRecord() // 获取今天的打卡记录
                 clearStepFormData() // 清空表单
+                
+                globalData.showToast(title: "提交成功")
+            } else {
+                globalData.showToast(title: res.message)
             }
-            
         } catch {
             print("完善步行打卡记录详情异常")
             loadingData.hiddenLoading()
@@ -349,6 +372,7 @@ struct HomeView: View {
             print("打卡结果", res)
 
             guard res.code == 200, let data = res.data else {
+                globalData.showToast(title: res.message)
                 return
             }
             
@@ -361,7 +385,6 @@ struct HomeView: View {
             routeDetailForm.route_id = data.route_id
                 
             visibleSheet.toggle() // 打开对话框
-           
         } catch {
             print("打卡当前地点异常")
             loadingData.hiddenLoading()
@@ -1266,4 +1289,5 @@ private enum FullScreenCoverType {
         .environmentObject(LoadingData())
         .environmentObject(HomeData())
         .environmentObject(StorageData())
+        .environmentObject(GlobalData())
 }

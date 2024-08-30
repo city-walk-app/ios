@@ -20,11 +20,15 @@ protocol RequestInterceptor {
 
 /// 基础请求类
 class Request {
+    /// 单例模式
     static let shared = Request()
+    /// 基础路径
     private let baseUrl = BASE_URL
+    /// JSON 解析
     private let decoder = JSONDecoder()
+    /// 用于网络请求
     private let session = URLSession.shared
-
+    /// 缓存数据
     private let storageData = StorageData()
 
     /// 发送请求
@@ -54,9 +58,7 @@ class Request {
             // 6. 设置请求头字段
             let token = storageData.token
 
-//            if let token = token {
             request.setValue(token, forHTTPHeaderField: "token")
-//            }
 
             request.httpBody = httpBody
         }

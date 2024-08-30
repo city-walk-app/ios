@@ -12,6 +12,7 @@ import SwiftUI
 /// 卡片数量
 private let cardCount: CGFloat = 2
 
+/// 登录
 struct LoginView: View {
     /// 创建一个每秒触发一次的定时器
     private let timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
@@ -299,4 +300,5 @@ private enum FocusedField: Hashable {
         .environmentObject(LoadingData())
         .environmentObject(StorageData())
         .environmentObject(HomeData())
+        .environmentObject(GlobalData())
 }

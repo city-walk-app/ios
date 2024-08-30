@@ -8,6 +8,7 @@
 import Network
 import SwiftUI
 
+/// 启动页面
 struct LaunchView: View {
     /// 缓存信息
 //    private let cacheInfo = UserCache.shared.getInfo()

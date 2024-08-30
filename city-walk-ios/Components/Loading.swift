@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 加载中
 struct Loading: View {
     @EnvironmentObject var loadingData: LoadingData
 

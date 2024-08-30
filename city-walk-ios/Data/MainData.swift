@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// 我的页面数据
 class MainData: ObservableObject {
     /// 选中的热力图元素索引
     @Published var routeDetailActiveIndex: Int?

@@ -14,5 +14,3 @@ let homeMarkers = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/ass
 let recordSucceseCamera = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/record-succese-camera.png")
 
 let mainPosition = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-position.png")
-
-let emptyImage = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/empty.png")

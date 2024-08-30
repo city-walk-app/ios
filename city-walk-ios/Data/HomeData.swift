@@ -9,6 +9,7 @@ import Foundation
 import MapKit
 import SwiftUI
 
+/// 首页数据
 class HomeData: NSObject, ObservableObject {
     /// 地图区域
     @Published var region: MKCoordinateRegion

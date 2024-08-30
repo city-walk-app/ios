@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// 朋友数据
 class FriendsData: ObservableObject {
     /// 朋友列表
     @Published var friends: [FriendListType.FriendListData] = []

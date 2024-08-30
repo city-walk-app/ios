@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 邀请
 struct InviteView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 

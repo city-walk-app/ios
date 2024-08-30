@@ -9,6 +9,7 @@ import Kingfisher
 import MapKit
 import SwiftUI
 
+/// 步行记录详情
 struct RouteDetailView: View {
     /// 列表 id
     var list_id: String

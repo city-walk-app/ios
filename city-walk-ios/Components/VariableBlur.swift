@@ -15,6 +15,7 @@ public enum VariableBlurDirection {
     case blurredBottomClearTop
 }
 
+/// 模糊的
 public struct VariableBlurView: UIViewRepresentable {
     public var maxBlurRadius: CGFloat = 20
 

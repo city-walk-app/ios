@@ -13,6 +13,7 @@ enum LaunchScreenStates {
     case leave
 }
 
+/// 启动页面数据
 class LaunchScreenData: ObservableObject {
     /// 当前状态
     @Published private(set) var states: LaunchScreenStates = .enter

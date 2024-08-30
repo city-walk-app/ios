@@ -8,6 +8,7 @@
 import Kingfisher
 import SwiftUI
 
+/// 我的朋友
 struct FriendsView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     /// 朋友数据

@@ -8,6 +8,7 @@
 import PhotosUI
 import SwiftUI
 
+/// 照片选择
 struct ImagePicker: UIViewControllerRepresentable {
     /// 选择的图片文件列表
     @Binding var selectedImages: [UIImage]

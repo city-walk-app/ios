@@ -8,6 +8,7 @@
 import SwiftUI
 import UIKit
 
+/// 照相机
 struct CameraView: UIViewControllerRepresentable {
     @Binding var isPresented: Bool
     @Binding var selectedImage: [UIImage]

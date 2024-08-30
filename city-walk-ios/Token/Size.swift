@@ -7,4 +7,5 @@
 
 import Foundation
 
+/// 页面距离顶部预留的距离
 let viewPaddingTop: CGFloat = 40
