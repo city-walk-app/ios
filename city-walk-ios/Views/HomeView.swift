@@ -12,6 +12,8 @@ import MapKit
 import SwiftUI
 import ToastUI
 
+// import CoreMotion 步数
+
 /// 心情颜色
 private let moodColorList = moodColors
 /// 出行方式
@@ -199,15 +201,15 @@ struct HomeView: View {
         .onDisappear {
             NotificationCenter.default.removeObserver(self)
         }
-//        // 退出到桌面返回执行
-//        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-//            self.readClipboard() // 读取剪贴板
-//
-//            Task {
-//                await self.getUserInfo() // 获取用户信息
-//                await homeData.getTodayRecord() // 获取今天的打卡记录
-//            }
-//        }
+        // 退出到桌面返回执行
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            self.readClipboard() // 读取剪贴板
+
+            Task {
+                await self.getUserInfo() // 获取用户信息
+                await homeData.getTodayRecord() // 获取今天的打卡记录
+            }
+        }
     }
     
     /// 同意好友申请

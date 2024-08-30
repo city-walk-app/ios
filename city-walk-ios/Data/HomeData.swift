@@ -36,26 +36,21 @@ class HomeData: NSObject, ObservableObject {
 
             print("今日打卡记录", res)
 
-//            let user = Landmark(
-//                coordinate: CLLocationCoordinate2D(latitude: self.userLocation.latitude, longitude: self.userLocation.longitude),
-//                type: .user
-//            )
-//
-//            self.landmarks.append(user)
-
             guard res.code == 200, let data = res.data else {
+                return
+            }
+
+            // 如果数组为空
+            if data.isEmpty {
+                DispatchQueue.main.async {
+                    self.landmarks = []
+                }
                 return
             }
 
             // SwiftUI 期望这些变化是在主线程上完成的
             DispatchQueue.main.async {
                 withAnimation {
-//                    self.region = MKCoordinateRegion(
-//                        center: CLLocationCoordinate2D(latitude: Double(data[0].latitude) ?? 0, longitude: Double(data[0].longitude) ?? 0),
-//                        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-//                    )
-//                    self.landmarks
-
                     // 打卡记录
                     let records = data.map { item in
                         LandmarkItem(
@@ -67,7 +62,7 @@ class HomeData: NSObject, ObservableObject {
                         )
                     }
 
-                    self.landmarks.append(contentsOf: records)
+                    self.landmarks = records
 
                     print("打卡地点列表", self.landmarks)
                 }
