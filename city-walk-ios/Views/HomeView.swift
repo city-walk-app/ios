@@ -81,7 +81,7 @@ struct HomeView: View {
                 // 地图
                 Map(coordinateRegion: $homeData.region, showsUserLocation: true, annotationItems: homeData.landmarks ?? []) { landmark in
                     MapAnnotation(coordinate: landmark.coordinate) {
-                        HomeLandmarkView(landmark: landmark, storageData: storageData)
+                        Landmark(landmark: landmark)
                     }
                 }
                 .ignoresSafeArea(.all) // 忽略安全区域边缘
@@ -396,69 +396,6 @@ struct HomeView: View {
     }
 }
 
-/// 首页地图标点
-private struct HomeLandmarkView: View {
-    /// 地图标点
-    var landmark: Landmark
-    /// 缓存数据
-    var storageData: StorageData
-    
-    var body: some View {
-        // 标点
-        if landmark.type == .record {
-            VStack(spacing: 3) {
-                KFImage(homeMarkers)
-                    .placeholder {
-                        Color.clear
-                            .frame(width: 50, height: 64)
-                    }
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 50, height: 64)
-        
-                if let picture = landmark.picure, !picture.isEmpty {
-                    ForEach(picture, id: \.self) { item in
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color("background-1"))
-                            .frame(width: 90, height: 90)
-                            .overlay {
-                                KFImage(URL(string: item))
-                                    .resizable()
-                                    .frame(width: 82, height: 82)
-                                    .aspectRatio(contentMode: .fill)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                                    .clipped()
-                            }
-                            .shadow(radius: 5)
-                    }
-                }
-            }
-        }
-        // 用户位置
-        else if landmark.type == .user {
-            if let userInfo = storageData.userInfo {
-                if let avatar = userInfo.avatar,
-                   let url = URL(string: avatar)
-                {
-                    KFImage(url)
-                        .placeholder {
-                            Circle()
-                                .fill(Color("skeleton-background"))
-                                .frame(width: 53, height: 53)
-                                .shadow(radius: 10)
-                        }
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 53, height: 53)
-                        .clipShape(
-                            Circle()
-                        )
-                }
-            }
-        }
-    }
-}
-
 // 打卡 sheet 对话框内容
 private struct HomeRecordSheetView: View {
     /// 打卡信息详情
@@ -533,9 +470,19 @@ private struct HomeRecordSheetView: View {
                         // 一张照片都没选择
                         if selectedImages.count == 0 || selectedImages.isEmpty {
                             // 发布瞬间
-                            Button {
-                                self.fullScreenCoverType = .picture
-                                self.visibleFullScreenCover.toggle()
+                            Menu {
+                                Section {
+                                    Button {} label: {
+                                        Label("拍照", systemImage: "camera")
+                                    }
+                                    
+                                    Button {
+                                        self.fullScreenCoverType = .picture
+                                        self.visibleFullScreenCover.toggle()
+                                    } label: {
+                                        Label("相册选择", systemImage: "photo")
+                                    }
+                                }
                             } label: {
                                 VStack {
                                     KFImage(recordSucceseCamera)
@@ -572,9 +519,17 @@ private struct HomeRecordSheetView: View {
                                         visibleActionSheet.toggle()
                                     }
 
-                                Button {
-                                    self.fullScreenCoverType = .picture
-                                    self.visibleFullScreenCover.toggle()
+                                Menu {
+                                    Button {} label: {
+                                        Label("拍照", systemImage: "camera")
+                                    }
+                                    
+                                    Button {
+                                        self.fullScreenCoverType = .picture
+                                        self.visibleFullScreenCover.toggle()
+                                    } label: {
+                                        Label("相册选择", systemImage: "photo")
+                                    }
                                 } label: {
                                     KFImage(recordSucceseCamera)
                                         .placeholder {

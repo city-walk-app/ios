@@ -9,24 +9,11 @@ import Foundation
 import MapKit
 import SwiftUI
 
-enum LandmarkType {
-    case record, user
-}
-
-struct Landmark: Identifiable {
-    let id = UUID()
-
-    var coordinate: CLLocationCoordinate2D
-    var picure: [String]?
-    var name: String?
-    var type: LandmarkType
-}
-
 class HomeData: NSObject, ObservableObject {
     /// 地图区域
     @Published var region: MKCoordinateRegion
     /// 标注列表
-    @Published var landmarks: [Landmark] = []
+    @Published var landmarks: [LandmarkItem] = []
 
     @Published var userLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
 
@@ -70,13 +57,12 @@ class HomeData: NSObject, ObservableObject {
 
                     // 打卡记录
                     let records = data.map { item in
-                        Landmark(
+                        LandmarkItem(
                             coordinate: CLLocationCoordinate2D(
                                 latitude: Double(item.latitude) ?? 0,
                                 longitude: Double(item.longitude) ?? 0
                             ),
-                            picure: item.picture,
-                            type: .record
+                            picure: item.picture
                         )
                     }
 

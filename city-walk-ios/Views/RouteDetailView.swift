@@ -25,7 +25,7 @@ struct RouteDetailView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
     )
     // 标注列表
-    @State private var landmarks: [Landmark] = []
+    @State private var landmarks: [LandmarkItem] = []
     /// 步行记录详情
     @State private var routeDetail: [GpsGetRouteHistory.GpsGetRouteHistoryData] = []
 
@@ -33,19 +33,7 @@ struct RouteDetailView: View {
         // 地图
         Map(coordinateRegion: $region, annotationItems: landmarks) { landmark in
             MapAnnotation(coordinate: landmark.coordinate) {
-                VStack {
-                    KFImage(homeMarkers)
-                        .placeholder {
-                            Color.clear
-                                .frame(width: 50, height: 64)
-                        }
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 50, height: 64)
-
-                    Text("地点")
-                        .font(.system(size: 20))
-                }
+                Landmark(landmark: landmark)
             }
         }
         .ignoresSafeArea(.all)
@@ -65,6 +53,8 @@ struct RouteDetailView: View {
         do {
             let res = try await Api.shared.getUserRouteDetail(params: ["list_id": list_id, "user_id": user_id])
 
+            print("结果", res)
+
             guard res.code == 200, let data = res.data else {
                 return
             }
@@ -75,13 +65,12 @@ struct RouteDetailView: View {
                     span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
                 )
                 self.landmarks = data.map { item in
-                    Landmark(
+                    LandmarkItem(
                         coordinate: CLLocationCoordinate2D(
                             latitude: Double(item.latitude) ?? 0,
                             longitude: Double(item.longitude) ?? 0
                         ),
-                        name: item.address ?? "",
-                        type: .record
+                        picure: item.picture
                     )
                 }
             }

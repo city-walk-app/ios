@@ -223,7 +223,7 @@ struct GetUserRouteDetailType: Decodable {
         var list_id: String
         var longitude: String
         var mood_color: String?
-        var picture: String?
+        var picture: [String]?
         var province: String?
         var province_code: String?
         var route_id: String
