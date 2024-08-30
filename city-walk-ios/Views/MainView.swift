@@ -469,62 +469,7 @@ struct MainView: View {
                             if !mainData.routeList.isEmpty {
                                 LazyVGrid(columns: columns, alignment: .center) {
                                     ForEach(mainData.routeList, id: \.list_id) { item in
-                                        NavigationLink(destination: RouteDetailView(list_id: item.list_id, user_id: self.user_id)) {
-                                            ZStack {
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .fill(Color(hex: item.mood_color ?? "#FFCC94"))
-                                                    .frame(height: 116)
-                                                    .frame(maxWidth: .infinity)
-                                                    .overlay {
-                                                        RoundedRectangle(cornerRadius: 8)
-                                                            .fill(.white.opacity(0.3))
-                                                            .overlay {
-                                                                RoundedRectangle(cornerRadius: 200)
-                                                                    .fill(Color(hex: item.mood_color ?? "#FFCC94"))
-                                                                    .frame(width: 400, height: 370)
-                                                                    .offset(y: -170)
-                                                                    .rotationEffect(.degrees(13))
-                                                            }
-                                                            .clipped()
-                                                    }
-                                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                                
-                                                HStack(alignment: .top) {
-                                                    Spacer()
-                                           
-                                                    VStack(alignment: .trailing) {
-                                                        // 地点数量
-                                                        Text("地点×\(item.count)")
-                                                            .foregroundStyle(.white)
-                                                            .font(.system(size: 18))
-                                                            .padding(.top, 28)
-                                                            .bold()
-                                           
-                                                        Spacer()
-                                           
-                                                        // 时间
-                                                        Text("\(convertToDateOnly(from: item.create_at)!)")
-                                                            .foregroundStyle(.white)
-                                                            .font(.system(size: 15))
-                                                            .padding(.bottom, 10)
-                                                    }
-                                                    .padding(.trailing, 16)
-                                                }
-                                                .overlay(alignment: .topLeading) {
-                                                    if let travel_type = item.travel_type {
-                                                        // 火车
-                                                        if travel_type == "TRAIN" {
-                                                            Image(systemName: "tram.fill")
-                                                                .font(.system(size: 75))
-                                                                .foregroundStyle(.white.opacity(0.5))
-                                                                .padding(.top, 6)
-                                                                .offset(x: -16)
-                                                        }
-                                                    }
-                                                }
-                                                .clipped()
-                                            }
-                                        }
+                                        MainRouteListItem(item: item, user_id: user_id)
                                     }
                                 }
                             } else {
@@ -674,6 +619,73 @@ private struct MainHeatmapSkeletonView: View {
             .frame(maxWidth: .infinity)
         }
         .padding(16)
+    }
+}
+
+/// 步行记录列表每一项
+private struct MainRouteListItem: View {
+    /// 每一项
+    var item: GetUserRouteHistoryType.GetUserRouteHistoryRoute
+    /// 用户 id
+    var user_id: String
+    
+    var body: some View {
+        NavigationLink(destination: RouteDetailView(list_id: item.list_id, user_id: user_id)) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color(hex: item.mood_color ?? "#FFCC94"))
+                    .frame(height: 116)
+                    .frame(maxWidth: .infinity)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(.white.opacity(0.3))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 200)
+                                    .fill(Color(hex: item.mood_color ?? "#FFCC94"))
+                                    .frame(width: 400, height: 370)
+                                    .offset(y: -170)
+                                    .rotationEffect(.degrees(13))
+                            }
+                            .clipped()
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    
+                HStack(alignment: .top) {
+                    Spacer()
+               
+                    VStack(alignment: .trailing) {
+                        // 地点数量
+                        Text("地点×\(item.count)")
+                            .foregroundStyle(.white)
+                            .font(.system(size: 18))
+                            .padding(.top, 28)
+                            .bold()
+               
+                        Spacer()
+               
+                        // 时间
+                        Text("\(convertToDateOnly(from: item.create_at)!)")
+                            .foregroundStyle(.white)
+                            .font(.system(size: 15))
+                            .padding(.bottom, 10)
+                    }
+                    .padding(.trailing, 16)
+                }
+                .overlay(alignment: .topLeading) {
+                    if let travel_type = item.travel_type {
+                        // 火车
+                        if travel_type == "TRAIN" {
+                            Image(systemName: "tram.fill")
+                                .font(.system(size: 75))
+                                .foregroundStyle(.white.opacity(0.5))
+                                .padding(.top, 6)
+                                .offset(x: -16)
+                        }
+                    }
+                }
+                .clipped()
+            }
+        }
     }
 }
 
