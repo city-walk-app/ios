@@ -242,7 +242,7 @@ struct LocationCreateRecordType: Decodable {
         var background_color: String?
         var city: String?
         var content: String?
-        var experience: Int
+        var experience: Int?
         var is_in_china: Bool
         var is_new_province: Bool?
         var province: String?

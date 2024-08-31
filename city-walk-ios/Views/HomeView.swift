@@ -155,21 +155,23 @@ struct HomeView: View {
                 secondaryButton: .cancel(Text("取消"))
             )
         }
-        .toast(isPresented: $globalData.isShowToast, dismissAfter: 2.0) {
-            print("Toast dismissed")
-        } content: {
-            VStack {
-                Text(globalData.toastMessage)
-                    .foregroundColor(.white)
-                    .bold()
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color("theme-1"))
-                    .cornerRadius(8.0)
-                    .shadow(radius: 4.0)
-                Spacer()
+        .toast(isPresented: $globalData.isShowToast, dismissAfter: 3.0) {
+            Button {
+                globalData.isShowToast = false
+            } label: {
+                VStack {
+                    Text(globalData.toastMessage)
+                        .foregroundColor(.white)
+                        .bold()
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color("theme-1"))
+                        .cornerRadius(8.0)
+                        .shadow(radius: 4.0)
+                    Spacer()
+                }
+                .padding()
             }
-            .padding()
         }
         .toastDimmedBackground(false)
         .onAppear {
@@ -476,18 +478,18 @@ private struct HomeRecordSheetView: View {
                                         .aspectRatio(contentMode: .fill)
                                 }
                             )
+                  
+                        // 文案
+                        Text("\(recordDetail.content ?? "当前地点打卡成功")")
+                            .foregroundStyle(
+                                recordDetail.background_color != nil
+                                    ? Color(hex: recordDetail.background_color!)
+                                    : Color("theme-1")
+                            )
+                            .padding(.top, 9)
+                            .font(.system(size: 16))
+                            .bold()
                     }
-                    
-                    // 文案
-                    Text("\(recordDetail.content ?? "当前地点打卡成功")")
-                        .foregroundStyle(
-                            recordDetail.background_color != nil
-                                ? Color(hex: recordDetail.background_color!)
-                                : Color("theme-1")
-                        )
-                        .padding(.top, 9)
-                        .font(.system(size: 16))
-                        .bold()
                 }
                 
                 VStack(spacing: 0) {
