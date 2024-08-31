@@ -5,12 +5,17 @@
 //  Created by Tyh2001 on 2024/7/15.
 //
 
+import Kingfisher
 import SwiftUI
+
+private let inviteBg1 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/invite-bg-1.jpg")
 
 /// 邀请
 struct InviteView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
+    /// 全球的数据
+    @EnvironmentObject private var globalData: GlobalData
     /// loading 数据
     @EnvironmentObject private var loadingData: LoadingData
 
@@ -19,14 +24,15 @@ struct InviteView: View {
             ScrollView {
                 ZStack {
                     VStack {
+                        KFImage(inviteBg1)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+
                         // 按钮操作组
                         HStack(spacing: 23) {
-                            Button {
-                                Task {
-                                    await self.friendInvite()
-                                }
-                            } label: {
-                                Text("复制邀请链接")
+                            Button {} label: {
+                                Text("分享App")
                                     .frame(width: 160, height: 48)
                                     .font(.system(size: 16))
                                     .foregroundStyle(Color("theme-1"))
@@ -35,26 +41,31 @@ struct InviteView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 14))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 14)
-                                            .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                            .stroke(Color("theme-1"), lineWidth: 2) // 使用 overlay 添加圆角边框
                                     )
                             }
 
-//                            Button {} label: {
-//                                Text("分享")
-//                                    .frame(width: 160, height: 48)
-//                                    .font(.system(size: 16))
-//                                    .foregroundStyle(.white)
-//                                    .background(Color("theme-1"))
-//                                    .border(Color("theme-1"))
-//                                    .clipShape(RoundedRectangle(cornerRadius: 14))
-//                                    .overlay(
-//                                        RoundedRectangle(cornerRadius: 14)
-//                                            .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
-//                                    )
-//                            }
+                            Button {
+                                Task {
+                                    await self.friendInvite()
+                                }
+                            } label: {
+                                Text("复制邀请链接")
+                                    .frame(width: 160, height: 48)
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(.white)
+                                    .background(Color("theme-1"))
+                                    .border(Color("theme-1"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                    )
+                            }
                         }
                         .padding(.top, 34)
                     }
+                    .padding(.top, viewPaddingTop)
 
                     // loading 组件
                     Loading()
@@ -97,6 +108,8 @@ struct InviteView: View {
             }
 
             UIPasteboard.general.string = data
+
+            globalData.showToast(title: "复制成功")
         } catch {
             print("邀请朋友异常")
             loadingData.hiddenLoading()
@@ -107,4 +120,5 @@ struct InviteView: View {
 #Preview {
     InviteView()
         .environmentObject(LoadingData())
+        .environmentObject(GlobalData())
 }

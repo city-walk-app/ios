@@ -28,7 +28,7 @@ private let latitudeOffset = -0.00294
 /// 首页
 struct HomeView: View {
     /// loading 数据
-    @EnvironmentObject private var loadingData: LoadingData
+//    @EnvironmentObject private var loadingData: LoadingData
     /// 首页数据
     @EnvironmentObject private var homeData: HomeData
     /// 缓存数据
@@ -117,7 +117,7 @@ struct HomeView: View {
                 .ignoresSafeArea(.all, edges: .bottom)
                 
                 // loading 组件
-                Loading()
+//                Loading()
             }
             .overlay(alignment: .top) {
                 VariableBlurView(maxBlurRadius: 12)
@@ -155,22 +155,31 @@ struct HomeView: View {
                 secondaryButton: .cancel(Text("取消"))
             )
         }
-        .toast(isPresented: $globalData.isShowToast, dismissAfter: 3.0) {
-            Button {
-                globalData.isShowToast = false
-            } label: {
-                VStack {
-                    Text(globalData.toastMessage)
-                        .foregroundColor(.white)
-                        .bold()
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color("theme-1"))
-                        .cornerRadius(8.0)
-                        .shadow(radius: 4.0)
-                    Spacer()
+        .toast(isPresented: $globalData.isShowToast, dismissAfter: globalData.toastType == .toast ? 1.25 : nil) {
+            // 加载中
+            if globalData.toastType == .loading {
+                ToastView(globalData.toastMessage)
+                    .toastViewStyle(.indeterminate)
+            }
+            // 提示信息
+            else if globalData.toastType == .toast {
+                Button {
+                    globalData.isShowToast = false
+                } label: {
+                    VStack {
+                        Text(globalData.toastMessage)
+                            .foregroundColor(.white)
+                            .bold()
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color("theme-1"))
+                            .cornerRadius(8.0)
+                            .shadow(radius: 4.0)
+
+                        Spacer()
+                    }
+                    .padding()
                 }
-                .padding()
             }
         }
         .toastDimmedBackground(false)
@@ -297,7 +306,8 @@ struct HomeView: View {
         }
         
         do {
-            loadingData.showLoading(options: LoadingParams(title: "提交中..."))
+//            loadingData.showLoading(options: LoadingParams(title: "提交中..."))
+            globalData.showLoading(title: "提交中...")
             
             // 有选择照片
             if !selectedImages.isEmpty {
@@ -319,7 +329,8 @@ struct HomeView: View {
                 "latitude": routeDetailForm.latitude ?? "",
             ])
             
-            loadingData.hiddenLoading()
+//            loadingData.hiddenLoading()
+            globalData.hiddenLoading()
             
             print("完善记录详情", res)
             
@@ -335,7 +346,7 @@ struct HomeView: View {
             }
         } catch {
             print("完善步行打卡记录详情异常")
-            loadingData.hiddenLoading()
+            globalData.hiddenLoading()
         }
     }
     
@@ -364,14 +375,16 @@ struct HomeView: View {
     /// 打卡当前地点
     private func locationCreateRecord(longitude: String, latitude: String) async {
         do {
-            loadingData.showLoading(options: LoadingParams(title: "打卡中..."))
+//            loadingData.showLoading(options: LoadingParams(title: "打卡中..."))
+            globalData.showLoading(title: "打卡中...")
             
             let res = try await Api.shared.locationCreateRecord(params: [
                 "longitude": longitude,
                 "latitude": latitude,
             ])
             
-            loadingData.hiddenLoading()
+//            loadingData.hiddenLoading()
+            globalData.hiddenLoading()
             
             print("打卡结果", res)
 
@@ -391,7 +404,8 @@ struct HomeView: View {
             visibleSheet.toggle() // 打开对话框
         } catch {
             print("打卡当前地点异常")
-            loadingData.hiddenLoading()
+//            loadingData.hiddenLoading()
+            globalData.hiddenLoading()
         }
     }
     
@@ -800,7 +814,7 @@ private struct HomeRecordSheetView: View {
             }
                 
             // loading 组件
-            Loading()
+//            Loading()
         }
     }
     
@@ -1290,7 +1304,7 @@ private enum FullScreenCoverType {
         .environmentObject(FriendsData())
         .environmentObject(RankingData())
         .environmentObject(MainData())
-        .environmentObject(LoadingData())
+//        .environmentObject(LoadingData())
         .environmentObject(HomeData())
         .environmentObject(StorageData())
         .environmentObject(GlobalData())
