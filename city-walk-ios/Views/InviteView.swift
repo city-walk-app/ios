@@ -16,8 +16,6 @@ struct InviteView: View {
 
     /// 全球的数据
     @EnvironmentObject private var globalData: GlobalData
-    /// loading 数据
-    @EnvironmentObject private var loadingData: LoadingData
 
     var body: some View {
         NavigationView {
@@ -66,9 +64,6 @@ struct InviteView: View {
                         .padding(.top, 34)
                     }
                     .padding(.top, viewPaddingTop)
-
-                    // loading 组件
-                    Loading()
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 200)
@@ -97,11 +92,11 @@ struct InviteView: View {
     /// 邀请朋友
     func friendInvite() async {
         do {
-            loadingData.showLoading(options: LoadingParams(title: "处理中..."))
+            globalData.showLoading(title: "处理中...")
 
             let res = try await Api.shared.friendInvite(params: [:])
 
-            loadingData.hiddenLoading()
+            globalData.hiddenLoading()
 
             guard res.code == 200, let data = res.data else {
                 return
@@ -112,13 +107,12 @@ struct InviteView: View {
             globalData.showToast(title: "复制成功")
         } catch {
             print("邀请朋友异常")
-            loadingData.hiddenLoading()
+            globalData.hiddenLoading()
         }
     }
 }
 
 #Preview {
     InviteView()
-        .environmentObject(LoadingData())
         .environmentObject(GlobalData())
 }

@@ -21,7 +21,6 @@ struct ContentView: View {
                 } else {
                     LoginView()
                         .environmentObject(StorageData())
-                        .environmentObject(LoadingData())
                         .environmentObject(HomeData())
                         .environmentObject(GlobalData())
                 }
@@ -36,7 +35,6 @@ struct ContentView: View {
             .environmentObject(FriendsData())
             .environmentObject(RankingData())
             .environmentObject(MainData())
-            .environmentObject(LoadingData())
             .environmentObject(HomeData())
             .environmentObject(StorageData())
             .environmentObject(GlobalData())

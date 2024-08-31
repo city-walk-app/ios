@@ -27,8 +27,6 @@ private let latitudeOffset = -0.00294
 
 /// 首页
 struct HomeView: View {
-    /// loading 数据
-//    @EnvironmentObject private var loadingData: LoadingData
     /// 首页数据
     @EnvironmentObject private var homeData: HomeData
     /// 缓存数据
@@ -115,9 +113,6 @@ struct HomeView: View {
                     HomeBottomCardsView(onRecord: self.onRecord)
                 }
                 .ignoresSafeArea(.all, edges: .bottom)
-                
-                // loading 组件
-//                Loading()
             }
             .overlay(alignment: .top) {
                 VariableBlurView(maxBlurRadius: 12)
@@ -306,7 +301,6 @@ struct HomeView: View {
         }
         
         do {
-//            loadingData.showLoading(options: LoadingParams(title: "提交中..."))
             globalData.showLoading(title: "提交中...")
             
             // 有选择照片
@@ -328,8 +322,7 @@ struct HomeView: View {
                 "longitude": routeDetailForm.longitude ?? "",
                 "latitude": routeDetailForm.latitude ?? "",
             ])
-            
-//            loadingData.hiddenLoading()
+
             globalData.hiddenLoading()
             
             print("完善记录详情", res)
@@ -375,7 +368,6 @@ struct HomeView: View {
     /// 打卡当前地点
     private func locationCreateRecord(longitude: String, latitude: String) async {
         do {
-//            loadingData.showLoading(options: LoadingParams(title: "打卡中..."))
             globalData.showLoading(title: "打卡中...")
             
             let res = try await Api.shared.locationCreateRecord(params: [
@@ -383,7 +375,6 @@ struct HomeView: View {
                 "latitude": latitude,
             ])
             
-//            loadingData.hiddenLoading()
             globalData.hiddenLoading()
             
             print("打卡结果", res)
@@ -404,7 +395,6 @@ struct HomeView: View {
             visibleSheet.toggle() // 打开对话框
         } catch {
             print("打卡当前地点异常")
-//            loadingData.hiddenLoading()
             globalData.hiddenLoading()
         }
     }
@@ -1304,7 +1294,6 @@ private enum FullScreenCoverType {
         .environmentObject(FriendsData())
         .environmentObject(RankingData())
         .environmentObject(MainData())
-//        .environmentObject(LoadingData())
         .environmentObject(HomeData())
         .environmentObject(StorageData())
         .environmentObject(GlobalData())

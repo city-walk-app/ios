@@ -19,10 +19,10 @@ struct LoginView: View {
   
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
-    /// loading 数据
-    @EnvironmentObject private var loadingData: LoadingData
     /// 缓存数据
     @EnvironmentObject private var storageData: StorageData
+    /// 全球的数据
+    @EnvironmentObject private var globalData: GlobalData
     
     /// 输入框是否获取焦点
     @FocusState private var focus: FocusedField?
@@ -150,9 +150,6 @@ struct LoginView: View {
                     .frame(width: geometry.size.width * cardCount, alignment: .leading)
                     .offset(x: -CGFloat(step) * geometry.size.width)
                     .animation(.easeInOut, value: step)
-                    
-                    // loading 元素
-                    Loading()
                 }
             }
             .background(viewBackground)
@@ -213,11 +210,11 @@ struct LoginView: View {
         }
         
         do {
-            loadingData.showLoading(options: LoadingParams(title: "获取中..."))
+            globalData.showLoading(title: "获取中...")
             
             let res = try await Api.shared.emailSend(params: ["email": email])
         
-            loadingData.hiddenLoading()
+            globalData.hiddenLoading()
             
             print("获取邮箱验证码结果", res)
             
@@ -228,18 +225,18 @@ struct LoginView: View {
             }
         } catch {
             print("获取验证码错误")
-            loadingData.hiddenLoading()
+            globalData.hiddenLoading()
         }
     }
     
     /// 邮箱验证码登录
     private func userLoginEmail() async {
         do {
-            loadingData.showLoading(options: LoadingParams(title: "登录中..."))
+            globalData.showLoading(title: "登录中...")
             
             let res = try await Api.shared.userLoginEmail(params: ["email": email, "code": code])
             
-            loadingData.hiddenLoading()
+            globalData.hiddenLoading()
             
             print("登录结果", res)
             
@@ -252,7 +249,7 @@ struct LoginView: View {
             isToHomeView = true
         } catch {
             print("邮箱登录错误")
-            loadingData.hiddenLoading()
+            globalData.hiddenLoading()
         }
     }
     
@@ -297,7 +294,6 @@ private enum FocusedField: Hashable {
 
 #Preview {
     LoginView()
-        .environmentObject(LoadingData())
         .environmentObject(StorageData())
         .environmentObject(HomeData())
         .environmentObject(GlobalData())
