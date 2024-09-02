@@ -9,24 +9,25 @@ import Foundation
 import MapKit
 import SwiftUI
 
+let defaultDelta = 0.3
+let uploadDelta = 0.04
+
 /// 首页数据
 class HomeData: NSObject, ObservableObject {
     /// 地图区域
     @Published var region: MKCoordinateRegion
     /// 标注列表
     @Published var landmarks: [LandmarkItem] = []
-
+    /// 用户所在位置
     @Published var userLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
 
     init(
         region: MKCoordinateRegion = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
-            span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+            span: MKCoordinateSpan(latitudeDelta: defaultDelta, longitudeDelta: defaultDelta)
         )
-//        landmarks: [Landmark]? = nil
     ) {
         self.region = region
-//        self.landmarks = landmarks
     }
 
     /// 获取今天的打卡记录

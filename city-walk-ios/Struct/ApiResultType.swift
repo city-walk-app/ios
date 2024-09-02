@@ -258,9 +258,20 @@ struct LocationCreateRecordType: Decodable {
 
 /// 完善步行打卡记录详情
 struct UpdateRouteDetailType: Decodable {
+    struct UpdateRouteDetailData: Codable {
+        var latitude: String
+        var longitude: String
+        var content: String?
+        var create_at: String
+        var travel_type: String?
+        var province_code: String?
+        var picture: [String]?
+        var list_id: String
+    }
+
     var message: String
     var code: Int
-    var data: String?
+    var data: UpdateRouteDetailData?
 }
 
 /// 获取周边热门地点

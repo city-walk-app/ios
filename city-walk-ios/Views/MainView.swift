@@ -558,6 +558,8 @@ struct MainView: View {
                 Spacer()
 
                 Button {
+                    mainData.isFilter = true
+                    
                     Task {
                         await mainData.getUserRouteHistory() // 获取用户步行历史记录
                     }

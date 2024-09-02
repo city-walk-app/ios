@@ -96,17 +96,38 @@ struct HomeView: View {
                         
                         // SwiftUI 期望这些变化是在主线程上完成的
                         DispatchQueue.main.async {
-                            homeData.region.center = currentLocation
-                            homeData.userLocation = currentLocation // 更新 location 为当前用户位置
+                            withAnimation {
+                                homeData.region = MKCoordinateRegion(
+                                    center: CLLocationCoordinate2D(latitude: currentLocation.latitude, longitude: currentLocation.longitude),
+                                    span: MKCoordinateSpan(latitudeDelta: defaultDelta, longitudeDelta: defaultDelta)
+                                )
+                                
+                                //                            homeData.region.center = currentLocation
+                                homeData.userLocation = currentLocation // 更新 location 为当前用户位置
+                            }
                         }
                     }
                 }
-                
+               
                 // 头部和底部操作视图
                 VStack {
                     // 头部操作栏
                     HomeHeaderView(storageData: storageData, isSatelliteMap: $isSatelliteMap)
                 
+//                    Button {
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                            withAnimation {
+//                                homeData.region = MKCoordinateRegion(
+//                                    center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
+//                                    span: MKCoordinateSpan(latitudeDelta: defaultDelta, longitudeDelta: defaultDelta)
+//                                )
+//                            }
+//                        }
+//
+//                    } label: {
+//                        Text("change")
+//                    }
+                    
                     Spacer()
                     
                     // 底部卡片
@@ -196,7 +217,7 @@ struct HomeView: View {
             ) { _ in
                 keyboardHeight = 0
             }
-
+            
             Task {
                 await self.getUserInfo() // 获取用户信息
                 await homeData.getTodayRecord() // 获取今天的打卡记录
@@ -301,8 +322,8 @@ struct HomeView: View {
         }
         
         do {
-            globalData.showLoading(title: "提交中...")
-            
+//            globalData.showLoading(title: "提交中...")
+           
             // 有选择照片
             if !selectedImages.isEmpty {
                 let uploadedImageURLs = await uploadImages(images: selectedImages)
@@ -323,20 +344,38 @@ struct HomeView: View {
                 "latitude": routeDetailForm.latitude ?? "",
             ])
 
-            globalData.hiddenLoading()
+//            globalData.hiddenLoading()
             
             print("完善记录详情", res)
             
-            if res.code == 200 {
-                visibleSheet.toggle()
-                
-                await homeData.getTodayRecord() // 获取今天的打卡记录
-                clearStepFormData() // 清空表单
-                
-                globalData.showToast(title: "提交成功")
-            } else {
+            guard res.code == 200, let data = res.data else {
                 globalData.showToast(title: res.message)
+                return
             }
+            
+            let resLatitude = Double(data.latitude) ?? 0
+            let resLongitude = Double(data.longitude) ?? 0
+            
+            homeData.landmarks.append(
+                LandmarkItem(
+                    coordinate: CLLocationCoordinate2D(
+                        latitude: resLatitude,
+                        longitude: resLongitude
+                    ),
+                    picure: data.picture
+                )
+            )
+
+            withAnimation {
+                homeData.region = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: resLatitude, longitude: resLongitude),
+                    span: MKCoordinateSpan(latitudeDelta: uploadDelta, longitudeDelta: uploadDelta)
+                )
+            }
+         
+            clearStepFormData() // 清空表单
+            visibleSheet.toggle()
+            globalData.showToast(title: "提交成功")
         } catch {
             print("完善步行打卡记录详情异常")
             globalData.hiddenLoading()
@@ -657,7 +696,6 @@ private struct HomeRecordSheetView: View {
                                     .font(.system(size: 18))
                                     .bold()
                             }
-
                         } else {
                             ForEach(moodColorList, id: \.key) { item in
                                 Button {
@@ -772,6 +810,7 @@ private struct HomeRecordSheetView: View {
                             Task {
                                 await self.updateRouteDetail() // 完善步行打卡记录详情
                             }
+                       
                         } label: {
                             Text("就这样")
                                 .frame(width: 160, height: 48)
@@ -802,9 +841,6 @@ private struct HomeRecordSheetView: View {
             .onTapGesture {
 //                self.hideKeyboard()
             }
-                
-            // loading 组件
-//            Loading()
         }
     }
     

@@ -32,6 +32,8 @@ class MainData: ObservableObject {
     @Published var year = Calendar.current.component(.year, from: Date())
     /// 当前的月份
     @Published var month = Calendar.current.component(.month, from: Date())
+    /// 是否为筛选
+    @Published var isFilter = false
 
     /// 设置当前用户 id
     /// - Parameter user_id: 用户 id
@@ -61,8 +63,8 @@ class MainData: ObservableObject {
 
             let res = try await Api.shared.getUserRouteHistory(params: [
                 "user_id": user_id,
-                "year": year,
-                "month": month,
+                "year": isFilter ? year : "",
+                "month": isFilter ? month : "",
             ])
 
             print("获取用户步行历史记录", res)
@@ -134,6 +136,7 @@ class MainData: ObservableObject {
     func onDisappear() {
         routeDetailList = nil
         routeDetailActiveIndex = nil
+        isFilter = false
         year = Calendar.current.component(.year, from: Date())
         month = Calendar.current.component(.month, from: Date())
     }
