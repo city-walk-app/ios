@@ -38,7 +38,7 @@ struct LaunchView: View {
                 networkAuthorizationStatus == .satisfied
             {
                 print("授权了网络")
-                self.goHome()
+                self.goPage()
                 return
             }
 
@@ -68,18 +68,23 @@ struct LaunchView: View {
             // 如果网络权限已授权
             if networkAuthorizationStatus == .satisfied {
                 print("网络授权改变")
-                self.goHome() // 跳转
+                self.goPage()
+//                self.goHome() // 跳转
             }
         }
     }
 
-    /// 开始跳转首页
-    private func goHome() {
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-        print("准备跳转首页")
-        launchScreenData.change()
-//        }
+    private func goPage() {
+        launchScreenData.change(states: .leave)
     }
+
+    /// 开始跳转首页
+//    private func goHome() {
+    ////        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//        print("准备跳转首页")
+//        launchScreenData.change()
+    ////        }
+//    }
 }
 
 #Preview {

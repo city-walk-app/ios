@@ -9,8 +9,7 @@ import Foundation
 import SwiftUI
 
 enum LaunchScreenStates {
-    case enter
-    case leave
+    case enter, leave
 }
 
 /// 启动页面数据
@@ -19,9 +18,9 @@ class LaunchScreenData: ObservableObject {
     @Published private(set) var states: LaunchScreenStates = .enter
 
     /// 切换当前状态
-    func change() {
+    func change(states: LaunchScreenStates) {
         withAnimation {
-            self.states = .leave
+            self.states = states
         }
     }
 }

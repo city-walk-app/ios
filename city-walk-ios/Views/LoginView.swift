@@ -65,7 +65,7 @@ struct LoginView: View {
                                     .keyboardType(.default)
                                     .textContentType(.emailAddress)
                                     .focused($focus, equals: .email)
-                                    .submitLabel(.next)
+                                    .submitLabel(.done)
                                     .foregroundStyle(Color("text-1"))
                                     .onReceive(Just(code), perform: { _ in
                                         limitMaxLength(content: &code, maxLength: 50)
@@ -113,87 +113,100 @@ struct LoginView: View {
                     .padding(.top, 79)
                             
                     // 验证码
-                    VStack {
-                        VStack(spacing: 44) {
-                            LoginHeaderView(title: "请输入验证码")
+                    ZStack(alignment: .topLeading) {
+                        VStack {
+                            VStack(spacing: 44) {
+                                LoginHeaderView(title: "请输入验证码")
                             
-                            VStack(alignment: .center, spacing: 51) {
-                                HStack(spacing: 14) {
-                                    ForEach(0 ..< maxDigits, id: \.self) { index in
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 14)
-                                                .stroke(index == code.count ? Color("theme-1") : Color.gray.opacity(0.2), lineWidth: 2)
-                                                .frame(width: 44, height: 52)
+                                VStack(alignment: .center, spacing: 51) {
+                                    HStack(spacing: 14) {
+                                        ForEach(0 ..< maxDigits, id: \.self) { index in
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 14)
+                                                    .stroke(index == code.count ? Color("theme-1") : Color.gray.opacity(0.2), lineWidth: 2)
+                                                    .frame(width: 44, height: 52)
                                                   
-                                            Text(getCharacter(at: index))
-                                                .font(.system(size: 24))
-                                                .fontWeight(.bold)
-                                                .foregroundStyle(Color("text-1"))
+                                                Text(getCharacter(at: index))
+                                                    .font(.system(size: 24))
+                                                    .fontWeight(.bold)
+                                                    .foregroundStyle(Color("text-1"))
+                                            }
                                         }
                                     }
-                                }
-                                .background(Color("background-1").opacity(0.00000001))
-                                .onTapGesture {
-                                    self.focus = .code
-                                    print("获取焦点")
-                                }
-                                .overlay {
-                                    ZStack {
-                                        TextField("", text: $code)
-                                            .keyboardType(.numberPad)
-                                            .textContentType(.oneTimeCode)
-                                            .focused($focus, equals: .code)
-                                            .onChange(of: code) {
-                                                limitMaxLength(content: &code, maxLength: maxDigits)
-                                            }
-                                            .opacity(0)
+                                    .background(Color("background-1").opacity(0.00000001))
+                                    .onTapGesture {
+                                        self.focus = .code
+                                        print("获取焦点")
                                     }
-                                }
+                                    .overlay {
+                                        ZStack {
+                                            TextField("", text: $code)
+                                                .keyboardType(.numberPad)
+                                                .textContentType(.oneTimeCode)
+                                                .focused($focus, equals: .code)
+                                                .onChange(of: code) {
+                                                    limitMaxLength(content: &code, maxLength: maxDigits)
+                                                }
+                                                .opacity(0)
+                                        }
+                                    }
                               
-                                // 获取验证码按钮
-                                Button {
-                                    self.hideKeyboard() // 隐藏键盘
+                                    // 获取验证码按钮
+                                    Button {
+                                        self.hideKeyboard() // 隐藏键盘
                                     
-                                    Task {
-                                        await self.userLoginEmail()
-                                    }
-                                } label: {
-                                    Circle()
-                                        .fill(code.count != 6 || isLoginButtonDisabled ? Color("theme-1").opacity(0.5) : Color("theme-1"))
-                                        .frame(width: 90, height: 90)
-                                        .overlay {
-                                            Image(systemName: "chevron.right")
-                                                .foregroundStyle(.white)
-                                                .font(.system(size: 27))
+                                        Task {
+                                            await self.userLoginEmail()
                                         }
-                                }
-                                .disabled(code.count != 6 || isLoginButtonDisabled)
-                                
-                                // 倒计时中
-                                Group {
-                                    if isCountingDown {
-                                        Text("\(countdownSeconds)s后重新获取")
-                                    } else {
-                                        Button {
-                                            Task {
-                                                await self.sendEmail()
+                                    } label: {
+                                        Circle()
+                                            .fill(code.count != 6 || isLoginButtonDisabled ? Color("theme-1").opacity(0.5) : Color("theme-1"))
+                                            .frame(width: 90, height: 90)
+                                            .overlay {
+                                                Image(systemName: "chevron.right")
+                                                    .foregroundStyle(.white)
+                                                    .font(.system(size: 27))
                                             }
-                                        } label: {
-                                            Text("重新获取")
+                                    }
+                                    .disabled(code.count != 6 || isLoginButtonDisabled)
+                                
+                                    // 倒计时中
+                                    Group {
+                                        if isCountingDown {
+                                            Text("\(countdownSeconds)s后重新获取")
+                                        } else {
+                                            Button {
+                                                Task {
+                                                    await self.sendEmail()
+                                                }
+                                            } label: {
+                                                Text("重新获取")
+                                            }
                                         }
                                     }
+                                    .foregroundStyle(Color("theme-1"))
+                                    .font(.system(size: 16))
+                                    .padding(.top, 20)
                                 }
-                                .foregroundStyle(Color("theme-1"))
-                                .font(.system(size: 16))
-                                .padding(.top, 20)
-                            }
                                     
-                            Spacer()
+                                Spacer()
+                            }
                         }
                         .padding(.horizontal, 26)
+                        .frame(width: geometry.size.width)
+                        .padding(.top, 79)
+                        
+                        HStack {
+                            BackButton {
+                                withAnimation {
+                                    self.step = 0
+                                }
+                            }
+                            
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
                     }
-                    .frame(width: geometry.size.width)
-                    .padding(.top, 79)
                 }
                 .frame(width: geometry.size.width * cardCount, alignment: .leading)
                 .offset(x: -CGFloat(step) * geometry.size.width)
@@ -202,14 +215,12 @@ struct LoginView: View {
             .background(viewBackground)
             .ignoresSafeArea(.keyboard)
            
-            // 返回首页
             NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
                 EmptyView()
             }
         }
-        // 点击空白处隐藏输入框
         .onTapGesture {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            self.hideKeyboard() // 收起键盘
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {

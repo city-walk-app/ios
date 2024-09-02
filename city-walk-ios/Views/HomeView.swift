@@ -976,7 +976,7 @@ private struct HomeHeaderView: View {
                     }
                 }
             } else {
-                NavigationLink(destination: storageData.token != nil && storageData.token != "" ? LoginView() : LoginView()) {
+                NavigationLink(destination: LoginView()) {
                     Circle()
                         .fill(Color("skeleton-background"))
                         .frame(width: 48, height: 48)
