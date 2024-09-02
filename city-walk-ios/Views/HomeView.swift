@@ -112,7 +112,11 @@ struct HomeView: View {
                 // 头部和底部操作视图
                 VStack {
                     // 头部操作栏
-                    HomeHeaderView(storageData: storageData, isSatelliteMap: $isSatelliteMap)
+                    HomeHeaderView(
+                        storageData: storageData,
+                        homeData: homeData,
+                        isSatelliteMap: $isSatelliteMap
+                    )
                 
 //                    Button {
 //                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -980,6 +984,8 @@ private struct HomeRecordSheetFullScreenCoverView: View {
 private struct HomeHeaderView: View {
     /// 缓存数据
     var storageData: StorageData
+    /// 首页数据
+    var homeData: HomeData
     /// 是否显示卫星地图
     @Binding var isSatelliteMap: Bool
     
@@ -1057,7 +1063,14 @@ private struct HomeHeaderView: View {
                     }
                    
                     // 回到当前位置按钮
-                    Button {} label: {
+                    Button {
+                        withAnimation(Animation.easeInOut(duration: 1.0)) {
+                            homeData.region = MKCoordinateRegion(
+                                center: CLLocationCoordinate2D(latitude: homeData.userLocation.latitude, longitude: homeData.userLocation.longitude),
+                                span: MKCoordinateSpan(latitudeDelta: defaultDelta, longitudeDelta: defaultDelta)
+                            )
+                        }
+                    } label: {
                         Rectangle()
                             .fill(.ultraThinMaterial)
                             .frame(width: 42, height: 42)
