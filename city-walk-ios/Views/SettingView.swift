@@ -8,6 +8,12 @@
 import Kingfisher
 import SwiftUI
 
+/// 个性签名最大输入长度
+private let signatureMaxLength = 30
+/// 手机最大输入长度
+private let mobileMaxLength = 11
+/// 昵称最大输入长度
+private let nickNameMaxLength = 16
 /// 信息设置的每一项
 private let infoItems = [
     InfoItemBar(icon: "person", key: .nick_name, title: "名字", color: "#EF7708"),
@@ -361,6 +367,12 @@ private struct SettingSheetView: View {
                                 .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
                         )
                         .font(.system(size: 16))
+                        .onChange(of: userInfo.nick_name) {
+                            if userInfo.nick_name.count > nickNameMaxLength {
+                                globalData.showToast(title: "最多只能输入\(nickNameMaxLength)个字符")
+                                userInfo.nick_name = String(userInfo.nick_name.prefix(nickNameMaxLength))
+                            }
+                        }
                 }
                 // 性别
                 else if sheetKey == .gender {
@@ -434,20 +446,29 @@ private struct SettingSheetView: View {
                                 .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
                         )
                         .font(.system(size: 16))
+                        .onChange(of: userInfo.mobile) {
+                            if userInfo.mobile.count > mobileMaxLength {
+                                userInfo.mobile = String(userInfo.mobile.prefix(mobileMaxLength))
+                            }
+                        }
                 }
                 // 签名
                 else if sheetKey == .signature {
                     TextField("Comment", text: $userInfo.signature, prompt: Text("请输入签名"), axis: .vertical)
-                        .lineLimit(4 ... 8)
+                        .lineLimit(4 ... 10)
+                        .padding(12)
                         .submitLabel(.done)
-                        .autocapitalization(.none) // 禁止任何自动大写
-                        .disableAutocorrection(true) // 禁止自动更正
-                        .foregroundStyle(Color(hex: "#333333"))
-                        .border(Color(hex: "#eeeeee"), width: 2)
+                        .background(Color(hex: "#F0F0F0"))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
+                        )
+                        .font(.system(size: 16))
                         .onChange(of: userInfo.signature) {
-                            // 当内容变化时执行的代码
-                            if userInfo.signature.contains("\n") {
-                                userInfo.signature = userInfo.signature.replacingOccurrences(of: "\n", with: "")
+                            if userInfo.signature.count > signatureMaxLength {
+                                globalData.showToast(title: "最多只能输入\(signatureMaxLength)个字符")
+                                userInfo.signature = String(userInfo.signature.prefix(signatureMaxLength))
                             }
                         }
                 }
@@ -479,6 +500,7 @@ private struct SettingSheetView: View {
                         .font(.headline)
                         .foregroundStyle(Color("text-1"))
                 }
+                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         self.visibleSheet.toggle()
@@ -489,6 +511,7 @@ private struct SettingSheetView: View {
                     }
                 }
             }
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
     
