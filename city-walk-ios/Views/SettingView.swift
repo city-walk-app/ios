@@ -360,12 +360,8 @@ private struct SettingSheetView: View {
                     TextField("请输入名字", text: $userInfo.nick_name)
                         .padding(12)
                         .frame(height: 50)
-                        .background(Color(hex: "#F0F0F0"))
+                        .background(Color("background-3"))
                         .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
-                        )
                         .font(.system(size: 16))
                         .onChange(of: userInfo.nick_name) {
                             if userInfo.nick_name.count > nickNameMaxLength {
@@ -439,12 +435,8 @@ private struct SettingSheetView: View {
                     TextField("请输入手机", text: $userInfo.mobile)
                         .padding(12)
                         .frame(height: 50)
-                        .background(Color(hex: "#F0F0F0"))
+                        .background(Color("background-3"))
                         .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
-                        )
                         .font(.system(size: 16))
                         .onChange(of: userInfo.mobile) {
                             if userInfo.mobile.count > mobileMaxLength {
@@ -458,12 +450,8 @@ private struct SettingSheetView: View {
                         .lineLimit(4 ... 10)
                         .padding(12)
                         .submitLabel(.done)
-                        .background(Color(hex: "#F0F0F0"))
+                        .background(Color("background-3"))
                         .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(hex: "#D1D1D1"), lineWidth: 1)
-                        )
                         .font(.system(size: 16))
                         .onChange(of: userInfo.signature) {
                             if userInfo.signature.count > signatureMaxLength {
@@ -474,40 +462,40 @@ private struct SettingSheetView: View {
                 }
                 
                 Spacer()
-                
-                Button {
-                    Task {
-                        await self.submitUserInfo() // 提交用户信息
-                    }
-                } label: {
-                    Text("就这样")
-                        .frame(width: 160, height: 48)
-                        .font(.system(size: 16))
-                        .foregroundStyle(.white)
-                        .background(Color("theme-1"))
-                        .border(Color("theme-1"))
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
-                        )
-                }
             }
             .padding(.horizontal, 18)
+            .padding(.top, 30)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        self.visibleSheet.toggle()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(Color("text-2"))
+                            .bold()
+                    }
+                }
+                
                 ToolbarItem(placement: .principal) {
-                    Text(title)
+                    Text("设置" + title)
                         .font(.headline)
                         .foregroundStyle(Color("text-1"))
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        self.visibleSheet.toggle()
+                        Task {
+                            await self.submitUserInfo() // 提交用户信息
+                        }
                     } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(Color("text-2"))
+                        Text("就这样")
+                            .frame(width: 70, height: 38)
+                            .font(.system(size: 13))
+                            .foregroundStyle(.white)
+                            .background(Color("theme-1"))
+                            .border(Color("theme-1"))
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
                 }
             }
