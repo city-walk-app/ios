@@ -66,28 +66,34 @@ struct MainView: View {
                     // 用户信息
                     if let userInfo = mainData.userInfo {
                         // 头像
-                        KFImage(URL(string: userInfo.avatar ?? defaultAvatar))
-                            .placeholder {
-                                Circle()
-                                    .fill(Color("skeleton-background"))
-                                    .frame(width: 74, height: 74)
-                            }
-                            .resizable()
-                            .frame(width: 74, height: 74)
-                            .aspectRatio(contentMode: .fill)
-                            .clipShape(Circle())
+                        NavigationLink(destination: SettingView(acitveKey: .avatar)) {
+                            KFImage(URL(string: userInfo.avatar ?? defaultAvatar))
+                                .placeholder {
+                                    Circle()
+                                        .fill(Color("skeleton-background"))
+                                        .frame(width: 74, height: 74)
+                                }
+                                .resizable()
+                                .frame(width: 74, height: 74)
+                                .aspectRatio(contentMode: .fill)
+                                .clipShape(Circle())
+                        }
                      
                         // 昵称
-                        Text("\(userInfo.nick_name)")
-                            .padding(.top, 16)
-                            .foregroundStyle(Color("text-1"))
-                            .font(.system(size: 18))
+                        NavigationLink(destination: SettingView(acitveKey: .nick_name)) {
+                            Text("\(userInfo.nick_name)")
+                                .padding(.top, 16)
+                                .foregroundStyle(Color("text-1"))
+                                .font(.system(size: 18))
+                        }
                         
                         // 签名
-                        Text("\(userInfo.signature ?? "")")
-                            .padding(.top, 8)
-                            .foregroundStyle(Color("text-2"))
-                            .font(.system(size: 14))
+                        NavigationLink(destination: SettingView(acitveKey: .signature)) {
+                            Text("\(userInfo.signature ?? "")")
+                                .padding(.top, 8)
+                                .foregroundStyle(Color("text-2"))
+                                .font(.system(size: 14))
+                        }
                     } else {
                         Circle()
                             .fill(Color("skeleton-background"))

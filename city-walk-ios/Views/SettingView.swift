@@ -24,6 +24,9 @@ private let infoItems = [
 
 /// 设置
 struct SettingView: View {
+    /// 进入需要激活的弹窗类型
+    var acitveKey: SettingSheetKey? = nil
+    
     /// 缓存数据
     @EnvironmentObject private var storageData: StorageData
     /// 全球的数据
@@ -32,7 +35,7 @@ struct SettingView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     /// 控制弹窗内容的 key
-    @State private var sheetKey: SheetKey = .nick_name
+    @State private var sheetKey: SettingSheetKey = .nick_name
     /// 是否显示编辑信息的弹窗
     @State private var isShowSetInfo = false
     /// 是否跳转到登录页面
@@ -51,9 +54,7 @@ struct SettingView: View {
         mobile: "",
         signature: ""
     )
-    /// 设置标题
-    @State private var title = "设置"
-  
+ 
     var body: some View {
         NavigationView {
             // 选项列表
@@ -64,7 +65,6 @@ struct SettingView: View {
                         // 头像设置
                         Button {
                             self.sheetKey = .avatar
-                            self.title = "头像"
                             self.visibleSheet.toggle()
                         } label: {
                             HStack {
@@ -96,7 +96,6 @@ struct SettingView: View {
                     Section {
                         ForEach(infoItems, id: \.key) { item in
                             Button {
-                                self.title = item.title
                                 self.sheetKey = item.key
                                 self.visibleSheet.toggle()
                             } label: {
@@ -180,14 +179,6 @@ struct SettingView: View {
                     
                     // 应用服务
                     Section {
-//                        Button {} label: {
-//                            Text("给个好评")
-//                        }
-//
-//                        Button {} label: {
-//                            Text("分享给好友")
-//                        }
-                        
                         Button {
                             if let url = URL(string: "https://github.com/city-walk-app") {
                                 UIApplication.shared.open(url)
@@ -258,6 +249,12 @@ struct SettingView: View {
 //        }
         .onAppear {
             self.loadCacheInfo() // 获取缓存的用户信息
+            
+            /// 如果点击进入需要直接修改信息
+            if let acitveKey = acitveKey {
+                self.sheetKey = acitveKey
+                self.visibleSheet.toggle()
+            }
         }
         // 修改信息的弹出层
         .sheet(isPresented: $visibleSheet, onDismiss: {
@@ -268,8 +265,7 @@ struct SettingView: View {
                 globalData: globalData,
                 sheetKey: $sheetKey,
                 userInfo: $userInfo,
-                visibleSheet: $visibleSheet,
-                title: $title
+                visibleSheet: $visibleSheet
             )
         }
     }
@@ -300,13 +296,11 @@ private struct SettingSheetView: View {
     private let pictureMaxCount = 1
     
     /// 显示的内容 key
-    @Binding var sheetKey: SheetKey
+    @Binding var sheetKey: SettingSheetKey
     /// 用户信息
     @Binding var userInfo: UserInfo
     /// 是否显示
     @Binding var visibleSheet: Bool
-    /// 标题
-    @Binding var title: String
     
     /// 是否显示全屏对话框
     @State private var visibleFullScreenCover = false
@@ -478,7 +472,7 @@ private struct SettingSheetView: View {
                 }
                 
                 ToolbarItem(placement: .principal) {
-                    Text("设置" + title)
+                    Text("设置" + self.getSheetTitle(key: self.sheetKey))
                         .font(.headline)
                         .foregroundStyle(Color("text-1"))
                 }
@@ -500,6 +494,21 @@ private struct SettingSheetView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+    
+    private func getSheetTitle(key: SettingSheetKey) -> String {
+        switch key {
+        case .avatar:
+            return "头像"
+        case .gender:
+            return "性别"
+        case .mobile:
+            return "手机"
+        case .nick_name:
+            return "名字"
+        default:
+            return ""
         }
     }
     
@@ -544,7 +553,7 @@ private struct SettingSheetView: View {
 }
 
 /// 用户信息编辑键
-private enum SheetKey {
+enum SettingSheetKey {
     case avatar, nick_name, gender, mobile, signature
 }
 
@@ -560,7 +569,7 @@ private struct UserInfo {
 /// 信息每一项度菜单
 private struct InfoItemBar {
     var icon: String
-    var key: SheetKey
+    var key: SettingSheetKey
     var title: String
     var color: String
 }
