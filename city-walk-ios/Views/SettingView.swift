@@ -507,8 +507,8 @@ private struct SettingSheetView: View {
             return "手机"
         case .nick_name:
             return "名字"
-        default:
-            return ""
+        case .signature:
+            return "签名"
         }
     }
     
