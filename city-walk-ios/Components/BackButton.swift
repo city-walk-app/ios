@@ -17,11 +17,11 @@ struct BackButton: View {
             action() // 执行传入的返回操作
         } label: {
             Circle()
-                .fill(Color.white)
+                .fill(Color("background-2"))
                 .frame(width: 36, height: 36)
                 .overlay {
                     Image(systemName: "chevron.left")
-                        .foregroundStyle(Color(hex: "#666666"))
+                        .foregroundStyle(Color("text-1"))
                         .font(.system(size: 16))
                 }
                 .shadow(color: Color(hex: "#656565").opacity(0.1), radius: 5.4, x: 0, y: 1)

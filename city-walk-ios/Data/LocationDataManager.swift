@@ -9,7 +9,7 @@ import CoreLocation
 import Foundation
 
 /// 定位服务
-class LocationDataManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+class LocationData: NSObject, ObservableObject, CLLocationManagerDelegate {
     /// 记录位置信息
     @Published var currentLocation: CLLocationCoordinate2D?
 
@@ -56,8 +56,6 @@ class LocationDataManager: NSObject, ObservableObject, CLLocationManagerDelegate
             }
         }
     }
-
-    // MARK: - CLLocationManagerDelegate
 
     // 每当位置更新时都会被调用，这里更新currentLocation变量。
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

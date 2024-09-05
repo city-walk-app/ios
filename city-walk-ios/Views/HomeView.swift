@@ -12,7 +12,7 @@ import MapKit
 import SwiftUI
 import ToastUI
 
-// import CoreMotion 步数
+// import WeatherKit
 
 /// 心情颜色
 private let moodColorList = moodColors
@@ -35,7 +35,7 @@ struct HomeView: View {
     @EnvironmentObject private var globalData: GlobalData
     
     /// 定位数据管理对象
-    @StateObject private var locationDataManager = LocationDataManager()
+    @StateObject private var locationData = LocationData()
     /// 定位服务管理对象
     private var locationManager = CLLocationManager()
 
@@ -117,7 +117,7 @@ struct HomeView: View {
                         homeData: homeData,
                         isSatelliteMap: $isSatelliteMap
                     )
-                
+                    
 //                    Button {
 //                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
 //                            withAnimation {
@@ -444,10 +444,10 @@ struct HomeView: View {
     
     /// 获取当前位置并打卡
     private func onRecord() async {
-        locationDataManager.checkLocationAuthorization()
+        locationData.checkLocationAuthorization()
         
         // 获取经纬度的字符串描述
-        if let location = locationDataManager.locationManager.location {
+        if let location = locationData.locationManager.location {
             let longitudeString = location.coordinate.longitude.description
             let latitudeString = location.coordinate.latitude.description
             

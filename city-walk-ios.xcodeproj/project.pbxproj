@@ -155,6 +155,7 @@
 		26A624052BE52A4B0074352D /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				262368532BC3715400264BD9 /* LocationDataManager.swift */,
 				26A624062BE52A5C0074352D /* StorageData.swift */,
 				264B8F122BEC57D100AA2E79 /* LaunchScreenData.swift */,
 				2617B7ED2C76190300E3BD82 /* FriendsData.swift */,
@@ -253,7 +254,6 @@
 			children = (
 				265ED6932C44AF3F009142A7 /* Request.swift */,
 				2617B7E52C7583FB00E3BD82 /* Window.swift */,
-				262368532BC3715400264BD9 /* LocationDataManager.swift */,
 				2652016F2C6C976700222C9A /* Utils.swift */,
 				2628877D2C732369006BBE1E /* UploadImages.swift */,
 			);
@@ -531,7 +531,6 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "我们需要使用你的摄像头";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "需要使用您的位置信息";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "需要获取您的位置以提供更好的服务";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要获取您的位置以提供更好的服务。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -569,7 +568,6 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "我们需要使用你的摄像头";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "需要使用您的位置信息";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "需要获取您的位置以提供更好的服务";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要获取您的位置以提供更好的服务。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
