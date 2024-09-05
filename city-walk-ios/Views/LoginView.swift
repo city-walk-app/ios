@@ -61,7 +61,7 @@ struct LoginView: View {
                                 TextField("请输入邮箱", text: $email)
                                     .frame(height: 58)
                                     .padding(.horizontal, 23)
-                                    .background(self.focus == .email ? Color.clear : Color("text-2").opacity(0.2))
+                                    .background(self.focus == .email ? Color.clear : Color("background-3"))
                                     .keyboardType(.default)
                                     .textContentType(.emailAddress)
                                     .focused($focus, equals: .email)

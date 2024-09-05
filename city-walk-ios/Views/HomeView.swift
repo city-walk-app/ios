@@ -24,6 +24,8 @@ private let pictureMaxCount = 2
 private let longitudeOffset = 0.00428
 /// 纬度偏移量
 private let latitudeOffset = -0.00294
+/// 定位服务管理对象
+private var locationManager = CLLocationManager()
 
 /// 首页
 struct HomeView: View {
@@ -36,9 +38,7 @@ struct HomeView: View {
     
     /// 定位数据管理对象
     @StateObject private var locationData = LocationData()
-    /// 定位服务管理对象
-    private var locationManager = CLLocationManager()
-
+   
     /// 打卡弹窗是否显示
     @State private var visibleSheet = false
     /// 是否显示选择的菜单
@@ -382,6 +382,7 @@ struct HomeView: View {
             globalData.showToast(title: "提交成功")
         } catch {
             print("完善步行打卡记录详情异常")
+            globalData.showToast(title: "提交异常")
             globalData.hiddenLoading()
         }
     }
@@ -438,6 +439,7 @@ struct HomeView: View {
             visibleSheet.toggle() // 打开对话框
         } catch {
             print("打卡当前地点异常")
+            globalData.showToast(title: "打卡当前地点异常")
             globalData.hiddenLoading()
         }
     }
@@ -462,10 +464,11 @@ struct HomeView: View {
                 
                 await locationCreateRecord(longitude: "\(lon)", latitude: "\(lat)") // 打卡当前地点
             } else {
+                globalData.showToast(title: "打卡异常")
                 print("经度或纬度转换失败")
             }
         } else {
-            print("无法获取位置数据")
+            globalData.showToast(title: "打卡异常")
         }
     }
 }

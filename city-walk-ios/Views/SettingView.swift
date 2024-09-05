@@ -429,6 +429,7 @@ private struct SettingSheetView: View {
                     TextField("请输入手机", text: $userInfo.mobile)
                         .padding(12)
                         .frame(height: 50)
+                        .keyboardType(.numberPad)
                         .background(Color("background-3"))
                         .cornerRadius(12)
                         .font(.system(size: 16))
