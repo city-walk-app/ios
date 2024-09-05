@@ -264,16 +264,6 @@ struct LoginView: View {
         return String(code[startIndex])
     }
      
-    /// 限制字符串的最大长度
-    /// - Parameters:
-    ///   - content: 输入的字符串
-    ///   - maxLength: 最大允许的字符数
-    private func limitMaxLength(content: inout String, maxLength: Int) {
-        if content.count > maxLength {
-            content = String(content.prefix(maxLength))
-        }
-    }
-    
     /// 检测是否为邮箱格式
     /// - Parameter email: 邮箱
     /// - Returns: 是否为正确的邮箱

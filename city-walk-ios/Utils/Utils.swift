@@ -26,3 +26,13 @@ func convertToDateOnly(from dateString: String) -> String? {
         return nil
     }
 }
+
+/// 限制字符串的最大长度
+/// - Parameters:
+///   - content: 输入的字符串
+///   - maxLength: 最大允许的字符数
+func limitMaxLength(content: inout String, maxLength: Int) {
+    if content.count > maxLength {
+        content = String(content.prefix(maxLength))
+    }
+}

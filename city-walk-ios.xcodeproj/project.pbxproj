@@ -16,7 +16,7 @@
 		2617B7F22C762B6400E3BD82 /* RankingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2617B7F12C762B6400E3BD82 /* RankingData.swift */; };
 		2622AB4A2BF8ED14003C31E0 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2622AB492BF8ED14003C31E0 /* HomeView.swift */; };
 		262368502BBE3A6100264BD9 /* RouteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2623684F2BBE3A6100264BD9 /* RouteDetailView.swift */; };
-		262368542BC3715400264BD9 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262368532BC3715400264BD9 /* LocationDataManager.swift */; };
+		262368542BC3715400264BD9 /* LocationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262368532BC3715400264BD9 /* LocationData.swift */; };
 		2628877A2C72044E006BBE1E /* KeyboardHeightPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262887792C72044E006BBE1E /* KeyboardHeightPublisher.swift */; };
 		2628877C2C720A1E006BBE1E /* MoodColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628877B2C720A1E006BBE1E /* MoodColors.swift */; };
 		2628877E2C732369006BBE1E /* UploadImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2628877D2C732369006BBE1E /* UploadImages.swift */; };
@@ -66,7 +66,7 @@
 		2617B7F12C762B6400E3BD82 /* RankingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingData.swift; sourceTree = "<group>"; };
 		2622AB492BF8ED14003C31E0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		2623684F2BBE3A6100264BD9 /* RouteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteDetailView.swift; sourceTree = "<group>"; };
-		262368532BC3715400264BD9 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
+		262368532BC3715400264BD9 /* LocationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationData.swift; sourceTree = "<group>"; };
 		262887792C72044E006BBE1E /* KeyboardHeightPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHeightPublisher.swift; sourceTree = "<group>"; };
 		2628877B2C720A1E006BBE1E /* MoodColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodColors.swift; sourceTree = "<group>"; };
 		2628877D2C732369006BBE1E /* UploadImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadImages.swift; sourceTree = "<group>"; };
@@ -155,7 +155,7 @@
 		26A624052BE52A4B0074352D /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				262368532BC3715400264BD9 /* LocationDataManager.swift */,
+				262368532BC3715400264BD9 /* LocationData.swift */,
 				26A624062BE52A5C0074352D /* StorageData.swift */,
 				264B8F122BEC57D100AA2E79 /* LaunchScreenData.swift */,
 				2617B7ED2C76190300E3BD82 /* FriendsData.swift */,
@@ -368,7 +368,7 @@
 				26DB3C282C6B3C4000D14719 /* Default.swift in Sources */,
 				2617B7EE2C76190300E3BD82 /* FriendsData.swift in Sources */,
 				26CE0B932C1143B4001984D9 /* LoginView.swift in Sources */,
-				262368542BC3715400264BD9 /* LocationDataManager.swift in Sources */,
+				262368542BC3715400264BD9 /* LocationData.swift in Sources */,
 				265ED6962C44BC89009142A7 /* Api.swift in Sources */,
 				26B998562BBD92EF000D1E88 /* city_walk_iosApp.swift in Sources */,
 				2617B7F02C761EE600E3BD82 /* MainData.swift in Sources */,
@@ -530,8 +530,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "City Walk";
 				INFOPLIST_KEY_NSCameraUsageDescription = "我们需要使用你的摄像头";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "需要使用您的位置信息";
-				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "需要获取您的位置以提供更好的服务";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要使用您的位置信息来提供服务。";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要使用您的位置信息来提供服务";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -568,8 +568,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "City Walk";
 				INFOPLIST_KEY_NSCameraUsageDescription = "我们需要使用你的摄像头";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "需要使用您的位置信息";
-				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "需要获取您的位置以提供更好的服务";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要使用您的位置信息来提供服务。";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "需要使用您的位置信息来提供服务";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

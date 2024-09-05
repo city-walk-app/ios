@@ -5,15 +5,16 @@
 //  Created by Tyh2001 on 2024/4/20.
 //
 
+import Combine
 import Kingfisher
 import SwiftUI
 
 /// 个性签名最大输入长度
-private let signatureMaxLength = 30
+private let signatureMaxLength = 255
 /// 手机最大输入长度
 private let mobileMaxLength = 11
 /// 昵称最大输入长度
-private let nickNameMaxLength = 16
+private let nickNameMaxLength = 12
 /// 信息设置的每一项
 private let infoItems = [
     InfoItemBar(icon: "person", key: .nick_name, title: "名字", color: "#EF7708"),
@@ -119,33 +120,8 @@ struct SettingView: View {
                         }
                     }
                     
-                    // 赞助
-//                    Section {
-//                        HStack {
-//                            Button {} label: {
-//                                Text("赞助")
-//                            }
-//
-//                            Spacer()
-//
-//                            Image(systemName: "chevron.right")
-//                                .foregroundColor(Color(hex: "#B5B5B5"))
-//                        }
-//                    }
-                    
                     // 作者
                     Section(header: Text("作者")) {
-//                        Button {} label: {
-//                            HStack {
-//                                Text("微信")
-//
-//                                Spacer()
-//
-//                                Image(systemName: "chevron.right")
-//                                    .foregroundColor(Color(hex: "#B5B5B5"))
-//                            }
-//                        }
-                        
                         Button {
                             if let url = URL(string: "https://x.com/tyh20011") {
                                 UIApplication.shared.open(url)
@@ -306,6 +282,10 @@ private struct SettingSheetView: View {
     @State private var visibleFullScreenCover = false
     /// 选择的图片文件列表
     @State private var selectedImages: [UIImage] = []
+    /// 提交信息按钮是否禁用
+    @State private var isSubmitInfoButtonDisabled = false
+    /// 输入框是否获取焦点
+    @FocusState private var focus: SettingSheetKey?
     
     /// 性别列表
     private let genders: [Genders] = Genders.allCases
@@ -351,18 +331,45 @@ private struct SettingSheetView: View {
                 }
                 // 名字
                 else if sheetKey == .nick_name {
-                    TextField("请输入名字", text: $userInfo.nick_name)
-                        .padding(12)
-                        .frame(height: 50)
-                        .background(Color("background-3"))
-                        .cornerRadius(12)
-                        .font(.system(size: 16))
-                        .onChange(of: userInfo.nick_name) {
-                            if userInfo.nick_name.count > nickNameMaxLength {
-                                globalData.showToast(title: "最多只能输入\(nickNameMaxLength)个字符")
-                                userInfo.nick_name = String(userInfo.nick_name.prefix(nickNameMaxLength))
+                    ZStack(alignment: .trailing) {
+                        TextField("请输入名字", text: $userInfo.nick_name)
+                            .frame(height: 58)
+                            .padding(.horizontal, 23)
+                            .background(self.focus == .nick_name ? Color.clear : Color("background-3"))
+                            .keyboardType(.default)
+                            .focused($focus, equals: .nick_name)
+                            .submitLabel(.done)
+                            .foregroundStyle(Color("text-1"))
+                            .onReceive(Just(userInfo.nick_name), perform: { _ in
+                                limitMaxLength(content: &userInfo.nick_name, maxLength: nickNameMaxLength)
+                            })
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(self.focus == .nick_name ? Color("theme-1") : Color.clear, lineWidth: 2)
+                            )
+                            .onChange(of: userInfo.nick_name) {
+                                getSubmitInfoButtonDisabled() // 提交信息按钮是否禁用
                             }
+
+                        Button {
+                            self.focus = .nick_name
+                            userInfo.nick_name = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(Color("text-3").opacity(0.8))
+                                .padding(.trailing, 23)
                         }
+                    }
+                    HStack {
+                        Spacer()
+                        
+                        Text("\(userInfo.nick_name.count)/\(nickNameMaxLength)")
+                            .font(.system(size: 14))
+                            .foregroundStyle(Color("text-2"))
+                    }
+                    .padding(.horizontal, 2)
+                    .padding(.top, 6)
                 }
                 // 性别
                 else if sheetKey == .gender {
@@ -427,33 +434,51 @@ private struct SettingSheetView: View {
                 // 手机
                 else if sheetKey == .mobile {
                     TextField("请输入手机", text: $userInfo.mobile)
-                        .padding(12)
-                        .frame(height: 50)
+                        .frame(height: 58)
+                        .padding(.horizontal, 23)
+                        .background(self.focus == .mobile ? Color.clear : Color("background-3"))
                         .keyboardType(.numberPad)
-                        .background(Color("background-3"))
-                        .cornerRadius(12)
-                        .font(.system(size: 16))
+                        .focused($focus, equals: .mobile)
+                        .foregroundStyle(Color("text-1"))
+                        .onReceive(Just(userInfo.mobile), perform: { _ in
+                            limitMaxLength(content: &userInfo.mobile, maxLength: mobileMaxLength)
+                        })
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(self.focus == .mobile ? Color("theme-1") : Color.clear, lineWidth: 2)
+                        )
                         .onChange(of: userInfo.mobile) {
-                            if userInfo.mobile.count > mobileMaxLength {
-                                userInfo.mobile = String(userInfo.mobile.prefix(mobileMaxLength))
-                            }
+                            getSubmitInfoButtonDisabled() // 提交信息按钮是否禁用
                         }
                 }
                 // 签名
                 else if sheetKey == .signature {
                     TextField("Comment", text: $userInfo.signature, prompt: Text("请输入签名"), axis: .vertical)
                         .lineLimit(4 ... 10)
-                        .padding(12)
-                        .submitLabel(.done)
-                        .background(Color("background-3"))
-                        .cornerRadius(12)
-                        .font(.system(size: 16))
-                        .onChange(of: userInfo.signature) {
-                            if userInfo.signature.count > signatureMaxLength {
-                                globalData.showToast(title: "最多只能输入\(signatureMaxLength)个字符")
-                                userInfo.signature = String(userInfo.signature.prefix(signatureMaxLength))
-                            }
-                        }
+                        .padding(23)
+                        .background(self.focus == .signature ? Color.clear : Color("background-3"))
+                        .keyboardType(.numberPad)
+                        .focused($focus, equals: .signature)
+                        .foregroundStyle(Color("text-1"))
+                        .onReceive(Just(userInfo.signature), perform: { _ in
+                            limitMaxLength(content: &userInfo.signature, maxLength: signatureMaxLength)
+                        })
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(self.focus == .signature ? Color("theme-1") : Color.clear, lineWidth: 2)
+                        )
+                      
+                    HStack {
+                        Spacer()
+                        
+                        Text("\(userInfo.signature.count)/\(signatureMaxLength)")
+                            .font(.system(size: 14))
+                            .foregroundStyle(Color("text-2"))
+                    }
+                    .padding(.horizontal, 2)
+                    .padding(.top, 6)
                 }
                 
                 Spacer()
@@ -473,7 +498,7 @@ private struct SettingSheetView: View {
                 }
                 
                 ToolbarItem(placement: .principal) {
-                    Text("设置" + self.getSheetTitle(key: self.sheetKey))
+                    Text(self.getSheetTitle(key: self.sheetKey))
                         .font(.headline)
                         .foregroundStyle(Color("text-1"))
                 }
@@ -488,16 +513,50 @@ private struct SettingSheetView: View {
                             .frame(width: 70, height: 38)
                             .font(.system(size: 13))
                             .foregroundStyle(.white)
-                            .background(Color("theme-1"))
-                            .border(Color("theme-1"))
+                            .background(isSubmitInfoButtonDisabled ? Color("theme-1").opacity(0.5) : Color("theme-1"))
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
+                    .disabled(isSubmitInfoButtonDisabled)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                getSubmitInfoButtonDisabled() // 提交信息按钮是否禁用
+                
+                withAnimation {
+                    self.focus = self.sheetKey
+                }
+            }
         }
     }
     
+    /// 提交信息按钮是否禁用
+    /// - Returns: 是否禁用
+    private func getSubmitInfoButtonDisabled() {
+        if sheetKey == .mobile {
+            if userInfo.mobile.count == 0 {
+                isSubmitInfoButtonDisabled = false
+                return
+            }
+
+            isSubmitInfoButtonDisabled = userInfo.mobile.count != mobileMaxLength
+            return
+        }
+        else if sheetKey == .nick_name {
+            isSubmitInfoButtonDisabled = userInfo.nick_name == ""
+            return
+        }
+        else if sheetKey == .signature {
+            isSubmitInfoButtonDisabled = userInfo.signature == ""
+            return
+        }
+        
+        isSubmitInfoButtonDisabled = false
+    }
+    
+    /// 设置当前标题
+    /// - Parameter key: key
+    /// - Returns: 标题
     private func getSheetTitle(key: SettingSheetKey) -> String {
         switch key {
         case .avatar:
@@ -518,6 +577,7 @@ private struct SettingSheetView: View {
         if sheetKey == .avatar {
             // 有选择照片
             if !selectedImages.isEmpty {
+                isSubmitInfoButtonDisabled = true
                 let uploadedImageURLs = await uploadImages(images: selectedImages)
                 
                 userInfo.avatar = uploadedImageURLs[0]
@@ -527,6 +587,8 @@ private struct SettingSheetView: View {
         }
         
         do {
+            isSubmitInfoButtonDisabled = true
+            
             let res = try await Api.shared.setUserInfo(params: [
                 "nick_name": userInfo.nick_name,
                 "avatar": userInfo.avatar,
@@ -539,6 +601,7 @@ private struct SettingSheetView: View {
             
             guard res.code == 200, let data = res.data else {
                 globalData.showToast(title: "提交异常")
+                isSubmitInfoButtonDisabled = false
                 return
             }
             
@@ -546,9 +609,12 @@ private struct SettingSheetView: View {
                 
             visibleSheet.toggle()
             globalData.showToast(title: "修改成功")
+            isSubmitInfoButtonDisabled = false
         }
         catch {
             print("设置用户信息异常")
+            globalData.showToast(title: "提交异常")
+            isSubmitInfoButtonDisabled = false
         }
     }
 }
