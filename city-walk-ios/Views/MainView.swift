@@ -363,7 +363,7 @@ struct MainView: View {
                                             }
                                         } else {
                                             Circle()
-                                                .fill(Color.white) // 设置圆形的背景颜色为白色
+                                                .fill(Color.clear) // 设置圆形的背景颜色为白色
                                                 .frame(width: 20, height: 20) // 设置圆形的大小
                                                 .overlay(
                                                     Circle()
@@ -380,40 +380,43 @@ struct MainView: View {
                                     
                                     // 右侧详情内容
                                     ZStack(alignment: .topTrailing) {
-                                        // 左上角的图标
-                                        KFImage(mainPosition)
-                                            .resizable()
-                                            .frame(width: 61, height: 56)
-                                            .zIndex(30)
-                                       
                                         // 主要内容
                                         VStack(alignment: .leading) {
                                             // 头部内容
                                             HStack {
+                                                // 打卡时间
+                                                if let create_at = item.create_at, let time = convertToTime(from: create_at) {
+                                                    Text("\(time)")
+                                                        .font(.system(size: 16))
+                                                        .padding(.trailing, 6)
+                                                        .foregroundStyle(Color(hex: "#333333"))
+                                                }
+                                                
+                                                // 地点
                                                 Text("\(item.city ?? "")")
-                                                    .padding(.horizontal, 24)
-                                                    .frame(maxHeight: .infinity)
-                                                    .foregroundStyle(Color("text-1"))
-                                                    .background(
-                                                        LinearGradient(
-                                                            gradient: Gradient(
-                                                                colors: [Color(hex: "#FFF8E8"), Color(hex: "#ffffff")]
-                                                            ),
-                                                            startPoint: .leading,
-                                                            endPoint: .trailing
-                                                        )
-                                                    )
+                                                    .font(.system(size: 14))
+                                                    .foregroundStyle(Color(hex: "#333333"))
                                                 
                                                 Spacer()
                                             }
                                             .frame(height: 46)
+                                            .padding(.horizontal, 24)
+                                            .background(
+                                                LinearGradient(
+                                                    gradient: Gradient(
+                                                        colors: [Color(hex: "#fff8e8"), Color.white]
+                                                    ),
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                )
+                                            )
                                             
                                             // 发布的文案
                                             if item.content != nil && item.content != "" {
                                                 HStack {
                                                     Text("\(item.content!)")
                                                         .font(.system(size: 14))
-                                                        .foregroundStyle(Color("text-2"))
+                                                        .foregroundStyle(Color(hex: "#666666"))
                                                         .padding(.horizontal, 24)
                                                         .padding(.top, 14)
                                                         .padding(.bottom, 12)
@@ -445,9 +448,16 @@ struct MainView: View {
                                             }
                                         }
                                         .frame(maxWidth: .infinity)
-//                                        .background(.white)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
                                         .shadow(color: Color(hex: "#656565").opacity(0.1), radius: 5.4, x: 0, y: 1)
+                                        .background(.white)
+                                        .clipped()
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        
+                                        // 左上角的图标
+                                        KFImage(mainPosition)
+                                            .resizable()
+                                            .frame(width: 61, height: 56)
+                                            .zIndex(30)
                                     }
                                 }
                             }

@@ -483,6 +483,9 @@ private struct SettingSheetView: View {
                             RoundedRectangle(cornerRadius: 20)
                                 .stroke(self.focus == .signature ? Color("theme-1") : Color.clear, lineWidth: 2)
                         )
+                        .onChange(of: userInfo.signature) {
+                            getSubmitInfoButtonDisabled() // 提交信息按钮是否禁用
+                        }
                       
                     HStack {
                         Spacer()
@@ -551,6 +554,7 @@ private struct SettingSheetView: View {
             return
         }
         
+        // 手机
         if sheetKey == .mobile {
             if userInfo.mobile.count == 0 {
                 isSubmitInfoButtonDisabled = false
@@ -565,6 +569,7 @@ private struct SettingSheetView: View {
             isSubmitInfoButtonDisabled = userInfo.mobile.count != mobileMaxLength
             return
         }
+        // 名字
         else if sheetKey == .nick_name {
             if userInfo.nick_name == storageInfo.nick_name {
                 isSubmitInfoButtonDisabled = true
@@ -574,6 +579,7 @@ private struct SettingSheetView: View {
             isSubmitInfoButtonDisabled = userInfo.nick_name == ""
             return
         }
+        // 签名
         else if sheetKey == .signature {
             if userInfo.signature == storageInfo.signature {
                 isSubmitInfoButtonDisabled = true
