@@ -22,6 +22,8 @@ private let infoItems = [
     InfoItemBar(icon: "smartphone", key: .mobile, title: "手机", color: "#FF323E"),
     InfoItemBar(icon: "lightbulb", key: .signature, title: "签名", color: "#0348F2"),
 ]
+/// 性别列表
+private let genders: [Genders] = Genders.allCases
 
 /// 设置
 struct SettingView: View {
@@ -287,9 +289,6 @@ private struct SettingSheetView: View {
     /// 输入框是否获取焦点
     @FocusState private var focus: SettingSheetKey?
     
-    /// 性别列表
-    private let genders: [Genders] = Genders.allCases
-   
     var body: some View {
         NavigationStack {
             VStack(alignment: .center) {

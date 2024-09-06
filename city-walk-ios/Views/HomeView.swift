@@ -77,6 +77,7 @@ struct HomeView: View {
     @State private var invite_id: String?
     /// 是否显示卫星地图
     @State private var isSatelliteMap = false
+    @State private var refreshID = UUID() // 用于强制刷新视图
     
     var body: some View {
         NavigationStack {
@@ -113,7 +114,8 @@ struct HomeView: View {
                 VStack {
                     // 头部操作栏
                     HomeHeaderView(
-                        storageData: storageData,
+                        //                        storageData: storageData,
+                        userInfo: userInfo,
                         homeData: homeData,
                         isSatelliteMap: $isSatelliteMap
                     )
@@ -203,7 +205,9 @@ struct HomeView: View {
             }
         }
         .toastDimmedBackground(false)
+        .id(refreshID)
         .onAppear {
+            print("首页执行了")
             NotificationCenter.default.addObserver(
                 forName: UIResponder.keyboardWillShowNotification,
                 object: nil,
@@ -224,6 +228,7 @@ struct HomeView: View {
             
             Task {
                 await self.getUserInfo() // 获取用户信息
+                
                 await homeData.getTodayRecord() // 获取今天的打卡记录
             }
 
@@ -235,7 +240,7 @@ struct HomeView: View {
         // 退出到桌面返回执行
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             self.readClipboard() // 读取剪贴板
-
+      
             Task {
                 await self.getUserInfo() // 获取用户信息
                 await homeData.getTodayRecord() // 获取今天的打卡记录
@@ -396,8 +401,6 @@ struct HomeView: View {
         do {
             let res = try await Api.shared.getUserInfo(params: ["user_id": storageData.userInfo!.user_id])
 
-            print("我的页面获取的用户信息", res)
-            
             guard res.code == 200, let data = res.data else {
                 return
             }
@@ -409,6 +412,23 @@ struct HomeView: View {
         }
     }
     
+    /// 获取缓存的用户信息
+    private func loadCacheInfo() {
+        guard let info = storageData.userInfo else {
+            return
+        }
+        
+        guard var userInfo = userInfo else {
+            return
+        }
+        
+        userInfo.avatar = info.avatar ?? defaultAvatar
+        userInfo.gender = info.gender
+        userInfo.nick_name = info.nick_name
+        userInfo.signature = info.signature ?? ""
+        userInfo.mobile = info.mobile ?? ""
+    }
+
     /// 打卡当前地点
     private func locationCreateRecord(longitude: String, latitude: String) async {
         do {
@@ -985,8 +1005,8 @@ private struct HomeRecordSheetFullScreenCoverView: View {
 
 /// 首页头部
 private struct HomeHeaderView: View {
-    /// 缓存数据
-    var storageData: StorageData
+    /// 用户信息
+    var userInfo: UserInfoType?
     /// 首页数据
     var homeData: HomeData
     /// 是否显示卫星地图
@@ -994,11 +1014,10 @@ private struct HomeHeaderView: View {
     
     var body: some View {
         HStack(alignment: .top) {
-            if let userInfo = storageData.userInfo {
+            if let userInfo = userInfo {
                 NavigationLink(destination: MainView(user_id: userInfo.user_id)) {
-                    if let avatar = userInfo.avatar,
-                       let url = URL(string: avatar)
-                    {
+                    // 头像存在
+                    if let avatar = userInfo.avatar, let url = URL(string: avatar) {
                         KFImage(url)
                             .placeholder {
                                 Circle()
@@ -1013,14 +1032,18 @@ private struct HomeHeaderView: View {
                                 Circle()
                             )
                             .shadow(radius: 10)
-                    } else {
+                    }
+                    // 头像不存在
+                    else {
                         Circle()
                             .fill(Color("skeleton-background"))
                             .frame(width: 53, height: 53)
                             .shadow(radius: 10)
                     }
                 }
-            } else {
+            }
+            // 没有缓存信息
+            else {
                 NavigationLink(destination: LoginView()) {
                     Circle()
                         .fill(Color("skeleton-background"))
