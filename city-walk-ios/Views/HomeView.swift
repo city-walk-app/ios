@@ -774,7 +774,8 @@ private struct HomeRecordSheetView: View {
                             .background(LinearGradient(gradient: Gradient(
                                     colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
                                 ),
-                                startPoint: .leading, endPoint: .trailing))
+                                startPoint: .leading, endPoint: .trailing)
+                            )
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .padding(.top, 25)
                             .font(.system(size: 16))

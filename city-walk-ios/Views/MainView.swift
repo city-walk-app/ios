@@ -399,18 +399,19 @@ struct MainView: View {
                                                 
                                                 Spacer()
                                             }
+                                          
+//                                            .background(
+//                                                LinearGradient(
+//                                                    gradient: Gradient(
+//                                                        colors: [Color(hex: "#fff8e8"), Color.white]
+//                                                    ),
+//                                                    startPoint: .leading,
+//                                                    endPoint: .trailing
+//                                                )
+//                                            )
                                             .frame(height: 46)
                                             .padding(.horizontal, 24)
-                                            .background(
-                                                LinearGradient(
-                                                    gradient: Gradient(
-                                                        colors: [Color(hex: "#fff8e8"), Color.white]
-                                                    ),
-                                                    startPoint: .leading,
-                                                    endPoint: .trailing
-                                                )
-                                            )
-                                            
+                                          
                                             // 发布的文案
                                             if item.content != nil && item.content != "" {
                                                 HStack {
@@ -448,8 +449,13 @@ struct MainView: View {
                                             }
                                         }
                                         .frame(maxWidth: .infinity)
+//                                        .background(Color("background-1 "))
+                                        .background(LinearGradient(gradient: Gradient(
+                                                colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                                            ),
+                                            startPoint: .leading, endPoint: .trailing)
+                                        )
                                         .shadow(color: Color(hex: "#656565").opacity(0.1), radius: 5.4, x: 0, y: 1)
-                                        .background(.white)
                                         .clipped()
                                         .clipShape(RoundedRectangle(cornerRadius: 10))
                                         

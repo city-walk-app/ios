@@ -326,8 +326,10 @@ private struct SettingSheetView: View {
                     }
                     // 选择照片的全屏弹出对话框
                     .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
-                        ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount)
-                            .ignoresSafeArea()
+                        ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount) {
+                            getSubmitInfoButtonDisabled() // 提交信息按钮是否禁用
+                        }
+                        .ignoresSafeArea()
                     })
                 }
                 // 名字
@@ -554,8 +556,13 @@ private struct SettingSheetView: View {
             return
         }
         
+        // 头像
+        if sheetKey == .avatar {
+            isSubmitInfoButtonDisabled = selectedImages.isEmpty
+            return
+        }
         // 手机
-        if sheetKey == .mobile {
+        else if sheetKey == .mobile {
             if userInfo.mobile.count == 0 {
                 isSubmitInfoButtonDisabled = false
                 return

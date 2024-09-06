@@ -14,6 +14,8 @@ struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImages: [UIImage]
     /// 做多选择的文件数量
     var maxCount: Int
+    /// 上传完成后的回调闭包
+    var onComplete: (() -> Void)? // 可选的回调闭包
     
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var configuration = PHPickerConfiguration()
@@ -41,7 +43,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
             picker.dismiss(animated: true)
             
-//            parent.selectedImages.removeAll()
+            // parent.selectedImages.removeAll()
             
             for result in results {
                 if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
@@ -50,7 +52,12 @@ struct ImagePicker: UIViewControllerRepresentable {
                             DispatchQueue.main.async {
                                 self.parent.selectedImages.append(image)
                                 
-                                print("选择的图片列表", self.parent.selectedImages)
+//                                print("选择的图片列表", self.parent.selectedImages)
+                                // 如果所有图片都处理完成，调用回调
+//                                if results.count == self.parent.selectedImages.count {
+                                // 调用上传完成后的回调
+                                self.parent.onComplete?()
+//                                }
                             }
                         }
                     }
