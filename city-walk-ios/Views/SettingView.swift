@@ -320,13 +320,15 @@ private struct SettingSheetView: View {
                             }
                                 
                             Text("上传头像")
-                                .font(.system(size: 17))
+                                .font(.system(size: 15))
                                 .foregroundStyle(Color("text-1"))
+                                .padding(.top, 6)
                         }
                     }
                     // 选择照片的全屏弹出对话框
                     .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
                         ImagePicker(selectedImages: $selectedImages, maxCount: pictureMaxCount)
+                            .ignoresSafeArea()
                     })
                 }
                 // 名字
@@ -379,9 +381,7 @@ private struct SettingSheetView: View {
                             GridItem(.flexible()),
                         ]) {
                             Button {
-                                withAnimation {
-                                    self.userInfo.gender = .male
-                                }
+                                self.userInfo.gender = .male
                             } label: {
                                 RoundedRectangle(cornerRadius: 10)
                                     .fill(userInfo.gender == .male ? Color("theme-1") : Color(hex: "#eeeeee"))
@@ -414,9 +414,8 @@ private struct SettingSheetView: View {
                         }
                         
                         Button {
-                            withAnimation {
-                                self.userInfo.gender = .privacy
-                            }
+                            self.userInfo.gender = .privacy
+                          
                         } label: {
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(userInfo.gender == .privacy ? Color("theme-1") : Color(hex: "#eeeeee"))
@@ -433,24 +432,41 @@ private struct SettingSheetView: View {
                 }
                 // 手机
                 else if sheetKey == .mobile {
-                    TextField("请输入手机", text: $userInfo.mobile)
-                        .frame(height: 58)
-                        .padding(.horizontal, 23)
-                        .background(self.focus == .mobile ? Color.clear : Color("background-3"))
-                        .keyboardType(.numberPad)
-                        .focused($focus, equals: .mobile)
-                        .foregroundStyle(Color("text-1"))
-                        .onReceive(Just(userInfo.mobile), perform: { _ in
-                            limitMaxLength(content: &userInfo.mobile, maxLength: mobileMaxLength)
-                        })
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(self.focus == .mobile ? Color("theme-1") : Color.clear, lineWidth: 2)
-                        )
-                        .onChange(of: userInfo.mobile) {
-                            getSubmitInfoButtonDisabled() // 提交信息按钮是否禁用
+                    ZStack(alignment: .trailing) {
+                        TextField("请输入手机", text: $userInfo.mobile)
+                            .frame(height: 58)
+                            .padding(.horizontal, 23)
+                            .background(self.focus == .mobile ? Color.clear : Color("background-3"))
+                            .keyboardType(.numberPad)
+                            .focused($focus, equals: .mobile)
+                            .foregroundStyle(Color("text-1"))
+                            .onReceive(Just(userInfo.mobile), perform: { newValue in
+                                // 移除所有非数字字符
+                                let filtered = newValue.filter { "0123456789".contains($0) }
+                                if filtered != newValue {
+                                    userInfo.mobile = filtered // 更新过滤后的内容
+                                }
+                                
+                                limitMaxLength(content: &userInfo.mobile, maxLength: mobileMaxLength)
+                            })
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(self.focus == .mobile ? Color("theme-1") : Color.clear, lineWidth: 2)
+                            )
+                            .onChange(of: userInfo.mobile) {
+                                getSubmitInfoButtonDisabled() // 提交信息按钮是否禁用
+                            }
+                        
+                        Button {
+                            self.focus = .mobile
+                            userInfo.mobile = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(Color("text-3").opacity(0.8))
+                                .padding(.trailing, 23)
                         }
+                    }
                 }
                 // 签名
                 else if sheetKey == .signature {
@@ -458,7 +474,6 @@ private struct SettingSheetView: View {
                         .lineLimit(4 ... 10)
                         .padding(23)
                         .background(self.focus == .signature ? Color.clear : Color("background-3"))
-                        .keyboardType(.numberPad)
                         .focused($focus, equals: .signature)
                         .foregroundStyle(Color("text-1"))
                         .onReceive(Just(userInfo.signature), perform: { _ in
@@ -533,9 +548,18 @@ private struct SettingSheetView: View {
     /// 提交信息按钮是否禁用
     /// - Returns: 是否禁用
     private func getSubmitInfoButtonDisabled() {
+        guard let storageInfo = storageData.userInfo else {
+            return
+        }
+        
         if sheetKey == .mobile {
             if userInfo.mobile.count == 0 {
                 isSubmitInfoButtonDisabled = false
+                return
+            }
+            
+            if userInfo.mobile == storageInfo.mobile {
+                isSubmitInfoButtonDisabled = true
                 return
             }
 
@@ -543,10 +567,20 @@ private struct SettingSheetView: View {
             return
         }
         else if sheetKey == .nick_name {
+            if userInfo.nick_name == storageInfo.nick_name {
+                isSubmitInfoButtonDisabled = true
+                return
+            }
+            
             isSubmitInfoButtonDisabled = userInfo.nick_name == ""
             return
         }
         else if sheetKey == .signature {
+            if userInfo.signature == storageInfo.signature {
+                isSubmitInfoButtonDisabled = true
+                return
+            }
+            
             isSubmitInfoButtonDisabled = userInfo.signature == ""
             return
         }
