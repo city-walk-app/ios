@@ -22,6 +22,7 @@ struct city_walk_iosApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(LaunchScreenData())
         }
     }
 }
