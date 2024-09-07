@@ -10,20 +10,11 @@ import SwiftUI
 struct ContentView: View {
     /// 启动页面数据
     @EnvironmentObject private var launchScreenData: LaunchScreenData
-    /// 缓存数据
-    @EnvironmentObject private var storageData: StorageData
 
     var body: some View {
         Group {
             if launchScreenData.states == .leave {
-                if storageData.token != nil && storageData.token != "" {
-                    homeViewGroup
-                } else {
-                    LoginView()
-                        .environmentObject(StorageData())
-                        .environmentObject(HomeData())
-                        .environmentObject(GlobalData())
-                }
+                homeViewGroup
             } else {
                 LaunchView()
             }
@@ -44,5 +35,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(LaunchScreenData())
-        .environmentObject(StorageData())
 }

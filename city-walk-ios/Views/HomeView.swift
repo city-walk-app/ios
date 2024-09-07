@@ -43,7 +43,6 @@ struct HomeView: View {
     @State private var visibleSheet = false
     /// 是否显示选择的菜单
     @State private var visibleActionSheet = false
- 
     /// 位置权限状态
     @State private var authorizationStatus: CLAuthorizationStatus = .notDetermined
     /// 用户的身份信息
@@ -117,6 +116,7 @@ struct HomeView: View {
                         //                        storageData: storageData,
                         userInfo: userInfo,
                         homeData: homeData,
+                        globalData: globalData,
                         isSatelliteMap: $isSatelliteMap
                     )
                     
@@ -205,46 +205,80 @@ struct HomeView: View {
             }
         }
         .toastDimmedBackground(false)
-        .id(refreshID)
         .onAppear {
-            print("首页执行了")
-            NotificationCenter.default.addObserver(
-                forName: UIResponder.keyboardWillShowNotification,
-                object: nil,
-                queue: .main
-            ) { notification in
-                if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-                    keyboardHeight = keyboardFrame.height
-                }
-            }
-
-            NotificationCenter.default.addObserver(
-                forName: UIResponder.keyboardWillHideNotification,
-                object: nil,
-                queue: .main
-            ) { _ in
-                keyboardHeight = 0
-            }
-            
-            Task {
-                await self.getUserInfo() // 获取用户信息
-                
-                await homeData.getTodayRecord() // 获取今天的打卡记录
-            }
-
-            self.readClipboard() // 读取剪贴板
+            self.getLoginState() // 获取登录状态
         }
         .onDisappear {
             NotificationCenter.default.removeObserver(self)
         }
         // 退出到桌面返回执行
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-            self.readClipboard() // 读取剪贴板
+            let isNeedLogin = storageData.token == nil || storageData.token == ""
+            
+            globalData.isShowLoginFullScreen = isNeedLogin
+            
+            if globalData.isShowLoginFullScreen {
+                globalData.isShowLoginFullScreen.toggle()
+            } else {
+                self.readClipboard() // 读取剪贴板
       
-            Task {
-                await self.getUserInfo() // 获取用户信息
-                await homeData.getTodayRecord() // 获取今天的打卡记录
+                Task {
+                    await self.getUserInfo() // 获取用户信息
+                    await homeData.getTodayRecord() // 获取今天的打卡记录
+                }
             }
+        }
+        .fullScreenCover(isPresented: $globalData.isShowLoginFullScreen, content: {
+            LoginView(storageData: storageData, globalData: globalData) {
+                homeLoad() // 首页加载
+            }
+        })
+    }
+    
+    /// 获取登录状态
+    private func getLoginState() {
+        let isNeedLogin = storageData.token == nil || storageData.token == ""
+        
+        globalData.isShowLoginFullScreen = isNeedLogin
+        
+        if globalData.isShowLoginFullScreen {
+            globalData.isShowLoginFullScreen = true
+        } else {
+            homeLoad() // 首页加载
+        }
+    }
+    
+    /// 首页加载
+    private func homeLoad() {
+        print("首页加载")
+        Task {
+            await self.getUserInfo() // 获取用户信息
+            
+            await homeData.getTodayRecord() // 获取今天的打卡记录
+        }
+
+        readClipboard() // 读取剪贴板
+        addObserverKeyboardHeight() // 监听键盘的高度
+    }
+    
+    /// 监听键盘的高度
+    private func addObserverKeyboardHeight() {
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillShowNotification,
+            object: nil,
+            queue: .main
+        ) { notification in
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                keyboardHeight = keyboardFrame.height
+            }
+        }
+
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillHideNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            keyboardHeight = 0
         }
     }
     
@@ -1010,6 +1044,8 @@ private struct HomeHeaderView: View {
     var userInfo: UserInfoType?
     /// 首页数据
     var homeData: HomeData
+    /// 全局数据
+    var globalData: GlobalData
     /// 是否显示卫星地图
     @Binding var isSatelliteMap: Bool
     
@@ -1045,7 +1081,9 @@ private struct HomeHeaderView: View {
             }
             // 没有缓存信息
             else {
-                NavigationLink(destination: LoginView()) {
+                Button {
+                    globalData.isShowLoginFullScreen.toggle()
+                } label: {
                     Circle()
                         .fill(Color("skeleton-background"))
                         .frame(width: 48, height: 48)

@@ -24,6 +24,8 @@ class StorageData: ObservableObject {
     @Published var token: String? {
         didSet {
             UserDefaults.standard.set(token, forKey: "USER_TOKEN")
+
+            print("设置的token", UserDefaults.standard.string(forKey: "USER_TOKEN"))
         }
     }
 

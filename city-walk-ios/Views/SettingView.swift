@@ -41,8 +41,6 @@ struct SettingView: View {
     @State private var sheetKey: SettingSheetKey = .nick_name
     /// 是否显示编辑信息的弹窗
     @State private var isShowSetInfo = false
-    /// 是否跳转到登录页面
-    @State private var isGoLoginView = false
     /// 是否显示退出登录的按钮确认框
     @State private var showingLogoutAlert = false
     /// 选择的头像图片
@@ -191,7 +189,7 @@ struct SettingView: View {
                                 message: Text("确定退出当前账号吗?"),
                                 primaryButton: .destructive(Text("确定"), action: {
                                     storageData.clearCache()
-                                    isGoLoginView = true
+                                    globalData.isShowLoginFullScreen.toggle()
                                 }),
                                 secondaryButton: .cancel(Text("取消"))
                             )
@@ -202,11 +200,6 @@ struct SettingView: View {
                     VariableBlurView(maxBlurRadius: 12)
                         .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
                         .ignoresSafeArea()
-                }
-                
-                // 跳转到首页
-                NavigationLink(destination: LoginView(), isActive: $isGoLoginView) {
-                    EmptyView()
                 }
             }
         }
@@ -221,10 +214,6 @@ struct SettingView: View {
             self.presentationMode.wrappedValue.dismiss() // 返回上一个视图
         })) // 自定义返回按钮
         .background(.gray.opacity(0.1))
-        // 登录成功之后跳转到首页
-//        .navigationDestination(isPresented: $isGoLoginView) {
-//            LoginView()
-//        }
         .onAppear {
             self.loadCacheInfo() // 获取缓存的用户信息
             
@@ -251,7 +240,7 @@ struct SettingView: View {
     /// 获取缓存的用户信息
     private func loadCacheInfo() {
         guard let info = storageData.userInfo else {
-            isGoLoginView = true
+            globalData.isShowLoginFullScreen.toggle()
             return
         }
         

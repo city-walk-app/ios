@@ -19,6 +19,8 @@ class GlobalData: ObservableObject {
     @Published var toastMessage = ""
     /// 提示类型
     @Published var toastType: ToastType = .toast
+    /// 是否需要登录
+    @Published var isShowLoginFullScreen = false
 
     /// 显示 toast
     /// - Parameter title: 标题

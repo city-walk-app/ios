@@ -20,12 +20,14 @@ private let timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect
 
 /// 登录
 struct LoginView: View {
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+//    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     /// 缓存数据
-    @EnvironmentObject private var storageData: StorageData
+    var storageData: StorageData
     /// 全球的数据
-    @EnvironmentObject private var globalData: GlobalData
+    var globalData: GlobalData
+    /// 上传完成后的回调闭包
+    var onComplete: (() -> Void)?
     
     /// 输入框是否获取焦点
     @FocusState private var focus: FocusedField?
@@ -40,8 +42,6 @@ struct LoginView: View {
     @State private var isEmailButtonDisabled = false
     /// 登录按钮是否禁用
     @State private var isLoginButtonDisabled = false
-    /// 是否跳转到首页
-    @State private var isToHomeView = false
     /// 是否在倒计时中
     @State private var isCountingDown = false
     /// 设置倒计时秒数
@@ -214,10 +214,6 @@ struct LoginView: View {
             }
             .background(viewBackground)
             .ignoresSafeArea(.keyboard)
-           
-            NavigationLink(destination: HomeView(), isActive: $isToHomeView) {
-                EmptyView()
-            }
         }
         .onTapGesture {
             self.hideKeyboard() // 收起键盘
@@ -249,10 +245,6 @@ struct LoginView: View {
                 }
             }
         }
-        // 登录成功之后跳转到首页
-//        .navigationDestination(isPresented: $isToHomeView) {
-//            HomeView()
-//        }
     }
     
     /// 根据索引获取验证码字符串中的单个字符
@@ -340,8 +332,10 @@ struct LoginView: View {
             
             storageData.saveUserInfo(info: data.user_info)
             storageData.saveToken(token: data.token)
-            isToHomeView = true
+            globalData.isShowLoginFullScreen = false
             isLoginButtonDisabled = false
+            
+            onComplete?()
         } catch {
             print("邮箱登录错误")
             globalData.hiddenLoading()
@@ -379,8 +373,8 @@ private enum FocusedField: Hashable {
 }
 
 #Preview {
-    LoginView()
-        .environmentObject(StorageData())
-        .environmentObject(HomeData())
-        .environmentObject(GlobalData())
+    LoginView(storageData: StorageData(), globalData: GlobalData())
+//        .environmentObject(StorageData())
+//        .environmentObject(HomeData())
+//        .environmentObject(GlobalData())
 }

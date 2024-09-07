@@ -7,12 +7,6 @@
 
 import Foundation
 
-/// HTTP 请求方法
-enum HTTPMethods: String {
-    case get = "GET"
-    case post = "POST"
-}
-
 /// 请求拦截器协议
 protocol RequestInterceptor {
     func intercept(_ request: URLRequest) -> URLRequest
@@ -28,8 +22,6 @@ class Request {
     private let decoder = JSONDecoder()
     /// 用于网络请求
     private let session = URLSession.shared
-    /// 缓存数据
-    private let storageData = StorageData()
 
     /// 发送请求
     /// - Parameters:
@@ -39,6 +31,9 @@ class Request {
     ///   - type: 解析类型
     /// - Returns: 请求结果
     func request<T: Decodable>(url: String, params: [String: Any], method: HTTPMethods, type: T.Type) async throws -> T {
+        /// 缓存数据
+        let storageData = StorageData()
+
         guard let urlComponents = URLComponents(string: baseUrl + url) else {
             throw URLError(.badURL)
         }
@@ -91,4 +86,10 @@ class Request {
             throw error
         }
     }
+}
+
+/// HTTP 请求方法
+enum HTTPMethods: String {
+    case get = "GET"
+    case post = "POST"
 }
