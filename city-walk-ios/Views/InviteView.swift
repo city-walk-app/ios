@@ -92,11 +92,11 @@ struct InviteView: View {
     /// 邀请朋友
     func friendInvite() async {
         do {
-            globalData.showLoading(title: "处理中...")
-
             let res = try await Api.shared.friendInvite(params: [:])
 
-            globalData.hiddenLoading()
+            print("邀请结果", res)
+
+//            globalData.hiddenLoading()
 
             guard res.code == 200, let data = res.data else {
                 return
@@ -107,7 +107,7 @@ struct InviteView: View {
             globalData.showToast(title: "复制成功")
         } catch {
             print("邀请朋友异常")
-            globalData.hiddenLoading()
+//            globalData.hiddenLoading()
         }
     }
 }
