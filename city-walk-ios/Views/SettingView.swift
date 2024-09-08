@@ -111,6 +111,7 @@ struct SettingView: View {
                                  
                                     Text(item.title)
                                         .foregroundColor(Color("text-1"))
+                                    
                                     Spacer()
                                     
                                     Image(systemName: "chevron.right")
@@ -372,6 +373,7 @@ private struct SettingSheetView: View {
                         ]) {
                             Button {
                                 self.userInfo.gender = .male
+                                getSubmitInfoButtonDisabled() // 提交信息按钮是否禁用
                             } label: {
                                 RoundedRectangle(cornerRadius: 10)
                                     .fill(userInfo.gender == .male ? Color("theme-1") : Color(hex: "#eeeeee"))
@@ -388,6 +390,7 @@ private struct SettingSheetView: View {
                             Button {
                                 withAnimation {
                                     self.userInfo.gender = .female
+                                    getSubmitInfoButtonDisabled() // 提交信息按钮是否禁用
                                 }
                             } label: {
                                 RoundedRectangle(cornerRadius: 10)
@@ -405,7 +408,7 @@ private struct SettingSheetView: View {
                         
                         Button {
                             self.userInfo.gender = .privacy
-                          
+                            getSubmitInfoButtonDisabled() // 提交信息按钮是否禁用
                         } label: {
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(userInfo.gender == .privacy ? Color("theme-1") : Color(hex: "#eeeeee"))
@@ -573,6 +576,11 @@ private struct SettingSheetView: View {
             }
             
             isSubmitInfoButtonDisabled = userInfo.nick_name == ""
+            return
+        }
+        // 性别
+        else if sheetKey == .gender {
+            isSubmitInfoButtonDisabled = (userInfo.gender.rawValue == storageInfo.gender ?? "")
             return
         }
         // 签名
