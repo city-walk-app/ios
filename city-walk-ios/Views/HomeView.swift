@@ -595,23 +595,28 @@ private struct HomeRecordSheetView: View {
                     // 省份图
                     if let province_url = recordDetail.province_url {
                         // 省份图
-                        Color.clear
-                            .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
-                            .background(
-                                Group {
-                                    recordDetail.background_color != nil
-                                        ? Color(hex: recordDetail.background_color!)
-                                        : Color("theme-1")
-                                }
-                                .mask {
-                                    KFImage(URL(string: province_url))
-                                        .placeholder {
-                                            Color.clear
-                                        }
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                }
-                            )
+                        ZStack {
+                            RadiatingTrianglesView()
+                                .frame(width: 160, height: 160)
+                            
+                            Color.clear
+                                .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
+                                .background(
+                                    Group {
+                                        recordDetail.background_color != nil
+                                            ? Color(hex: recordDetail.background_color!)
+                                            : Color("theme-1")
+                                    }
+                                    .mask {
+                                        KFImage(URL(string: province_url))
+                                            .placeholder {
+                                                Color.clear
+                                            }
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                    }
+                                )
+                        }
                   
                         // 文案
                         Text("\(recordDetail.content ?? "当前地点打卡成功")")
