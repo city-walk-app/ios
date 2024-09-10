@@ -185,8 +185,8 @@ struct CreatePositionRecord: Decodable {
 /// 获取周边热门地点
 struct GetPopularLocations: Decodable {
     struct GetPopularLocationsData: Codable {
-        var longitude: Double
-        var latitude: Double
+        var longitude: String
+        var latitude: String
         var name: String
         var province: String
         var city: String
@@ -278,8 +278,8 @@ struct UpdateRouteDetailType: Decodable {
 struct GetLocationPopularRecommendType: Decodable {
     struct GetLocationPopularRecommendData: Codable {
         var city: String?
-        var latitude: Double?
-        var longitude: Double?
+        var latitude: String?
+        var longitude: String?
         var name: String?
         var province: String?
     }
@@ -293,8 +293,8 @@ struct GetLocationPopularRecommendType: Decodable {
 struct GetAroundAddressType: Decodable {
     struct GetAroundAddressData: Codable {
         var city: String?
-        var latitude: Double?
-        var longitude: Double?
+        var latitude: String?
+        var longitude: String?
         var name: String?
         var province: String?
         var address: String?

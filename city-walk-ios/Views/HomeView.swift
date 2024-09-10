@@ -159,6 +159,7 @@ struct HomeView: View {
                 routeDetailForm: $routeDetailForm,
                 moodColorActive: $moodColorActive,
                 keyboardHeight: $keyboardHeight,
+                globalData: globalData,
                 homeData: homeData,
                 updateRouteDetail: updateRouteDetail
             )
@@ -469,8 +470,10 @@ struct HomeView: View {
             globalData.showLoading(title: "打卡中...")
             
             let res = try await Api.shared.locationCreateRecord(params: [
-                "longitude": longitude,
-                "latitude": latitude,
+                //                "longitude": longitude,
+//                "latitude": latitude,
+                "longitude": 112.455646,
+                "latitude": 30.709778,
             ])
             
             globalData.hiddenLoading()
@@ -545,6 +548,8 @@ private struct HomeRecordSheetView: View {
     @Binding var moodColorActive: MoodColor?
     /// 键盘高度
     @Binding var keyboardHeight: CGFloat
+    /// 全局数据
+    var globalData: GlobalData
     /// 首页数据
     var homeData: HomeData
     /// 完善步行打卡记录详情
@@ -913,16 +918,17 @@ private struct HomeRecordSheetView: View {
         
         do {
             let res = try await Api.shared.getAroundAddress(params: [
-                "longitude": longitude,
-                "latitude": latitude,
-                // "longitude": "120.298501",
-                // "latitude": "30.41875",
+                //                "longitude": longitude,
+//                "latitude": latitude,
+                "longitude": 112.455646,
+                "latitude": 30.709778,
                 "page_num": getAroundAddressPageNum,
             ])
             
             print("获取周边地址", res, longitude, latitude)
 
             guard res.code == 200, let data = res.data else {
+                globalData.showToast(title: "暂无可选周边地址")
                 return
             }
 
@@ -931,6 +937,7 @@ private struct HomeRecordSheetView: View {
             fullScreenCoverType = .location
             visibleFullScreenCover.toggle()
         } catch {
+            globalData.showToast(title: "获取周边地址异常")
             print("获取周边地址异常")
         }
     }
@@ -971,7 +978,7 @@ private struct HomeRecordSheetFullScreenCoverView: View {
                         } else {
                             ForEach(addressList, id: \.name) { item in
                                 Button {
-                                    self.selectAddress(longitude: item.longitude, latitude: item.latitude, address: item.address)
+                                    self.selectAddress(longitude: Double(item.longitude ?? "0"), latitude: Double(item.latitude ?? "0"), address: item.address)
                                 } label: {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("\(item.name ?? "")")
