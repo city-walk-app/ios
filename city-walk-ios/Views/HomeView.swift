@@ -27,6 +27,27 @@ private let latitudeOffset = -0.00294
 /// 定位服务管理对象
 private var locationManager = CLLocationManager()
 
+struct DashedLineOverlay: View {
+    let coordinates: [CLLocationCoordinate2D]
+    
+    var body: some View {
+        GeometryReader { geometry in
+            Path { path in
+                guard coordinates.count > 1 else { return }
+                
+                let points = coordinates.map { _ in
+                    // 转换坐标为地图视图的点
+                    geometry.frame(in: .local).origin
+                }
+                
+                path.addLines(points)
+            }
+            .stroke(style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [10, 5])) // 设置虚线样式
+            .foregroundColor(.blue) // 虚线的颜色
+        }
+    }
+}
+
 /// 首页
 struct HomeView: View {
     /// 首页数据
@@ -89,6 +110,10 @@ struct HomeView: View {
                 }
                 .ignoresSafeArea(.all) // 忽略安全区域边缘
                 .mapStyle(isSatelliteMap ? .hybrid : .standard)
+                .overlay(
+                    DashedLineOverlay(coordinates: homeData.landmarks.map { $0.coordinate })
+                        .opacity(homeData.landmarks.count > 1 ? 1 : 0) // 只有当有足够的点时显示虚线
+                )
                 .onAppear {
                     if var currentLocation = locationManager.location?.coordinate {
                         currentLocation.latitude = currentLocation.latitude + latitudeOffset
@@ -470,10 +495,10 @@ struct HomeView: View {
             globalData.showLoading(title: "打卡中...")
             
             let res = try await Api.shared.locationCreateRecord(params: [
-                //                "longitude": longitude,
-//                "latitude": latitude,
-                "longitude": 112.455646,
-                "latitude": 30.709778,
+                "longitude": longitude,
+                "latitude": latitude,
+//                "longitude": 112.455646,
+//                "latitude": 30.709778,
             ])
             
             globalData.hiddenLoading()
@@ -741,6 +766,7 @@ private struct HomeRecordSheetView: View {
                     }
 
                     // 选择心情颜色
+                   
                     HStack {
                         if let moodColorActive = moodColorActive {
                             Button {
@@ -756,7 +782,7 @@ private struct HomeRecordSheetView: View {
                                         Circle()
                                             .stroke(Color(hex: moodColorActive.borderColor), lineWidth: 1) // 圆形边框
                                     )
-
+                                    
                                 Text(moodColorActive.type)
                                     .foregroundStyle(Color(hex: moodColorActive.color))
                                     .font(.system(size: 18))
@@ -784,18 +810,23 @@ private struct HomeRecordSheetView: View {
                     .padding(.top, 16)
                     
                     // 选择出行方式
-                    HStack {
-                        ForEach(travelTypeList, id: \.key) { item in
-                            Button {
-                                self.routeDetailForm.travel_type = item.key
-                            } label: {
-                                Circle()
-                                    .fill(self.routeDetailForm.travel_type == item.key ? Color("theme-1") : Color(hex: "#eeeeee"))
-                                    .frame(width: 37, height: 37)
-                                    .overlay {
-                                        Image(systemName: item.icon)
-                                            .frame(width: 41, height: 41)
-                                    }
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(travelTypeList, id: \.key) { item in
+                                Button {
+                                    self.routeDetailForm.travel_type = item.key
+                                } label: {
+                                    let isActive = self.routeDetailForm.travel_type == item.key
+                                    Circle()
+                                        .fill(isActive ? Color("theme-1") : Color(hex: "#eeeeee"))
+                                        //                                    .frame(width: 37, height: 37)
+                                        .frame(width: 47, height: 47)
+                                        .overlay {
+                                            Image(systemName: item.icon)
+                                                .frame(width: 41, height: 41)
+                                                .foregroundStyle(isActive ? .white : .blue)
+                                        }
+                                }
                             }
                         }
                     }
@@ -918,10 +949,10 @@ private struct HomeRecordSheetView: View {
         
         do {
             let res = try await Api.shared.getAroundAddress(params: [
-                //                "longitude": longitude,
-//                "latitude": latitude,
-                "longitude": 112.455646,
-                "latitude": 30.709778,
+                "longitude": longitude,
+                "latitude": latitude,
+//                "longitude": 112.455646,
+//                "latitude": 30.709778,
                 "page_num": getAroundAddressPageNum,
             ])
             

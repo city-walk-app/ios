@@ -49,8 +49,8 @@ let travelTypes = [
     TravelType(icon: "bicycle", key: .BICYCLE),
     TravelType(icon: "car.rear", key: .CAR),
     TravelType(icon: "bus.fill", key: .BUS),
-    TravelType(icon: "tram.circle", key: .METRO),
-    TravelType(icon: "tram.fill", key: .TRAIN),
-    TravelType(icon: "airplane", key: .AIRPLANE),
-    TravelType(icon: "ferry", key: .SHIP),
+    TravelType(icon: "tram.fill.tunnel", key: .METRO), // 地铁
+    TravelType(icon: "tram.fill", key: .TRAIN), // 火车
+    TravelType(icon: "airplane", key: .AIRPLANE), // 飞机
+    TravelType(icon: "ferry", key: .SHIP), // 船
 ]
