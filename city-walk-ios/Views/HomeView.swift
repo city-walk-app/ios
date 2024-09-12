@@ -12,8 +12,6 @@ import MapKit
 import SwiftUI
 import ToastUI
 
-// import WeatherKit
-
 /// 心情颜色
 private let moodColorList = moodColors
 /// 出行方式
@@ -26,27 +24,6 @@ private let longitudeOffset = 0.00428
 private let latitudeOffset = -0.00294
 /// 定位服务管理对象
 private var locationManager = CLLocationManager()
-
-struct DashedLineOverlay: View {
-    let coordinates: [CLLocationCoordinate2D]
-    
-    var body: some View {
-        GeometryReader { geometry in
-            Path { path in
-                guard coordinates.count > 1 else { return }
-                
-                let points = coordinates.map { _ in
-                    // 转换坐标为地图视图的点
-                    geometry.frame(in: .local).origin
-                }
-                
-                path.addLines(points)
-            }
-            .stroke(style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [10, 5])) // 设置虚线样式
-            .foregroundColor(.blue) // 虚线的颜色
-        }
-    }
-}
 
 /// 首页
 struct HomeView: View {
@@ -97,7 +74,6 @@ struct HomeView: View {
     @State private var invite_id: String?
     /// 是否显示卫星地图
     @State private var isSatelliteMap = false
-    @State private var refreshID = UUID() // 用于强制刷新视图
     
     var body: some View {
         NavigationStack {
@@ -110,10 +86,6 @@ struct HomeView: View {
                 }
                 .ignoresSafeArea(.all) // 忽略安全区域边缘
                 .mapStyle(isSatelliteMap ? .hybrid : .standard)
-                .overlay(
-                    DashedLineOverlay(coordinates: homeData.landmarks.map { $0.coordinate })
-                        .opacity(homeData.landmarks.count > 1 ? 1 : 0) // 只有当有足够的点时显示虚线
-                )
                 .onAppear {
                     if var currentLocation = locationManager.location?.coordinate {
                         currentLocation.latitude = currentLocation.latitude + latitudeOffset
@@ -127,7 +99,7 @@ struct HomeView: View {
                                     span: MKCoordinateSpan(latitudeDelta: defaultDelta, longitudeDelta: defaultDelta)
                                 )
                                 
-                                //                            homeData.region.center = currentLocation
+                                // homeData.region.center = currentLocation
                                 homeData.userLocation = currentLocation // 更新 location 为当前用户位置
                             }
                         }
@@ -139,26 +111,11 @@ struct HomeView: View {
                     // 头部操作栏
                     HomeHeaderView(
                         storageData: storageData,
-//                        userInfo: userInfo,
                         homeData: homeData,
                         globalData: globalData,
                         isSatelliteMap: $isSatelliteMap
                     )
-                    
-//                    Button {
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//                            withAnimation {
-//                                homeData.region = MKCoordinateRegion(
-//                                    center: CLLocationCoordinate2D(latitude: 30, longitude: 120),
-//                                    span: MKCoordinateSpan(latitudeDelta: defaultDelta, longitudeDelta: defaultDelta)
-//                                )
-//                            }
-//                        }
-//
-//                    } label: {
-//                        Text("change")
-//                    }
-                    
+
                     Spacer()
                     
                     // 底部卡片
@@ -197,7 +154,7 @@ struct HomeView: View {
                 message: Text("\(friendInviteDetail?.name ?? "")申请加你为好友，你同意吗？"),
                 primaryButton: .destructive(Text("确定"), action: {
                     Task {
-                        await self.friendConfirmInvite()
+                        await self.friendConfirmInvite() // 同意好友申请
                     }
                 }),
                 secondaryButton: .cancel(Text("取消"))
@@ -234,25 +191,12 @@ struct HomeView: View {
         .onAppear {
             self.getLoginState() // 获取登录状态
         }
-        .onDisappear {
-            NotificationCenter.default.removeObserver(self)
-        }
         // 退出到桌面返回执行
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-            let isNeedLogin = storageData.token == nil || storageData.token == ""
-            
-            globalData.isShowLoginFullScreen = isNeedLogin
-            
-            if globalData.isShowLoginFullScreen {
-                globalData.isShowLoginFullScreen.toggle()
-            } else {
-                self.readClipboard() // 读取剪贴板
-      
-                Task {
-                    await self.getUserInfo() // 获取用户信息
-                    await homeData.getTodayRecord() // 获取今天的打卡记录
-                }
-            }
+            self.getLoginState() // 获取登录状态
+        }
+        .onDisappear {
+            NotificationCenter.default.removeObserver(self)
         }
         .fullScreenCover(isPresented: $globalData.isShowLoginFullScreen, content: {
             LoginView(storageData: storageData, globalData: globalData) {
@@ -467,18 +411,17 @@ struct HomeView: View {
 
             userInfo = data
             storageData.saveUserInfo(info: data)
+            updateUserInfo() // 获取缓存的用户信息
         } catch {
             print("获取用户信息异常")
         }
     }
     
     /// 获取缓存的用户信息
-    private func loadCacheInfo() {
-        guard let info = storageData.userInfo else {
-            return
-        }
-        
-        guard var userInfo = userInfo else {
+    private func updateUserInfo() {
+        guard let info = storageData.userInfo,
+              var userInfo = userInfo
+        else {
             return
         }
         
