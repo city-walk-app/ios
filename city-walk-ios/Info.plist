@@ -6,6 +6,10 @@
 	<array>
 		<string>zh</string>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>weixin</string>
+	</array>
 	<key>NSNetworkAccessDescription</key>
 	<string>需要访问网络</string>
 </dict>

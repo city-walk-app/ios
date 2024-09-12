@@ -273,15 +273,27 @@ struct HomeView: View {
     
     /// 读取剪贴板
     private func readClipboard() {
-        // 读取剪贴板中的文本内容
-        if let clipboardText = UIPasteboard.general.string {
-            print("剪贴板内容: \(clipboardText)")
-            invite_id = clipboardText
-            Task {
-                await getFriendInviteInfo()
+        do {
+            // 读取剪贴板中的文本内容
+            if let clipboardText = UIPasteboard.general.string {
+                print("剪贴板内容: \(clipboardText)")
+            
+                let decryptedString = try decrypt(base64String: clipboardText, usingKey: crytpoKey)
+
+                if decryptedString.hasPrefix("city-walk:IN") {
+                    print("解密结果", decryptedString)
+
+                    invite_id = decryptedString.replacingOccurrences(of: "city-walk:", with: "")
+                
+                    Task {
+                        await getFriendInviteInfo()
+                    }
+                }
+            } else {
+                print("剪贴板中没有文本内容")
             }
-        } else {
-            print("剪贴板中没有文本内容")
+        } catch {
+            print("读取异常")
         }
     }
     
@@ -297,12 +309,14 @@ struct HomeView: View {
             print("邀请详情", res)
             
             guard res.code == 200, let data = res.data else {
+                globalData.showToast(title: res.message)
                 return
             }
             
             friendInviteDetail = data
             isShowFriendInviteAlert.toggle()
         } catch {
+            globalData.showToast(title: "获取邀请详情异常")
             print("获取邀请详情异常")
         }
     }

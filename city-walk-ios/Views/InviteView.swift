@@ -20,51 +20,55 @@ struct InviteView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                ZStack {
-                    VStack {
-                        KFImage(inviteBg1)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                VStack {
+                    KFImage(inviteBg1)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
 
-                        // 按钮操作组
-                        HStack(spacing: 23) {
-                            Button {} label: {
-                                Text("分享App")
-                                    .frame(width: 160, height: 48)
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(Color("theme-1"))
-                                    .background(Color(hex: "#ffffff"))
-                                    .border(Color("theme-1"))
-                                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .stroke(Color("theme-1"), lineWidth: 2) // 使用 overlay 添加圆角边框
-                                    )
+                    // 按钮操作组
+                    HStack(spacing: 23) {
+                        Button {
+                            Task {
+                                await self.friendInvite()
                             }
-
-                            Button {
-                                Task {
-                                    await self.friendInvite()
-                                }
-                            } label: {
-                                Text("复制邀请链接")
-                                    .frame(width: 160, height: 48)
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(.white)
-                                    .background(Color("theme-1"))
-                                    .border(Color("theme-1"))
-                                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
-                                    )
-                            }
+                        } label: {
+                            Text("复制邀请码")
+                                .frame(width: 160, height: 48)
+                                .font(.system(size: 16))
+                                .foregroundStyle(Color("theme-1"))
+                                .background(Color(hex: "#ffffff"))
+                                .border(Color("theme-1"))
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .stroke(Color("theme-1"), lineWidth: 2) // 使用 overlay 添加圆角边框
+                                )
                         }
-                        .padding(.top, 34)
+
+                        Button {
+                            Task {
+                                await self.friendInvite()
+                            }
+
+                            openWeChatApp() // 打开微信
+                        } label: {
+                            Text("微信粘贴给好友")
+                                .frame(width: 160, height: 48)
+                                .font(.system(size: 16))
+                                .foregroundStyle(.white)
+                                .background(Color("theme-1"))
+                                .border(Color("theme-1"))
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                                )
+                        }
                     }
-                    .padding(.top, viewPaddingTop)
+                    .padding(.top, 34)
                 }
+
                 .padding(.horizontal, 16)
                 .padding(.bottom, 200)
                 .padding(.top, viewPaddingTop)
@@ -90,7 +94,7 @@ struct InviteView: View {
     }
 
     /// 邀请朋友
-    func friendInvite() async {
+    private func friendInvite() async {
         do {
             let res = try await Api.shared.friendInvite(params: [:])
 
@@ -102,12 +106,30 @@ struct InviteView: View {
                 return
             }
 
-            UIPasteboard.general.string = data
+            let code = try encrypt(string: "city-walk:" + data, usingKey: crytpoKey)
+
+            print("code", code)
+
+//            let resultCode = try decrypt(base64String: code, usingKey: crytpoKey)
+//
+//            print("解密结果", resultCode)
+
+            UIPasteboard.general.string = code
 
             globalData.showToast(title: "复制成功")
         } catch {
             print("邀请朋友异常")
-//            globalData.hiddenLoading()
+        }
+    }
+
+    /// 打开微信
+    private func openWeChatApp() {
+        if let url = URL(string: "weixin://") {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            } else {
+                globalData.showToast(title: "无法打开微信")
+            }
         }
     }
 }
