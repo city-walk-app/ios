@@ -11,6 +11,7 @@ import SwiftUI
 private let mainHeatmap1 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-1.png")
 private let mainHeatmap2 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-2.png")
 private let mainHeatmap3 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-3.png")
+private let mainHeatmapCheck = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/main-heatmap-check.png")
 
 /// 热力图布局
 private let heatmapColumns = [
@@ -54,13 +55,17 @@ struct MainView: View {
 
     /// 我的数据
     @EnvironmentObject private var mainData: MainData
+    /// 全局数据
+    @EnvironmentObject private var globalData: GlobalData
     /// 当前日期
     @State private var selectedDate = Date()
     /// 是否显示选择日期的对话框
     @State private var showDatePicker = false
     /// 是否显示预览的图片
     @State private var isPreviewing = false
+    /// 预览的图片列表
     @State private var previewImages: [String] = []
+    /// 预览的图片索引
     @State private var previewSelectedIndex = 0
   
     var body: some View {
@@ -209,7 +214,7 @@ struct MainView: View {
                             .padding(.horizontal, 16)
                         
                             if mainData.heatmap.isEmpty {
-                                MainHeatmapSkeletonView()
+                                MainHeatmapSkeletonView() // 热力图骨架图
                             } else {
                                 // 热力图
                                 HStack {
@@ -282,15 +287,33 @@ struct MainView: View {
                                                                     mainData.routeDetailList = item.routes
                                                                 }
                                                             }
+                                                        } else {
+                                                            globalData.showToast(title: "当天无记录")
                                                         }
                                                         print("点击的索引", index)
                                                     } label: {
-                                                        RoundedRectangle(cornerRadius: 4)
-                                                            .fill(Color(hex: isHaveRoute
-                                                                    ? "\(item.background_color!)"
-                                                                    : "#eeeeee"
-                                                            ))
-                                                            .frame(width: 26, height: 26)
+                                                        if isHaveRoute {
+                                                            RoundedRectangle(cornerRadius: 4)
+                                                                .fill(Color(hex: "\(item.background_color!)"))
+                                                                .frame(width: 26, height: 26)
+                                                        } else {
+                                                            KFImage(mainHeatmapCheck)
+                                                                .placeholder {
+                                                                    RoundedRectangle(cornerRadius: 4)
+                                                                        .fill(Color(hex: "#eeeeee"))
+                                                                        .frame(width: 26, height: 26)
+                                                                }
+                                                                .resizable()
+                                                                .frame(width: 26, height: 26)
+                                                        }
+                                                        
+//                                                        RoundedRectangle(cornerRadius: 4)
+//                                                            .fill(Color(hex: isHaveRoute
+//                                                                    ? "\(item.background_color!)"
+//                                                                    : "#eeeeee"
+//                                                            ))
+//                                                            .frame(width: 26, height: 26)
+//
                                                     }
                                                     .scaleEffect(mainData.routeDetailActiveIndex == index ? 40 : 1)
                                                     .zIndex(mainData.routeDetailActiveIndex == index ? 30 : 1)
@@ -516,6 +539,7 @@ struct MainView: View {
                         .ignoresSafeArea()
                 }
                 
+                // 预览图片
                 if isPreviewing {
                     ImagePreviewView(images: previewImages, selectedIndex: $previewSelectedIndex, isPresented: $isPreviewing)
                 }
@@ -733,4 +757,5 @@ private struct SelectmonthItem {
 #Preview {
     MainView(user_id: "U131995175454824711531011225172573302849")
         .environmentObject(MainData())
+        .environmentObject(GlobalData())
 }
