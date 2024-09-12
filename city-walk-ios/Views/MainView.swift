@@ -405,16 +405,6 @@ struct MainView: View {
                                                 
                                                     Spacer()
                                                 }
-                                          
-//                                            .background(
-//                                                LinearGradient(
-//                                                    gradient: Gradient(
-//                                                        colors: [Color(hex: "#fff8e8"), Color.white]
-//                                                    ),
-//                                                    startPoint: .leading,
-//                                                    endPoint: .trailing
-//                                                )
-//                                            )
                                                 .frame(height: 46)
                                                 .padding(.horizontal, 24)
                                           
@@ -689,7 +679,7 @@ private struct MainRouteListItem: View {
                                     .fill(Color(hex: item.mood_color ?? "#FFCC94"))
                                     .frame(width: 400, height: 370)
                                     .offset(y: -170)
-                                    .rotationEffect(.degrees(13))
+                                    .rotationEffect(.degrees(13)) // 旋转
                             }
                             .clipped()
                     }

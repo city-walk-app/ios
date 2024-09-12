@@ -286,7 +286,7 @@ struct HomeView: View {
                     invite_id = decryptedString.replacingOccurrences(of: "city-walk:", with: "")
                 
                     Task {
-                        await getFriendInviteInfo()
+                        await getFriendInviteInfo() // 获取邀请详情
                     }
                 }
             } else {

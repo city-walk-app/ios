@@ -5,10 +5,7 @@
 //  Created by Tyh2001 on 2024/7/15.
 //
 
-import Kingfisher
 import SwiftUI
-
-private let inviteBg1 = URL(string: "https://city-walk.oss-cn-beijing.aliyuncs.com/assets/images/city-walk/invite-bg-1.jpg")
 
 /// 邀请
 struct InviteView: View {
@@ -19,61 +16,86 @@ struct InviteView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack {
-                    KFImage(inviteBg1)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
+            VStack {
+                RoundedRectangle(cornerRadius: 22)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(
+                                // colors: [Color(hex: "#ec7b45"), Color(hex: "#f0a953")]
+                                colors: [Color(hex: "#de646c"), Color(hex: "#f0a953")]
+                            ),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .overlay {
+                        VStack {
+                            Image("logo")
+                                .resizable()
+                                .clipShape(Circle())
+                                .frame(width: 120, height: 120)
 
-                    // 按钮操作组
-                    HStack(spacing: 23) {
-                        Button {
-                            Task {
-                                await self.friendInvite()
-                            }
-                        } label: {
-                            Text("复制邀请码")
-                                .frame(width: 160, height: 48)
-                                .font(.system(size: 16))
-                                .foregroundStyle(Color("theme-1"))
-                                .background(Color(hex: "#ffffff"))
-                                .border(Color("theme-1"))
-                                .clipShape(RoundedRectangle(cornerRadius: 14))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .stroke(Color("theme-1"), lineWidth: 2) // 使用 overlay 添加圆角边框
-                                )
-                        }
-
-                        Button {
-                            Task {
-                                await self.friendInvite()
-                            }
-
-                            openWeChatApp() // 打开微信
-                        } label: {
-                            Text("微信粘贴给好友")
-                                .frame(width: 160, height: 48)
-                                .font(.system(size: 16))
+                            Text("City Walk")
+                                .font(.system(size: 46))
+                                .bold()
                                 .foregroundStyle(.white)
-                                .background(Color("theme-1"))
-                                .border(Color("theme-1"))
-                                .clipShape(RoundedRectangle(cornerRadius: 14))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
-                                )
+
+                            Text("记录你走过的每个地方。")
+                                .font(.system(size: 15))
+                                .foregroundStyle(.white)
                         }
+                        .shadow(radius: 10)
                     }
-                    .padding(.top, 34)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 400)
+                    .clipShape(RoundedRectangle(cornerRadius: 22))
+                    .shadow(radius: 7)
+
+                Spacer()
+
+                Button {
+                    Task {
+                        await self.friendInvite() // 邀请朋友
+                    }
+                } label: {
+                    Label("复制邀请码", systemImage: "doc.on.doc")
+                        .frame(width: 300, height: 48)
+                        .font(.system(size: 16))
+                        .foregroundStyle(Color("theme-1"))
+                        .background(Color(hex: "#ffffff"))
+                        .border(Color("theme-1"))
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(Color("theme-1"), lineWidth: 2) // 使用 overlay 添加圆角边框
+                        )
+                }
+                .padding(.top, 30)
+
+                Button {
+                    Task {
+                        await self.friendInvite()
+                    }
+
+                    openWeChatApp() // 打开微信
+                } label: {
+                    Label("微信粘贴给好友", systemImage: "ellipsis.message")
+                        .frame(width: 300, height: 48)
+                        .font(.system(size: 16))
+                        .foregroundStyle(.white)
+                        .background(Color("theme-1"))
+                        .border(Color("theme-1"))
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
+                        )
                 }
 
-                .padding(.horizontal, 16)
-                .padding(.bottom, 200)
-                .padding(.top, viewPaddingTop)
-                .frame(maxWidth: .infinity)
+                Spacer()
             }
+            .padding(.horizontal, 16)
+            .padding(.top, viewPaddingTop)
             .overlay(alignment: .top) {
                 VariableBlurView(maxBlurRadius: 12)
                     .frame(height: topSafeAreaInsets + globalNavigationBarHeight)
