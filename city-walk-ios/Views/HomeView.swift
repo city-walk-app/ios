@@ -138,8 +138,8 @@ struct HomeView: View {
                 VStack {
                     // 头部操作栏
                     HomeHeaderView(
-                        //                        storageData: storageData,
-                        userInfo: userInfo,
+                        storageData: storageData,
+//                        userInfo: userInfo,
                         homeData: homeData,
                         globalData: globalData,
                         isSatelliteMap: $isSatelliteMap
@@ -595,28 +595,23 @@ private struct HomeRecordSheetView: View {
                     // 省份图
                     if let province_url = recordDetail.province_url {
                         // 省份图
-                        ZStack {
-                            RadiatingTrianglesView()
-                                .frame(width: 160, height: 160)
-                            
-                            Color.clear
-                                .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
-                                .background(
-                                    Group {
-                                        recordDetail.background_color != nil
-                                            ? Color(hex: recordDetail.background_color!)
-                                            : Color("theme-1")
-                                    }
-                                    .mask {
-                                        KFImage(URL(string: province_url))
-                                            .placeholder {
-                                                Color.clear
-                                            }
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                    }
-                                )
-                        }
+                        Color.clear
+                            .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
+                            .background(
+                                Group {
+                                    recordDetail.background_color != nil
+                                        ? Color(hex: recordDetail.background_color!)
+                                        : Color("theme-1")
+                                }
+                                .mask {
+                                    KFImage(URL(string: province_url))
+                                        .placeholder {
+                                            Color.clear
+                                        }
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                }
+                            )
                   
                         // 文案
                         Text("\(recordDetail.content ?? "当前地点打卡成功")")
@@ -913,7 +908,6 @@ private struct HomeRecordSheetView: View {
                             Task {
                                 await self.updateRouteDetail() // 完善步行打卡记录详情
                             }
-                       
                         } label: {
                             Text("就这样")
                                 .frame(width: 160, height: 48)
@@ -1084,7 +1078,7 @@ private struct HomeRecordSheetFullScreenCoverView: View {
 /// 首页头部
 private struct HomeHeaderView: View {
     /// 用户信息
-    var userInfo: UserInfoType?
+    var storageData: StorageData
     /// 首页数据
     var homeData: HomeData
     /// 全局数据
@@ -1094,7 +1088,7 @@ private struct HomeHeaderView: View {
     
     var body: some View {
         HStack(alignment: .top) {
-            if let userInfo = userInfo {
+            if let userInfo = storageData.userInfo {
                 NavigationLink(destination: MainView(user_id: userInfo.user_id)) {
                     // 头像存在
                     if let avatar = userInfo.avatar, let url = URL(string: avatar) {
@@ -1341,7 +1335,7 @@ private struct HomeBottomCardsView: View {
                         // 地点打卡
                         Button {
                             Task {
-                                await self.onRecord()
+                                await self.onRecord() // 获取当前位置并打卡
                             }
                         } label: {
                             KFImage(recordBanner)
