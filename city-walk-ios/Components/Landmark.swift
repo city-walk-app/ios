@@ -21,6 +21,8 @@ struct LandmarkItem: Identifiable {
 struct Landmark: View {
     /// 地图标点
     var landmark: LandmarkItem
+    /// 照片点击的回调
+    var pictureClick: ((_ pictures: [String]) -> Void)?
 
     var body: some View {
         VStack(spacing: 3) {
@@ -35,18 +37,22 @@ struct Landmark: View {
 
             if let picture = landmark.picure, !picture.isEmpty {
                 ForEach(picture, id: \.self) { item in
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color("background-1"))
-                        .frame(width: 90, height: 90)
-                        .overlay {
-                            KFImage(URL(string: item))
-                                .resizable()
-                                .frame(width: 82, height: 82)
-                                .aspectRatio(contentMode: .fill)
-                                .clipShape(RoundedRectangle(cornerRadius: 6))
-                                .clipped()
-                        }
-                        .shadow(radius: 5)
+                    Button {
+                        pictureClick?(picture) // 照片点击的回调
+                    } label: {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color("background-1"))
+                            .frame(width: 90, height: 90)
+                            .overlay {
+                                KFImage(URL(string: item))
+                                    .resizable()
+                                    .frame(width: 82, height: 82)
+                                    .aspectRatio(contentMode: .fill)
+                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                                    .clipped()
+                            }
+                            .shadow(radius: 6)
+                    }
                 }
             }
         }

@@ -36,6 +36,7 @@ struct ImagePreviewView: View {
                 isPresented = false
             }
         }
+        .zIndex(200)
     }
 }
 

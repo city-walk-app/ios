@@ -29,12 +29,25 @@ struct RouteDetailView: View {
     @State private var landmarks: [LandmarkItem] = []
     /// 步行记录详情
     @State private var routeDetail: [GpsGetRouteHistory.GpsGetRouteHistoryData] = []
+    /// 是否显示预览的图片
+    @State private var isPreviewing = false
+    /// 预览的图片列表
+    @State private var previewImages: [String] = []
+    /// 预览的图片索引
+    @State private var previewSelectedIndex = 0
 
     var body: some View {
-        // 地图
-        Map(coordinateRegion: $region, annotationItems: landmarks) { landmark in
-            MapAnnotation(coordinate: landmark.coordinate) {
-                Landmark(landmark: landmark)
+        ZStack {
+            // 地图
+            Map(coordinateRegion: $region, annotationItems: landmarks) { landmark in
+                MapAnnotation(coordinate: landmark.coordinate) {
+                    Landmark(landmark: landmark, pictureClick: pictureClick)
+                }
+            }
+
+            // 预览图片
+            if isPreviewing {
+                ImagePreviewView(images: previewImages, selectedIndex: $previewSelectedIndex, isPresented: $isPreviewing)
             }
         }
         .ignoresSafeArea(.all)
@@ -46,6 +59,15 @@ struct RouteDetailView: View {
             Task {
                 await self.getUserRouteDetail() // 获取用户步行记录详情
             }
+        }
+    }
+
+    /// 照片点击的回调
+    private func pictureClick(picture: [String]) {
+        previewImages = picture
+
+        withAnimation {
+            self.isPreviewing.toggle()
         }
     }
 
