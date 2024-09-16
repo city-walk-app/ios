@@ -49,7 +49,7 @@ struct InviteView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 400)
                     .clipShape(RoundedRectangle(cornerRadius: 22))
-                    .shadow(radius: 7)
+//                    .shadow(radius: 7)
 
                 Spacer()
 
@@ -58,11 +58,11 @@ struct InviteView: View {
                         await self.friendInvite() // 邀请朋友
                     }
                 } label: {
-                    Label("复制邀请码", systemImage: "doc.on.doc")
+                    Label("复制邀请码分享", systemImage: "doc.on.doc")
                         .frame(width: 300, height: 48)
                         .font(.system(size: 16))
                         .foregroundStyle(Color("theme-1"))
-                        .background(Color(hex: "#ffffff"))
+                        .background(Color("background-1"))
                         .border(Color("theme-1"))
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                         .overlay(
@@ -91,6 +91,7 @@ struct InviteView: View {
                                 .stroke(Color("theme-1"), lineWidth: 1) // 使用 overlay 添加圆角边框
                         )
                 }
+                .padding(.top, 9)
 
                 Spacer()
             }

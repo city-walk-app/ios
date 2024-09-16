@@ -586,341 +586,348 @@ private struct HomeRecordSheetView: View {
     @State private var getAroundAddressPageNum = 1
     
     var body: some View {
-        VStack {
-            ScrollView {
-                VStack {
-                    // 省份图
-                    if let recordDetail = self.recordDetail {
+        NavigationStack {
+            VStack {
+                ScrollView {
+                    VStack {
                         // 省份图
-                        if let province_url = recordDetail.province_url {
+                        if let recordDetail = self.recordDetail {
                             // 省份图
-                            Color.clear
-                                .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
-                                .background(
-                                    Group {
+                            if let province_url = recordDetail.province_url {
+                                // 省份图
+                                Color.clear
+                                    .frame(width: 154, height: 154) // 保持原有的尺寸但设置为透明
+                                    .background(
+                                        Group {
+                                            recordDetail.background_color != nil
+                                                ? Color(hex: recordDetail.background_color!)
+                                                : Color("theme-1")
+                                        }
+                                        .mask {
+                                            KFImage(URL(string: province_url))
+                                                .placeholder {
+                                                    Color.clear
+                                                }
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .shadow(
+                                                    color: recordDetail.background_color != nil
+                                                        ? Color(hex: recordDetail.background_color!).opacity(0.6)
+                                                        : Color("theme-1").opacity(0.6),
+                                                    radius: 12
+                                                )
+                                        }
+                                    )
+                                
+                                // 文案
+                                Text("\(recordDetail.content ?? "当前地点打卡成功")")
+                                    .foregroundStyle(
                                         recordDetail.background_color != nil
                                             ? Color(hex: recordDetail.background_color!)
                                             : Color("theme-1")
+                                    )
+                                    .font(.system(size: 17))
+                                    .bold()
+                            }
+                        }
+                        
+                        // 说点什么
+                        VStack {
+                            TextField("Comment", text: $routeDetailForm.content, prompt: Text("说点什么？"), axis: .vertical)
+                                .lineLimit(3 ... 6)
+                                .padding(23)
+                                .submitLabel(.done)
+                                //                            .background(self.focus == .signature ? Color.clear : Color("background-3"))
+                                //                            .focused($focus, equals: .signature)
+                                .foregroundStyle(Color("text-1"))
+                                //                            .onReceive(Just(routeDetailForm.content), perform: { _ in
+                                //                                limitMaxLength(content: &routeDetailForm.content, maxLength: signatureMaxLength)
+                                //                            })
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(Color("theme-1"), lineWidth: 2)
+                                )
+                                .onChange(of: routeDetailForm.content) {
+                                    // 当内容变化时执行的代码
+                                    if routeDetailForm.content.contains("\n") {
+                                        routeDetailForm.content = routeDetailForm.content.replacingOccurrences(of: "\n", with: "")
                                     }
-                                    .mask {
-                                        KFImage(URL(string: province_url))
+                                }
+                        }
+                        .padding(.top, 6)
+                        .padding(.horizontal, 16)
+                        
+                        // 选择当前位置
+                        //                    Button {
+                        //                        Task {
+                        //                            await self.getAroundAddress()
+                        //                        }
+                        //                    } label: {
+                        //                        Text("\(routeDetailForm.address == "" ? "选择当前位置" : routeDetailForm.address)")
+                        //                            .frame(maxWidth: .infinity)
+                        //                            .padding(.vertical, 13)
+                        //                            .background(LinearGradient(gradient: Gradient(
+                        //                                    colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
+                        //                                ),
+                        //                                startPoint: .leading, endPoint: .trailing)
+                        //                            )
+                        //                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        //                            .padding(.top, 25)
+                        //                            .font(.system(size: 16))
+                        //                            .foregroundStyle(Color(hex: "#666666"))
+                        //                            .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
+                        //                    }
+                        
+                        // 选择心情颜色
+                        VStack {
+                            if let moodColorActive = moodColorActive {
+                                HStack {
+                                    Button {
+                                        withAnimation {
+                                            self.moodColorActive = nil
+                                            self.routeDetailForm.mood_color = ""
+                                        }
+                                    } label: {
+                                        Circle()
+                                            .fill(Color(hex: moodColorActive.color))
+                                            .frame(width: 47, height: 47)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color(hex: moodColorActive.borderColor), lineWidth: 1)
+                                            )
+                                        
+                                        Text(moodColorActive.type)
+                                            .foregroundStyle(Color(hex: moodColorActive.color))
+                                            .font(.system(size: 16))
+                                            .bold()
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                            } else {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack {
+                                        ForEach(moodColorList, id: \.key) { item in
+                                            Button {
+                                                withAnimation {
+                                                    self.moodColorActive = item
+                                                    self.routeDetailForm.mood_color = item.key
+                                                }
+                                            } label: {
+                                                Circle()
+                                                    .fill(Color(hex: item.color))
+                                                    .frame(width: 47, height: 47)
+                                                    .overlay(
+                                                        Circle()
+                                                            .stroke(Color(hex: item.borderColor), lineWidth: 1)
+                                                    )
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                }
+                            }
+                        }
+                        .padding(.top, 10)
+                        
+                        // 选择出行方式
+                        VStack {
+                            if let travelTypeActive = travelTypeActive {
+                                HStack {
+                                    Button {
+                                        withAnimation {
+                                            self.travelTypeActive = nil
+                                            self.routeDetailForm.travel_type = nil
+                                        }
+                                    } label: {
+                                        Circle()
+                                            .fill(.gray)
+                                            .frame(width: 47, height: 47)
+                                            .frame(width: 47, height: 47)
+                                            .overlay {
+                                                Image(systemName: travelTypeActive.icon)
+                                                    .frame(width: 41, height: 41)
+                                                    .foregroundStyle(.white)
+                                            }
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                            } else {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack {
+                                        ForEach(travelTypeList, id: \.key) { item in
+                                            Button {
+                                                withAnimation {
+                                                    self.routeDetailForm.travel_type = item.key
+                                                    self.travelTypeActive = item
+                                                }
+                                            } label: {
+                                                let isActive = self.routeDetailForm.travel_type == item.key
+                                                
+                                                Circle()
+                                                    .fill(isActive ? Color("theme-1") : Color(hex: "#eeeeee"))
+                                                    .frame(width: 47, height: 47)
+                                                    .overlay {
+                                                        Image(systemName: item.icon)
+                                                            .frame(width: 41, height: 41)
+                                                            .foregroundStyle(isActive ? .white : .blue)
+                                                    }
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                }
+                            }
+                        }
+                        .padding(.top, 10)
+                        
+                        // 选择照片
+                        HStack {
+                            // 一张照片都没选择
+                            if selectedImages.count == 0 || selectedImages.isEmpty {
+                                // 发布瞬间
+                                Menu {
+                                    Section {
+                                        Button {
+                                            self.fullScreenCoverType = .camera
+                                            self.visibleFullScreenCover.toggle()
+                                        } label: {
+                                            Label("拍照", systemImage: "camera")
+                                        }
+                                        
+                                        Button {
+                                            self.fullScreenCoverType = .picture
+                                            self.visibleFullScreenCover.toggle()
+                                        } label: {
+                                            Label("相册选择", systemImage: "photo")
+                                        }
+                                    }
+                                } label: {
+                                    HStack {
+                                        KFImage(recordSucceseCamera)
                                             .placeholder {
                                                 Color.clear
+                                                    .frame(width: 69, height: 64)
                                             }
                                             .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .shadow(
-                                                color: recordDetail.background_color != nil
-                                                    ? Color(hex: recordDetail.background_color!).opacity(0.6)
-                                                    : Color("theme-1").opacity(0.6),
-                                                radius: 12
-                                            )
+                                            .frame(width: 69, height: 64)
                                     }
-                                )
-                            
-                            // 文案
-                            Text("\(recordDetail.content ?? "当前地点打卡成功")")
-                                .foregroundStyle(
-                                    recordDetail.background_color != nil
-                                        ? Color(hex: recordDetail.background_color!)
-                                        : Color("theme-1")
-                                )
-                                .font(.system(size: 17))
-                                .bold()
-                        }
-                    }
-                   
-                    // 说点什么
-                    VStack {
-                        TextField("Comment", text: $routeDetailForm.content, prompt: Text("说点什么？"), axis: .vertical)
-                            .lineLimit(3 ... 6)
-                            .padding(23)
-                            .submitLabel(.done)
-                            //                            .background(self.focus == .signature ? Color.clear : Color("background-3"))
-                            //                            .focused($focus, equals: .signature)
-                            .foregroundStyle(Color("text-1"))
-                            //                            .onReceive(Just(routeDetailForm.content), perform: { _ in
-                            //                                limitMaxLength(content: &routeDetailForm.content, maxLength: signatureMaxLength)
-                            //                            })
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color("theme-1"), lineWidth: 2)
-                            )
-                            .onChange(of: routeDetailForm.content) {
-                                // 当内容变化时执行的代码
-                                if routeDetailForm.content.contains("\n") {
-                                    routeDetailForm.content = routeDetailForm.content.replacingOccurrences(of: "\n", with: "")
                                 }
                             }
-                    }
-                    .padding(.top, 6)
-                    .padding(.horizontal, 16)
-                    
-                    // 选择当前位置
-                    //                    Button {
-                    //                        Task {
-                    //                            await self.getAroundAddress()
-                    //                        }
-                    //                    } label: {
-                    //                        Text("\(routeDetailForm.address == "" ? "选择当前位置" : routeDetailForm.address)")
-                    //                            .frame(maxWidth: .infinity)
-                    //                            .padding(.vertical, 13)
-                    //                            .background(LinearGradient(gradient: Gradient(
-                    //                                    colors: [Color(hex: "#FFF2D1"), Color(hex: "#ffffff")]
-                    //                                ),
-                    //                                startPoint: .leading, endPoint: .trailing)
-                    //                            )
-                    //                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    //                            .padding(.top, 25)
-                    //                            .font(.system(size: 16))
-                    //                            .foregroundStyle(Color(hex: "#666666"))
-                    //                            .shadow(color: Color(hex: "#9F9F9F").opacity(0.4), radius: 4.4, x: 0, y: 1)
-                    //                    }
-                    
-                    // 选择心情颜色
-                    VStack {
-                        if let moodColorActive = moodColorActive {
-                            HStack {
-                                Button {
-                                    withAnimation {
-                                        self.moodColorActive = nil
-                                        self.routeDetailForm.mood_color = ""
-                                    }
-                                } label: {
-                                    Circle()
-                                        .fill(Color(hex: moodColorActive.color))
-                                        .frame(width: 47, height: 47)
-                                        .overlay(
-                                            Circle()
-                                                .stroke(Color(hex: moodColorActive.borderColor), lineWidth: 1)
-                                        )
-                                    
-                                    Text(moodColorActive.type)
-                                        .foregroundStyle(Color(hex: moodColorActive.color))
-                                        .font(.system(size: 16))
-                                        .bold()
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                        } else {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack {
-                                    ForEach(moodColorList, id: \.key) { item in
-                                        Button {
-                                            withAnimation {
-                                                self.moodColorActive = item
-                                                self.routeDetailForm.mood_color = item.key
-                                            }
-                                        } label: {
-                                            Circle()
-                                                .fill(Color(hex: item.color))
-                                                .frame(width: 47, height: 47)
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(Color(hex: item.borderColor), lineWidth: 1)
-                                                )
-                                        }
-                                    }
-                                }
-                                .padding(.horizontal, 16)
-                            }
-                        }
-                    }
-                    .padding(.top, 10)
-
-                    // 选择出行方式
-                    VStack {
-                        if let travelTypeActive = travelTypeActive {
-                            HStack {
-                                Button {
-                                    withAnimation {
-                                        self.travelTypeActive = nil
-                                        self.routeDetailForm.travel_type = nil
-                                    }
-                                } label: {
-                                    Circle()
-                                        .fill(.gray)
-                                        .frame(width: 47, height: 47)
-                                        .frame(width: 47, height: 47)
-                                        .overlay {
-                                            Image(systemName: travelTypeActive.icon)
-                                                .frame(width: 41, height: 41)
-                                                .foregroundStyle(.white)
-                                        }
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                        } else {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack {
-                                    ForEach(travelTypeList, id: \.key) { item in
-                                        Button {
-                                            withAnimation {
-                                                self.routeDetailForm.travel_type = item.key
-                                                self.travelTypeActive = item
-                                            }
-                                        } label: {
-                                            let isActive = self.routeDetailForm.travel_type == item.key
-                                        
-                                            Circle()
-                                                .fill(isActive ? Color("theme-1") : Color(hex: "#eeeeee"))
-                                                .frame(width: 47, height: 47)
-                                                .overlay {
-                                                    Image(systemName: item.icon)
-                                                        .frame(width: 41, height: 41)
-                                                        .foregroundStyle(isActive ? .white : .blue)
-                                                }
-                                        }
-                                    }
-                                }
-                                .padding(.horizontal, 16)
-                            }
-                        }
-                    }
-                    .padding(.top, 10)
-                    
-                    // 选择照片
-                    HStack {
-                        // 一张照片都没选择
-                        if selectedImages.count == 0 || selectedImages.isEmpty {
-                            // 发布瞬间
-                            Menu {
-                                Section {
-                                    Button {
-                                        self.fullScreenCoverType = .camera
-                                        self.visibleFullScreenCover.toggle()
-                                    } label: {
-                                        Label("拍照", systemImage: "camera")
-                                    }
-                                        
-                                    Button {
-                                        self.fullScreenCoverType = .picture
-                                        self.visibleFullScreenCover.toggle()
-                                    } label: {
-                                        Label("相册选择", systemImage: "photo")
-                                    }
-                                }
-                            } label: {
-                                HStack {
-                                    KFImage(recordSucceseCamera)
-                                        .placeholder {
-                                            Color.clear
-                                                .frame(width: 69, height: 64)
-                                        }
-                                        .resizable()
-                                        .frame(width: 69, height: 64)
-                                }
-                            }
-                        }
-                        // 选择了一张照片
-                        else if selectedImages.count == 1 {
-                            let columns = [
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                            ]
+                            // 选择了一张照片
+                            else if selectedImages.count == 1 {
+                                let columns = [
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible()),
+                                ]
                                 
-                            LazyVGrid(columns: columns) {
-                                Image(uiImage: selectedImages[0])
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: 134)
-                                    .frame(maxWidth: .infinity)
-                                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                                    .onLongPressGesture {
-                                        visibleActionSheet.toggle()
-                                    }
-                                    
-                                Menu {
-                                    Button {
-                                        self.fullScreenCoverType = .camera
-                                        self.visibleFullScreenCover.toggle()
-                                    } label: {
-                                        Label("拍照", systemImage: "camera")
-                                    }
-                                        
-                                    Button {
-                                        self.fullScreenCoverType = .picture
-                                        self.visibleFullScreenCover.toggle()
-                                    } label: {
-                                        Label("相册选择", systemImage: "photo")
-                                    }
-                                } label: {
-                                    KFImage(recordSucceseCamera)
-                                        .placeholder {
-                                            Color.clear
-                                                .frame(width: 69, height: 64)
-                                        }
+                                LazyVGrid(columns: columns) {
+                                    Image(uiImage: selectedImages[0])
                                         .resizable()
-                                        .frame(width: 69, height: 64)
-                                }
-                            }
-                        }
-                        // 选择了两张照片
-                        else if selectedImages.count == 2 {
-                            let columns = [
-                                GridItem(.flexible()),
-                                GridItem(.flexible()),
-                            ]
-                                
-                            LazyVGrid(columns: columns) {
-                                ForEach(selectedImages, id: \.self) { item in
-                                    Image(uiImage: item)
-                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
                                         .frame(height: 134)
                                         .frame(maxWidth: .infinity)
                                         .clipShape(RoundedRectangle(cornerRadius: 14))
                                         .onLongPressGesture {
                                             visibleActionSheet.toggle()
                                         }
+                                    
+                                    Menu {
+                                        Button {
+                                            self.fullScreenCoverType = .camera
+                                            self.visibleFullScreenCover.toggle()
+                                        } label: {
+                                            Label("拍照", systemImage: "camera")
+                                        }
+                                        
+                                        Button {
+                                            self.fullScreenCoverType = .picture
+                                            self.visibleFullScreenCover.toggle()
+                                        } label: {
+                                            Label("相册选择", systemImage: "photo")
+                                        }
+                                    } label: {
+                                        KFImage(recordSucceseCamera)
+                                            .placeholder {
+                                                Color.clear
+                                                    .frame(width: 69, height: 64)
+                                            }
+                                            .resizable()
+                                            .frame(width: 69, height: 64)
+                                    }
+                                }
+                            }
+                            // 选择了两张照片
+                            else if selectedImages.count == 2 {
+                                let columns = [
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible()),
+                                ]
+                                
+                                LazyVGrid(columns: columns) {
+                                    ForEach(selectedImages, id: \.self) { item in
+                                        Image(uiImage: item)
+                                            .resizable()
+                                            .frame(height: 134)
+                                            .frame(maxWidth: .infinity)
+                                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                                            .onLongPressGesture {
+                                                visibleActionSheet.toggle()
+                                            }
+                                    }
                                 }
                             }
                         }
-                    }
-                    .padding(.top, 23)
-                    .frame(maxWidth: .infinity)
-                    // 选择照片的全屏弹出对话框
-                    .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
-                        HomeRecordSheetFullScreenCoverView(
-                            fullScreenCoverType: $fullScreenCoverType,
-                            selectedImages: $selectedImages,
-                            addressList: $addressList,
-                            visibleFullScreenCover: $visibleFullScreenCover,
-                            routeDetailForm: $routeDetailForm,
-                            getAroundAddressPageNum: $getAroundAddressPageNum
-                        )
-                    })
-                    .actionSheet(isPresented: $visibleActionSheet) {
-                        ActionSheet(
-                            title: Text("选择操作"),
-                            message: Text("请选择你要执行的操作"),
-                            buttons: [
-                                .default(Text("重新选择")) {},
-                                .default(Text("删除")) {},
-                                .cancel(),
-                            ]
-                        )
-                    }
+                        .padding(.top, 23)
+                        .frame(maxWidth: .infinity)
+                        // 选择照片的全屏弹出对话框
+                        .fullScreenCover(isPresented: $visibleFullScreenCover, content: {
+                            HomeRecordSheetFullScreenCoverView(
+                                fullScreenCoverType: $fullScreenCoverType,
+                                selectedImages: $selectedImages,
+                                addressList: $addressList,
+                                visibleFullScreenCover: $visibleFullScreenCover,
+                                routeDetailForm: $routeDetailForm,
+                                getAroundAddressPageNum: $getAroundAddressPageNum
+                            )
+                        })
+                        .actionSheet(isPresented: $visibleActionSheet) {
+                            ActionSheet(
+                                title: Text("选择操作"),
+                                message: Text("请选择你要执行的操作"),
+                                buttons: [
+                                    .default(Text("重新选择")) {},
+                                    .default(Text("删除")) {},
+                                    .cancel(),
+                                ]
+                            )
+                        }
                         
-                    // 防止键盘挡住输入框
-                    // Spacer()
-                    // .frame(height: keyboardHeight)
+                        // 防止键盘挡住输入框
+                        // Spacer()
+                        // .frame(height: keyboardHeight)
+                    }
+                }
+                
+                Button {
+                    Task {
+                        await self.updateRouteDetail() // 完善步行打卡记录详情
+                    }
+                } label: {
+                    Label("就这样", systemImage: "globe.asia.australia")
+                        .frame(width: 180, height: 62)
+                        .font(.system(size: 19))
+                        .foregroundStyle(.white)
+                        .bold()
+                        .background(Color("theme-1"))
+                        .border(Color("theme-1"))
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                 }
             }
-            
-            Button {
-                Task {
-                    await self.updateRouteDetail() // 完善步行打卡记录详情
+            .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    Text("123")
                 }
-            } label: {
-                Label("就这样", systemImage: "globe.asia.australia")
-                    .frame(width: 180, height: 62)
-                    .font(.system(size: 19))
-                    .foregroundStyle(.white)
-                    .bold()
-                    .background(Color("theme-1"))
-                    .border(Color("theme-1"))
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
             }
         }
     }
@@ -1276,7 +1283,6 @@ private struct HomeBottomCardsView: View {
                                     .padding(.top, 14)
                                     .padding(.leading, 16)
                                 }
-                                .shadow(color: .gray, radius: 8)
                         }
                         
                         // 邀请朋友
@@ -1310,7 +1316,6 @@ private struct HomeBottomCardsView: View {
                                     .padding(.top, 14)
                                     .padding(.leading, 16)
                                 }
-                                .shadow(color: .gray, radius: 8)
                         }
                     }
                     
@@ -1351,7 +1356,6 @@ private struct HomeBottomCardsView: View {
                                     .padding(.top, 14)
                                     .padding(.leading, 16)
                                 }
-                                .shadow(color: .gray, radius: 8)
                         }
                         .opacity(isRecordButtonDisabled ? 0.5 : 1)
                         .disabled(isRecordButtonDisabled)
@@ -1389,7 +1393,6 @@ private struct HomeBottomCardsView: View {
                                     .padding(.leading, 16)
                                 }
                         }
-                        .shadow(color: .gray, radius: 8)
                     }
                 }
                 .frame(maxWidth: .infinity)
